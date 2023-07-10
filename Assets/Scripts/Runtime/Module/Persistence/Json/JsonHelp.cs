@@ -62,6 +62,18 @@ public static class JsonHelp {
     }
 
     /// <summary>
+    /// 删除
+    /// </summary>
+    /// <param name="target"></param>
+    public static void Delete(this IJson target) {
+        var path = CombinePath(target.Path);
+        if (!File.Exists(path))
+            return;
+        
+        File.Delete(path);
+    }
+
+    /// <summary>
     /// 获得路径
     /// </summary>
     /// <param name="path"></param>
