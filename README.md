@@ -38,3 +38,11 @@
   * LogSystem
     * 富文本日志
     * 双击日志跳转设置
+
+**Version: 0.0.2**
+
+* 持久化
+  * XML类
+  * Json接口
+  * Excel转类/结构体（编辑器模式）
+  * Playerprefs扩展
