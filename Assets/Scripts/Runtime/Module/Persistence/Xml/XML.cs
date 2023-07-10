@@ -31,7 +31,7 @@ public class XML {
     public XML(string path, bool @readonly = true) {
         this.@readonly = @readonly;
 
-        if (!@readonly && (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer)) {
+        if (!@readonly && !Application.isEditor) {
             this.path = Path.Combine(Application.persistentDataPath, path);
         } else {
             this.path = Path.Combine(Application.streamingAssetsPath, path);
@@ -99,7 +99,7 @@ public class XML {
     /// </summary>
     /// <returns></returns>
     public bool Exist() {
-#if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
+#if !UNITY_EDITOR
         if (@readonly) {
             UnityWebRequest request = UnityWebRequest.Get(path);
             var operation = request.SendWebRequest();
@@ -114,7 +114,7 @@ public class XML {
             return false;
 
         xml.Load(path);
-#if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
+#if !UNITY_EDITOR
         }
 #endif
         return true;
