@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60a1150468e176547a5a845d3fd8e284, type: 3}
+  m_Name: LogConfig
+  m_EditorClassIdentifier: 
+  logfully: 1
+  datas:
+  - name: Editor
+    color: {r: 0.53524387, g: 0.49247953, b: 0.8773585, a: 1}
+    logable: 1
+  - name: GameState
+    color: {r: 0, g: 1, b: 0.9683552, a: 1}
+    logable: 1
+  - name: Event
+    color: {r: 0, g: 1, b: 0.63107514, a: 1}
+    logable: 1
+  - name: Source
+    color: {r: 0.70089984, g: 1, b: 0, a: 1}
+    logable: 1
+  - name: Guide
+    color: {r: 1, g: 0.48235297, b: 0, a: 1}
+    logable: 1
+  - name: UI
+    color: {r: 0.048891068, g: 0, b: 1, a: 1}
+    logable: 1
+  - name: AI
+    color: {r: 0.8666667, g: 0.627451, b: 0.8666667, a: 1}
+    logable: 1
+  - name: Cheat
+    color: {r: 0.8716521, g: 0, b: 1, a: 1}
+    logable: 1
+  - name: Test
+    color: {r: 0.36845854, g: 0.52357036, b: 0.6792453, a: 1}
+    logable: 1
