@@ -12,8 +12,6 @@
   * Plugins：插件
   * Scripts：脚本
     * Runtime：运行时
-      * CSharp单例：Singleton
-      * 其他单例：SystemBase
     * Editor：编辑器下代码
     * Test：测试
 
