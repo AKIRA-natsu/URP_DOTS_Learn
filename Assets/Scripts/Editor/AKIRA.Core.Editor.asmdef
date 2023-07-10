@@ -1,0 +1,18 @@
+{
+    "name": "AKIRA.Core.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:b6027b4701dab38488bbce31c3835156"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
