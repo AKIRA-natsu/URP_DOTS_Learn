@@ -86,5 +86,10 @@ namespace AKIRA {
             public const string Test = "Test";
         }
         #endregion
+
+        #region 事件
+        public class Event {
+        }
+        #endregion
     }
 }

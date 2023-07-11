@@ -98,10 +98,10 @@ namespace AKIRA.Editor {
 
             } else {
                 string content = 
-    @$"            /// <summary>
-                /// {addSummaryStr}
-                /// </summary>
-                public const string {addFieldStr} = ""{addValueStr}"";";
+@$"            /// <summary>
+            /// {addSummaryStr}
+            /// </summary>
+            public const string {addFieldStr} = ""{addValueStr}"";";
                 lines.Insert(lastIndex, content);
                 File.WriteAllLines(path, lines);
 
