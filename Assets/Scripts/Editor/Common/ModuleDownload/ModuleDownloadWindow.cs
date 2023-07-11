@@ -15,9 +15,4 @@ namespace AKIRA.Editor {
             
         }
     }
-
-    [CreateAssetMenu(fileName = "ModuleDownloadConfig", menuName = "AKIRA.Framework/Common/ModuleDownloadConfig", order = 0)]
-    public class ModuleDownloadConfig : ScriptableObject {
-        
-    }
 }

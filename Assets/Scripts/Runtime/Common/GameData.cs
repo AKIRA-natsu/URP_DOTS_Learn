@@ -27,6 +27,10 @@ namespace AKIRA {
             /// 日志配置文件
             /// </summary>
             public const string LogConfig = "Configs/LogConfig";
+            /// <summary>
+            /// 模块下载配置
+            /// </summary>
+            public const string ModuleDownloadConfig = "Configs/ModuleDownloadConfig";
         }
         #endregion
 
