@@ -92,24 +92,23 @@ namespace AKIRA.Editor {
             var lastIndex = lines.FindIndex(fileClassIndex, lines.Count - fileClassIndex, line => line.Contains("}"));
             var findIndex = lines.FindIndex(fileClassIndex, lastIndex - fileClassIndex, line => line.Contains($"public const string {addFieldStr}"));
             if (findIndex != -1) {
-                lines[findIndex - 2] = @$"                /// {addSummaryStr}";
-                lines[findIndex] = @$"                public const string {addFieldStr} = ""{addValueStr}"";";
-                $"GameData.{classNames[index]} 已经存在 {addFieldStr}".Log(GameData.Log.Editor);
-
+                lines[findIndex - 2] = @$"            /// {addSummaryStr}";
+                lines[findIndex] = @$"            public const string {addFieldStr} = ""{addValueStr}"";";
+                $"GameData.{classNames[index]} 已经存在 {addFieldStr}，更新行 {findIndex}".Log(GameData.Log.Editor);
             } else {
                 string content = 
-    @$"            /// <summary>
-                /// {addSummaryStr}
-                /// </summary>
-                public const string {addFieldStr} = ""{addValueStr}"";";
+@$"            /// <summary>
+            /// {addSummaryStr}
+            /// </summary>
+            public const string {addFieldStr} = ""{addValueStr}"";";
                 lines.Insert(lastIndex, content);
-                File.WriteAllLines(path, lines);
 
                 $@"GameData脚本更新，插入行 {lastIndex + 1}: {addFieldStr} - {addValueStr}".Log(GameData.Log.Editor);
 
-                AssetDatabase.Refresh();
             }
-            
+
+            File.WriteAllLines(path, lines);
+            AssetDatabase.Refresh();
         }
 
         /// <summary>
