@@ -1,6 +1,7 @@
 namespace AKIRA {
     /// <summary>
-    /// 游戏整体数据存储
+    /// <para>游戏整体数据存储</para>
+    /// <para>可以通过Editor的Tools/AKIRA.Framework/GameDataWindow进行修改</para>
     /// </summary>
     public class GameData {
         #region 程序集
@@ -26,6 +27,10 @@ namespace AKIRA {
             /// 日志配置文件
             /// </summary>
             public const string LogConfig = "Configs/LogConfig";
+            /// <summary>
+            /// 测试
+            /// </summary>
+            public const string Test = "Test";
         }
         #endregion
 
