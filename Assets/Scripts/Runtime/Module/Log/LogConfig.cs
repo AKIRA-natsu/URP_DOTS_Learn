@@ -3,7 +3,7 @@ using AKIRA.Attribute;
 using UnityEngine;
 
 namespace AKIRA.Manager {
-    [CreateAssetMenu(fileName = "LogConfig", menuName = "Framework/LogConfig", order = 0)]
+    [CreateAssetMenu(fileName = "LogConfig", menuName = "AKIRA.Framework/Module/LogConfig", order = 0)]
     public class LogConfig : ScriptableObject {
         /// <summary>
         /// 日志数据
