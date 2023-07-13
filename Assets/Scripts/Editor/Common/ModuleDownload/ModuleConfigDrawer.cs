@@ -93,7 +93,7 @@ namespace AKIRA.Editor {
             GitObject gitObject = JsonUtility.FromJson<GitObject>(await GetRequest(assetsUrl));
 
             // 遍歷獲得子節點
-            gitObject = await GetChildren(gitObject, downloadUrl);
+            gitObject = await GetChildren(gitObject, assetsUrl.Replace("/Assets", ""));
 
             ModuleDownloadWindow.ShowWindow(moduleName, gitObject);
         }
