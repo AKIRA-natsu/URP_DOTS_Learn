@@ -1,7 +1,10 @@
+using System.IO;
 using UnityEngine;
 using UnityEditor;
 using System.Linq;
 using UnityEngine.Networking;
+using System.Threading.Tasks;
+using AKIRA.Editor.Git;
 
 namespace AKIRA.Editor {
     [CustomPropertyDrawer(typeof(ModuleConfig))]
@@ -32,8 +35,9 @@ namespace AKIRA.Editor {
             // 绘制Git路径字段
             EditorGUI.PropertyField(new Rect(position.x, position.y, position.width, lineHeight), gitPathProp);
             position.y += lineHeight;
-            if (EditorGUI.EndChangeCheck() && !string.IsNullOrEmpty(gitPathProp.stringValue)) {
-                moduleNameProp.stringValue = gitPathProp.stringValue.Split('_').Last();
+            var path = gitPathProp.stringValue;
+            if (EditorGUI.EndChangeCheck() && !string.IsNullOrEmpty(path)) {
+                moduleNameProp.stringValue = path.Split('_').Last();
             }
 
             GUI.enabled = false;
@@ -45,8 +49,20 @@ namespace AKIRA.Editor {
             // 绘制路径数组
             EditorGUI.PropertyField(new Rect(position.x, position.y, position.width, lineHeight), pathsProp, true);
             
-            if (!string.IsNullOrEmpty(gitPathProp.stringValue) && GUILayout.Button("Get Paths"))
-                ConnectPath(gitPathProp.stringValue);
+            // 获得路径数组，git url + cmd 获取
+            if (!string.IsNullOrEmpty(path) && GUILayout.Button("Get Paths"))
+                GetGitFileList(moduleNameProp.stringValue, path);
+            
+            if (isLoadedProp.boolValue) {
+                if (GUILayout.Button("Delete Module")) {
+                    "卸载模块".Log(GameData.Log.Editor);
+                }
+            } else {
+                if (GUILayout.Button("Load Module")) {
+                    // for (int i = 0; i < pathsProp.arraySize; i++)
+                    //     DownloadModule(pathsProp.GetArrayElementAtIndex(i).stringValue);
+                }
+            }
             
             EditorGUI.EndProperty();
         }
@@ -58,33 +74,69 @@ namespace AKIRA.Editor {
             return lineHeight * 4 + EditorGUI.GetPropertyHeight(pathsProp, true);
         }
 
-        
+        /// <summary>
+        /// 获得url路径
+        /// </summary>
+        /// <param name="moduleName"></param>
+        /// <param name="downloadUrl"></param>
+        /// <returns></returns>
+        public async void GetGitFileList(string moduleName, string downloadUrl) {
+            string html = await GetRequest(downloadUrl);
+
+            // 找到Assets
+            var assetsLine = html.Split('\n').SingleOrDefault(line => line.Contains(downloadUrl.Replace(ModuleDownloadConfig.GitHubURL, "")) && line.Contains("Assets"));
+            var splitStartIndex = assetsLine.IndexOf("href=\"") + 6;
+            var splitLastIndex = assetsLine.IndexOf('\"', splitStartIndex);
+            var assetsUrl = $"{ModuleDownloadConfig.GitHubURL}{assetsLine.Substring(splitStartIndex, splitLastIndex - splitStartIndex)}";
+            $"Assets URL => {assetsUrl}".Log(GameData.Log.Editor);
+
+            GitObject gitObject = JsonUtility.FromJson<GitObject>(await GetRequest(assetsUrl));
+
+            // 遍歷獲得子節點
+            gitObject = await GetChildren(gitObject, downloadUrl);
+
+            ModuleDownloadWindow.ShowWindow(moduleName, gitObject);
+        }
 
         /// <summary>
-        /// 
+        /// 獲得子節點
         /// </summary>
-        public void ConnectPath(string path) {
-            // 创建UnityWebRequest对象，并设置URL
-            UnityWebRequest request = UnityWebRequest.Get(path);
+        /// <param name="git"></param>
+        /// <param name="assetsPath"></param>
+        /// <returns></returns>
+        private async Task<GitObject> GetChildren(GitObject git, string assetsPath) {
+            var items = git.payload.tree.items;
+            foreach (var item in items) {
+                if (item.ContentType == TreeItem.ItemType.File)
+                    continue;
+                var path = Path.Combine(assetsPath, item.path);
+                GitObject child = JsonUtility.FromJson<GitObject>(await GetRequest(path));
+                git.children.Add(item.path, child);
+                $"{item.path} 添加子節點 {path}".Log();
+                child = await GetChildren(child, assetsPath);
+            }
+            return git;
+        }
 
-            // 发送网络请求
-            request.SendWebRequest();
+        /// <summary>
+        /// 获得地址数据
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        private async Task<string> GetRequest(string path) {
+            UnityWebRequest webRequest = UnityWebRequest.Get(path);
+            var asyncOperation = webRequest.SendWebRequest();
 
-            // 等待请求完成
-            while (!request.isDone) {
-                // 可以在这里添加一些加载中的提示
+            while (!asyncOperation.isDone) {
+                await Task.Yield();
             }
 
-            // 检查是否有错误
-            if (request.result == UnityWebRequest.Result.ConnectionError) {
-                Debug.LogError("Failed to connect to git path: " + request.error);
+            if (webRequest.result != UnityWebRequest.Result.Success) {
+                $"Request {path} Error: {webRequest.error}".Error();
+                return default;
             }
-            else {
-                // 请求成功，获取响应的内容
-                string response = request.downloadHandler.text;
-                // 在这里解析响应的内容，根据需要处理资源
-                Debug.Log("Response: " + response);
-            }
+
+            return webRequest.downloadHandler.text;
         }
     }
 }

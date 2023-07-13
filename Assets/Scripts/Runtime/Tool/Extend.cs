@@ -275,6 +275,18 @@ public static class Extend {
     }
 
     /// <summary>
+    /// 富文本，鏈接
+    /// </summary>
+    /// <param name="url"></param>
+    /// <param name="webName"></param>
+    /// <returns></returns>
+    public static string Link(this string url, string webName) {
+        if (String.IsNullOrEmpty(webName))
+            webName = url;
+        return $"<a href=\"{url}\">{webName}</a>";
+    }
+
+    /// <summary>
     /// Color的简单转换（System.Drawing.Color => UnityEngine.Color）
     /// </summary>
     /// <param name="color"></param>
