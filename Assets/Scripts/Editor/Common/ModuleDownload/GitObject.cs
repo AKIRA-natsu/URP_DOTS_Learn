@@ -16,7 +16,7 @@ namespace AKIRA.Editor.Git {
 
         public override string ToString() {
             return 
-$@"object: {payload.tree.ToString()}
+$@"object: {payload}
 title: {title}
 locale: {locale}";
         }
@@ -37,37 +37,7 @@ locale: {locale}";
         public bool showCodeNavSurvey;
         public Dictionary<string, string> csrf_tokens;
 
-        public override string ToString() {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine("Payload:");
-            sb.AppendLine($"allShortcutsEnabled: {allShortcutsEnabled}");
-            sb.AppendLine($"path: {path}");
-            sb.AppendLine($"repo: {repo}");
-            sb.AppendLine($"currentUser: {currentUser}");
-            sb.AppendLine($"refInfo: {refInfo}");
-            sb.AppendLine($"tree: {tree}");
-            sb.AppendLine($"fileTree: {fileTree}");
-            sb.AppendLine($"fileTreeProcessingTime: {fileTreeProcessingTime}");
-
-            if (foldersToFetch != null && foldersToFetch.Length > 0) {
-                sb.AppendLine($"foldersToFetch: {string.Join(", ", foldersToFetch)}");
-            } else {
-                sb.AppendLine("foldersToFetch: [empty]");
-            }
-
-            sb.AppendLine($"showSurveyBanner: {showSurveyBanner}");
-            sb.AppendLine($"showCodeNavSurvey: {showCodeNavSurvey}");
-            sb.AppendLine($"csrf_tokens:");
-
-            if (csrf_tokens != null && csrf_tokens.Count > 0) {
-                foreach (var token in csrf_tokens)
-                    sb.AppendLine($"{token.Key}: {token.Value}");
-            } else {
-                sb.AppendLine("[empty]");
-            }
-
-            return sb.ToString();
-        }
+        public Blob blob;
     }
 
     [Serializable]
@@ -148,5 +118,39 @@ $@"节点名称：{name}
         public string name;
         public string path;
         public string contentType;
+    }
+
+    [Serializable]
+    public class Blob {
+        public string[] rawLines;
+        public object[] stylingDirectives;
+        public object csv;
+        public object csvError;
+        public object dependabotInfo;
+        public string displayName;
+        public string displayUrl;
+        public object headerInfo;
+        public bool image;
+        public object isCodeownersFile;
+        public bool isValidLegacyIssueTemplate;
+        public string issueTemplateHelpUrl;
+        public object issueTemplate;
+        public object discussionTemplate;
+        public string language;
+        public bool large;
+        public bool loggedIn;
+        public string newDiscussionPath;
+        public string newIssuePath;
+        public object planSupportInfo;
+        public object publishBannersInfo;
+        public bool renderImageOrRaw;
+        public object richText;
+        public object renderedFileInfo;
+        public int tabSize;
+        public object topBannersInfo;
+        public bool truncated;
+        public bool viewable;
+        public object workflowRedirectUrl;
+        public object symbols;
     }
 }

@@ -52,16 +52,18 @@ namespace AKIRA.Editor {
             // 获得路径数组，git url + cmd 获取
             if (!string.IsNullOrEmpty(path) && GUILayout.Button("Get Paths"))
                 GetGitFileList(moduleNameProp.stringValue, path);
+
+            // 检查项目是否包含文件夹
+            if (pathsProp.arraySize != 0 && GUILayout.Button("Recheck Load"))
+                isLoadedProp.boolValue = CheckModuleLoad(pathsProp);
             
             if (isLoadedProp.boolValue) {
                 if (GUILayout.Button("Delete Module")) {
                     "卸载模块".Log(GameData.Log.Editor);
                 }
             } else {
-                if (GUILayout.Button("Load Module")) {
-                    // for (int i = 0; i < pathsProp.arraySize; i++)
-                    //     DownloadModule(pathsProp.GetArrayElementAtIndex(i).stringValue);
-                }
+                if (pathsProp.arraySize != 0 && GUILayout.Button("Load Module"))
+                    DownloadModule(pathsProp);
             }
             
             EditorGUI.EndProperty();
@@ -137,6 +139,59 @@ namespace AKIRA.Editor {
             }
 
             return webRequest.downloadHandler.text;
+        }
+
+        /// <summary>
+        /// 检查是否已经加载过
+        /// </summary>
+        private bool CheckModuleLoad(SerializedProperty pathProp) {
+            var count = pathProp.arraySize;
+            var existCount = 0;
+            for (int i = 0; i < count; i++) {
+                var productPath = GetProductPath(pathProp.GetArrayElementAtIndex(i).stringValue);
+
+                if (File.Exists(productPath))
+                    existCount++;
+                else
+                    $"文件未找到：{productPath}".Log(GameData.Log.Warn);
+            }
+
+            return existCount == count;
+        }
+
+        /// <summary>
+        /// 下载模块
+        /// </summary>
+        /// <param name="pathProp"></param>
+        /// <returns></returns>
+        private async void DownloadModule(SerializedProperty pathProp) {
+            var count = pathProp.arraySize;
+            for (int i = 0; i < count; i++) {
+                var gitPath = pathProp.GetArrayElementAtIndex(i).stringValue;
+                var productPath = GetProductPath(gitPath);
+
+                if (File.Exists(productPath))
+                    continue;
+                
+                var data = JsonUtility.FromJson<GitObject>(await GetRequest(gitPath));
+
+                // var lastIndex = productPath.LastIndexOf('/') + 1;
+                // var name = productPath.Remove(0, lastIndex);
+
+                // Path.Combine(Application.dataPath, name).Log();
+                data.payload.blob.displayUrl.Log();
+                var text = await GetRequest(data.payload.blob.displayUrl);
+                text.Log();
+            }
+        }
+
+        /// <summary>
+        /// 获得文件在项目路径
+        /// </summary>
+        /// <param name="gitPath"></param>
+        /// <returns></returns>
+        private string GetProductPath(string gitPath) {
+            return Path.Combine(Application.dataPath, gitPath.Split("Assets/")[1]);
         }
     }
 }

@@ -17,3 +17,7 @@ MonoBehaviour:
     gitPath: https://github.com/AKIRA-natsu/URP_DOTS_Learn/tree/Dev_0.0.3_EventSystem
     isLoaded: 0
     paths: []
+  - moduleName: Unity-ActFG
+    gitPath: https://github.com/AKIRA-natsu/Unity-ActFG
+    isLoaded: 0
+    paths: []

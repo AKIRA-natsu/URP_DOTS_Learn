@@ -136,7 +136,7 @@ namespace AKIRA.Editor {
                 // 額外添加子節點
                 var items = child.payload.tree.items;
                 foreach (var i in items) {
-                    if (i.path.Contains(".meta"))
+                    if (i.path.Contains(".meta") || ContainMap[i.path])
                         continue;
                     AddPath(i, i.ContentType == TreeItem.ItemType.Directory ? child.children[i.path] : null);
                 }
@@ -155,7 +155,7 @@ namespace AKIRA.Editor {
                 // 額外添加子節點
                 var items = child.payload.tree.items;
                 foreach (var i in items) {
-                    if (i.path.Contains(".meta"))
+                    if (i.path.Contains(".meta") || !ContainMap[i.path])
                         continue;
                     RemovePath(i, i.ContentType == TreeItem.ItemType.Directory ? child.children[i.path] : null);
                 }
