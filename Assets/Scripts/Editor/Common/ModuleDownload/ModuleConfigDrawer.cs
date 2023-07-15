@@ -1,3 +1,4 @@
+using System;
 using System.Text;
 using System.IO;
 using UnityEngine;
@@ -10,7 +11,7 @@ using AKIRA.Editor.Git;
 namespace AKIRA.Editor {
     [CustomPropertyDrawer(typeof(ModuleConfig))]
     public class ModuleConfigDrawer : PropertyDrawer {
-        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
+        public override async void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
             EditorGUI.BeginProperty(position, label, property);
 
             // 绘制默认的面板
@@ -59,12 +60,11 @@ namespace AKIRA.Editor {
                 isLoadedProp.boolValue = CheckModuleLoad(pathsProp);
             
             if (isLoadedProp.boolValue) {
-                if (GUILayout.Button("Delete Module")) {
-                    "卸载模块".Log(GameData.Log.Editor);
-                }
+                if (GUILayout.Button("Delete Module"))
+                    isLoadedProp.boolValue = DeleteModule(pathsProp);
             } else {
                 if (pathsProp.arraySize != 0 && GUILayout.Button("Load Module"))
-                    DownloadModule(pathsProp);
+                    isLoadedProp.boolValue = await DownloadModule(pathsProp);
             }
             
             EditorGUI.EndProperty();
@@ -154,9 +154,10 @@ namespace AKIRA.Editor {
                 if (File.Exists(productPath))
                     existCount++;
                 else
-                    $"文件未找到：{productPath}".Log(GameData.Log.Warn);
+                    $"File Not Found：{productPath}".Log(GameData.Log.Warn);
             }
-
+            
+            $"Check Finish".Log(GameData.Log.Success);
             return existCount == count;
         }
 
@@ -165,38 +166,64 @@ namespace AKIRA.Editor {
         /// </summary>
         /// <param name="pathProp"></param>
         /// <returns></returns>
-        private async void DownloadModule(SerializedProperty pathProp) {
+        private async Task<bool> DownloadModule(SerializedProperty pathProp) {
+            try {
+                var count = pathProp.arraySize;
+                for (int i = 0; i < count; i++) {
+                    var gitPath = pathProp.GetArrayElementAtIndex(i).stringValue;
+
+                    if (!(gitPath.Contains(".cs") || gitPath.Contains(".meta")))
+                        continue;
+
+                    var productPath = GetProductPath(gitPath);
+                    if (File.Exists(productPath))
+                        continue;
+                    
+                    $"Download File：{gitPath}".Log();
+                    var data = JsonUtility.FromJson<GitObject>(await GetRequest(gitPath));
+
+                    var lastIndex = productPath.LastIndexOf('/') + 1;
+                    var name = productPath.Remove(0, lastIndex);
+
+                    string folderPath = Path.GetDirectoryName(productPath); // 获取文件夹路径
+
+                    // 检查文件夹是否存在，如果不存在则创建
+                    if (!Directory.Exists(folderPath))
+                        Directory.CreateDirectory(folderPath);
+
+                    string text = await GetRequest(data.payload.blob.displayUrl);
+                    byte[] bytes = Encoding.UTF8.GetBytes(text);
+                    using (var stream = File.Open(productPath, FileMode.OpenOrCreate)) {
+                        stream.Write(bytes);
+                        await stream.DisposeAsync();
+                    }
+                }
+                AssetDatabase.Refresh();
+                return true;
+            } catch (Exception e) {
+                $"Download Error: {e}".Error();
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 删除模块
+        /// </summary>
+        /// <param name="pathProp"></param>
+        /// <returns></returns>
+        private bool DeleteModule(SerializedProperty pathProp) {
             var count = pathProp.arraySize;
             for (int i = 0; i < count; i++) {
                 var gitPath = pathProp.GetArrayElementAtIndex(i).stringValue;
-
-                if (!(gitPath.Contains(".cs") || gitPath.Contains(".meta")))
-                    continue;
-
                 var productPath = GetProductPath(gitPath);
-                if (File.Exists(productPath))
+                if (!File.Exists(productPath))
                     continue;
                 
-                $"下载文件：{gitPath}".Log();
-                var data = JsonUtility.FromJson<GitObject>(await GetRequest(gitPath));
-
-                var lastIndex = productPath.LastIndexOf('/') + 1;
-                var name = productPath.Remove(0, lastIndex);
-
-                string folderPath = Path.GetDirectoryName(productPath); // 获取文件夹路径
-
-                // 检查文件夹是否存在，如果不存在则创建
-                if (!Directory.Exists(folderPath))
-                    Directory.CreateDirectory(folderPath);
-
-                string text = await GetRequest(data.payload.blob.displayUrl);
-                byte[] bytes = Encoding.UTF8.GetBytes(text);
-                using (var stream = File.Open(productPath, FileMode.OpenOrCreate)) {
-                    stream.Write(bytes);
-                    await stream.DisposeAsync();
-                }
+                $"Delete File: {productPath}".Log();
+                File.Delete(productPath);
             }
             AssetDatabase.Refresh();
+            return false;
         }
 
         /// <summary>
