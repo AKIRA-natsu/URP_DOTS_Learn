@@ -16,8 +16,16 @@ MonoBehaviour:
   - moduleName: EventSystem
     gitPath: https://github.com/AKIRA-natsu/URP_DOTS_Learn/tree/Dev_0.0.3_EventSystem
     isLoaded: 0
-    paths: []
+    paths:
+    - https://github.com/AKIRA-natsu/URP_DOTS_Learn/tree/Dev_0.0.3_EventSystem\Assets/Scripts/Runtime/Module/Event
+    - https://github.com/AKIRA-natsu/URP_DOTS_Learn/tree/Dev_0.0.3_EventSystem\Assets/Scripts/Runtime/Module/Event.meta
   - moduleName: Unity-ActFG
     gitPath: https://github.com/AKIRA-natsu/Unity-ActFG
     isLoaded: 0
     paths: []
+  - moduleName: CharacterRigTest
+    gitPath: https://github.com/keijiro/CharacterRigTest/tree/main
+    isLoaded: 0
+    paths:
+    - https://github.com/keijiro/CharacterRigTest/tree/main\Assets/Scripts/Header.cs
+    - https://github.com/keijiro/CharacterRigTest/tree/main\Assets/Scripts/Header.cs.meta

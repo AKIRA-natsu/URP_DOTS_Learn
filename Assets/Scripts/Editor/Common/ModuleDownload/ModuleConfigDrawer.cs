@@ -1,3 +1,4 @@
+using System.Text;
 using System.IO;
 using UnityEngine;
 using UnityEditor;
@@ -168,21 +169,34 @@ namespace AKIRA.Editor {
             var count = pathProp.arraySize;
             for (int i = 0; i < count; i++) {
                 var gitPath = pathProp.GetArrayElementAtIndex(i).stringValue;
-                var productPath = GetProductPath(gitPath);
 
+                if (!(gitPath.Contains(".cs") || gitPath.Contains(".meta")))
+                    continue;
+
+                var productPath = GetProductPath(gitPath);
                 if (File.Exists(productPath))
                     continue;
                 
+                $"下载文件：{gitPath}".Log();
                 var data = JsonUtility.FromJson<GitObject>(await GetRequest(gitPath));
 
-                // var lastIndex = productPath.LastIndexOf('/') + 1;
-                // var name = productPath.Remove(0, lastIndex);
+                var lastIndex = productPath.LastIndexOf('/') + 1;
+                var name = productPath.Remove(0, lastIndex);
 
-                // Path.Combine(Application.dataPath, name).Log();
-                data.payload.blob.displayUrl.Log();
-                var text = await GetRequest(data.payload.blob.displayUrl);
-                text.Log();
+                string folderPath = Path.GetDirectoryName(productPath); // 获取文件夹路径
+
+                // 检查文件夹是否存在，如果不存在则创建
+                if (!Directory.Exists(folderPath))
+                    Directory.CreateDirectory(folderPath);
+
+                string text = await GetRequest(data.payload.blob.displayUrl);
+                byte[] bytes = Encoding.UTF8.GetBytes(text);
+                using (var stream = File.Open(productPath, FileMode.OpenOrCreate)) {
+                    stream.Write(bytes);
+                    await stream.DisposeAsync();
+                }
             }
+            AssetDatabase.Refresh();
         }
 
         /// <summary>
