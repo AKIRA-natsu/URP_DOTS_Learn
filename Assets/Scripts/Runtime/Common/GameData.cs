@@ -27,6 +27,10 @@ namespace AKIRA {
             /// 日志配置文件
             /// </summary>
             public const string LogConfig = "Configs/LogConfig";
+            /// <summary>
+            /// UI配置文件
+            /// </summary>
+            public const string UIConfig = "Configs/UIRuleConfig";
         }
         #endregion
 
@@ -86,5 +90,6 @@ namespace AKIRA {
             public const string Test = "Test";
         }
         #endregion
+    
     }
 }

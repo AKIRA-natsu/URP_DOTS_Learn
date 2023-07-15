@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fdabd3e36b708c47bba7bf628238738, type: 3}
+  m_Name: UIRuleConfig
+  m_EditorClassIdentifier: 
+  rules:
+  - controlName: Button
+    ruleNames:
+    - Btn
+  - controlName: Image
+    ruleNames:
+    - Img
+    - Bg
+    - Pic
+    - Image
+  - controlName: TextMeshProUGUI
+    ruleNames:
+    - Txt
+    - Text
+    - Title
+    - Count
+    - Amount
+  - controlName: ParticleSystem
+    ruleNames:
+    - FX
+  - controlName: RectTransform
+    ruleNames:
+    - Rect
+  - controlName: ScrollListComponent
+    ruleNames:
+    - Content
+  - controlName: Scrollbar
+    ruleNames:
+    - Scrollbar
+  - controlName: Animation
+    ruleNames:
+    - Animation
