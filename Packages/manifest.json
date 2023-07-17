@@ -1,5 +1,15 @@
 {
+  "scopedRegistries": [
+    {
+      "name": "package.openupm.com",
+      "url": "https://package.openupm.com",
+      "scopes": [
+        "com.unity.urp-water-system"
+      ]
+    }
+  ],
   "dependencies": {
+    "com.unity.urp-water-system": "2.0.0-preview.2",
     "com.unity.collab-proxy": "2.0.4",
     "com.unity.entities": "1.0.11",
     "com.unity.entities.graphics": "1.0.11",

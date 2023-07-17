@@ -39,3 +39,10 @@
   * LogSystem
     * 富文本日志
     * 双击日志跳转设置
+
+**Version: 0.0.6**
+
+* Unity-URP-WaterSystem
+  * [WaterSystem](https://openupm.com/packages/com.unity.urp-water-system/#close)
+    ![img](./Assets/Res/ReadmeLinks/Version_0.0.6/1.png)
+  * 待学习。。
