@@ -10,7 +10,7 @@ using UnityEditorInternal;
 public class ReferencePoolWindow : EditorWindow {
     private Vector2 scrollView;
 
-    [MenuItem("Tools/Framework/ReferencePoolWindow")]
+    [MenuItem("Tools/AKIRA.Framework/Module/ReferencePoolWindow")]
     private static void ShowWindow() {
         var window = GetWindow<ReferencePoolWindow>();
         window.titleContent = new GUIContent("ReferencePoolWindow");
