@@ -90,5 +90,11 @@ namespace AKIRA {
             public const string Test = "Test";
         }
         #endregion
+    
+        #region 更新组
+        public class Group {
+            public const string Default = "Default";
+        }
+        #endregion
     }
 }
