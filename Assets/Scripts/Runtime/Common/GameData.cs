@@ -86,5 +86,26 @@ namespace AKIRA {
             public const string Test = "Test";
         }
         #endregion
+
+        #region 摄像机
+        public class Camera {
+            /// <summary>
+            /// 主
+            /// </summary>
+            public const string Main = "Main";
+            /// <summary>
+            /// 子
+            /// </summary>
+            public const string Sub = "Sub";
+            /// <summary>
+            /// 渲染
+            /// </summary>
+            public const string Render = "Render";
+            /// <summary>
+            /// UI
+            /// </summary>
+            public const string UI = "UI";
+        }
+        #endregion
     }
 }
