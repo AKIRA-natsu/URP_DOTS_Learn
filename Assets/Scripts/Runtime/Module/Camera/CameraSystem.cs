@@ -3,6 +3,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using AKIRA.Behaviour.Camera;
+using Unity.Entities;
+using Unity.Burst;
+
+namespace AKIRA.Behaviour.Camera {
+    public partial struct CameraSystem : ISystem {
+        [BurstCompile]
+        public void OnCreate(ref SystemState state) {
+            state.RequireForUpdate<CameraTagAuthoring>();
+        }
+
+        [BurstCompile]
+        public void OnUpdate(ref SystemState state) {
+            
+        }
+
+        public GameObject GetCamera() {
+            return default;
+        }
+    }
+}
 
 /// <summary>
 /// 摄像机扩展
