@@ -1,11 +1,15 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Unity.Entities;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Transforms;
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+#if UNITY_ANDROID || UNITY_IOS
+using UnityEngine.InputSystem.EnhancedTouch;
+using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
+#endif
+#endif
 
 namespace AKIRA.Behaviour.Camera {
     // public partial struct CameraSystem : ISystem {
@@ -49,6 +53,68 @@ namespace AKIRA.Behaviour.Camera {
             // 判断是否看着
             if (followComponent.lookAt)
                 camera.LookAt(targetTrans.Position);
+        }
+    }
+
+    public partial class CameraDragSystem : SystemBase {
+        private IDrag dragObject;
+
+        protected override void OnCreate() {
+            base.OnCreate();
+#if ENABLE_INPUT_SYSTEM
+    #if UNITY_ANDROID || UNITY_IOS
+            EnhancedTouchSupport.Enable();
+    #endif
+#endif
+        }
+
+        protected override void OnUpdate() {
+#if ENABLE_INPUT_SYSTEM
+#if UNITY_EDITOR
+            if (Mouse.current.leftButton.wasReleasedThisFrame && dragObject != null)
+#else
+            if (Touch.activeTouches.Count == 0 && dragObject != null)
+#endif
+#else
+            if (Input.GetMouseUp(0))
+#endif
+            {
+                dragObject.OnDragUp();
+                dragObject = null;
+            }
+
+#if ENABLE_INPUT_SYSTEM
+#if UNITY_EDITOR
+            if (Mouse.current.leftButton.wasPressedThisFrame && dragObject == null)
+#else
+            if (Touch.activeTouches.Count > 0 && dragObject == null)
+#endif
+#else
+            if (Input.GetMouseDown(0))
+#endif
+            {
+#if ENABLE_INPUT_SYSTEM
+#if UNITY_EDITOR
+                Ray ray = CameraExtend.MainCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
+#else
+                Ray ray = CameraExtend.MainCamera.ScreenPointToRay(Touch.activeTouches[0].screenPosition);
+#endif
+#else
+                Ray ray = CameraExtend.MainCamera.ScreenPointToRay(Input.mousePosition);
+#endif
+                var hits = Physics.RaycastAll(ray, System.Single.MaxValue);
+                foreach (var hit in hits) {
+                    // 拿到第一个IDrag
+                    if (hit.transform.TryGetComponent<IDrag>(out dragObject)) {
+                        dragObject.OnDragDown();
+                        break;
+                    }
+                }
+            }
+
+
+            if (dragObject != null)
+                dragObject.OnDrag();
         }
     }
 }
