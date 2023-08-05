@@ -70,10 +70,10 @@ namespace AKIRA.Behaviour.Camera {
 
         protected override void OnUpdate() {
 #if ENABLE_INPUT_SYSTEM
-#if UNITY_EDITOR
-            if (Mouse.current.leftButton.wasReleasedThisFrame && dragObject != null)
-#else
+#if UNITY_ANDROID || UNITY_IOS
             if (Touch.activeTouches.Count == 0 && dragObject != null)
+#else
+            if (Mouse.current.leftButton.wasReleasedThisFrame && dragObject != null)
 #endif
 #else
             if (Input.GetMouseUp(0))
@@ -84,20 +84,20 @@ namespace AKIRA.Behaviour.Camera {
             }
 
 #if ENABLE_INPUT_SYSTEM
-#if UNITY_EDITOR
-            if (Mouse.current.leftButton.wasPressedThisFrame && dragObject == null)
-#else
+#if UNITY_ANDROID || UNITY_IOS
             if (Touch.activeTouches.Count > 0 && dragObject == null)
+#else
+            if (Mouse.current.leftButton.wasPressedThisFrame && dragObject == null)
 #endif
 #else
             if (Input.GetMouseDown(0))
 #endif
             {
 #if ENABLE_INPUT_SYSTEM
-#if UNITY_EDITOR
-                Ray ray = CameraExtend.MainCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
-#else
+#if UNITY_ANDROID || UNITY_IOS
                 Ray ray = CameraExtend.MainCamera.ScreenPointToRay(Touch.activeTouches[0].screenPosition);
+#else
+                Ray ray = CameraExtend.MainCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
 #endif
 #else
                 Ray ray = CameraExtend.MainCamera.ScreenPointToRay(Input.mousePosition);
@@ -116,5 +116,13 @@ namespace AKIRA.Behaviour.Camera {
             if (dragObject != null)
                 dragObject.OnDrag();
         }
+    }
+
+    public partial class CameraClickSystem : SystemBase {
+        protected override void OnCreate() {
+            base.OnCreate();
+        }
+
+        protected override void OnUpdate() { }
     }
 }

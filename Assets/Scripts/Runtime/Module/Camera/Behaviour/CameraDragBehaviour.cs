@@ -24,26 +24,26 @@ namespace AKIRA.Behaviour.Camera {
 #endif
 
         public override void GameUpdate() {
-#if UNITY_EDITOR
-            if (Mouse.current.leftButton.wasReleasedThisFrame && dragObject != null)
-#else
+#if UNITY_ANDROID || UNITY_IOS
             if (Touch.activeTouches.Count == 0 && dragObject != null)
+#else
+            if (Mouse.current.leftButton.wasReleasedThisFrame && dragObject != null)
 #endif
             {
                 dragObject.OnDragUp();
                 dragObject = null;
             }
 
-#if UNITY_EDITOR
-            if (Mouse.current.leftButton.wasPressedThisFrame && dragObject == null)
-#else
+#if UNITY_ANDROID || UNITY_IOS
             if (Touch.activeTouches.Count > 0 && dragObject == null)
+#else
+            if (Mouse.current.leftButton.wasPressedThisFrame && dragObject == null)
 #endif
             {
-#if UNITY_EDITOR
-                Ray ray = CameraExtend.MainCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
-#else
+#if UNITY_ANDROID || UNITY_IOS
                 Ray ray = CameraExtend.MainCamera.ScreenPointToRay(Touch.activeTouches[0].screenPosition);
+#else
+                Ray ray = CameraExtend.MainCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
 #endif
                 var hits = Physics.RaycastAll(ray, System.Single.MaxValue);
                 foreach (var hit in hits) {
