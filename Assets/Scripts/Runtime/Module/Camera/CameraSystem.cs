@@ -19,7 +19,11 @@ namespace AKIRA.Behaviour.Camera {
     //     [BurstCompile]
     //     public void OnUpdate(ref SystemState state) { }
     // }
-
+    
+    /// <summary>
+    /// <para>摄像机跟随</para>
+    /// <para>跟随目标需要挂载CameraFollowAuthoring脚本</para>
+    /// </summary>
     [UpdateInGroup(typeof(LateSimulationSystemGroup))]
     public partial struct CameraFollowSystem : ISystem {
         // 跟随实体
@@ -56,7 +60,13 @@ namespace AKIRA.Behaviour.Camera {
         }
     }
 
+    /// <summary>
+    /// <para>摄像机拖拽脚本</para>
+    /// <para>拖拽目标继承IDrag接口</para>
+    /// <para>SubScene无法使用。。</para>
+    /// </summary>
     public partial class CameraDragSystem : SystemBase {
+        // 拖拽目标
         private IDrag dragObject;
 
         protected override void OnCreate() {
@@ -118,11 +128,32 @@ namespace AKIRA.Behaviour.Camera {
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public partial class CameraClickSystem : SystemBase {
         protected override void OnCreate() {
             base.OnCreate();
         }
 
-        protected override void OnUpdate() { }
+        protected override void OnUpdate() {
+#if ENABLE_INPUT_SYSTEM
+    #if UNITY_ANDROID || UNITY_IOS
+            if (Touch.activeTouches.Count > 0)
+    #else
+            if (Mouse.current.leftButton.wasPressedThisFrame) {
+                Ray ray = CameraExtend.MainCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
+    #endif
+#else
+            if (Input.GetMouseButtonDown(0)) {
+                Ray ray = CameraExtend.MainCamera.ScreenPointToRay(Input.mousePosition);
+#endif
+                if (Physics.Raycast(ray, out RaycastHit hit, System.Single.MaxValue)) {
+                    if (hit.transform.TryGetComponent<IClick>(out IClick click)) {
+                        click.OnClick();
+                    }
+                }
+            }
+        }
     }
 }
