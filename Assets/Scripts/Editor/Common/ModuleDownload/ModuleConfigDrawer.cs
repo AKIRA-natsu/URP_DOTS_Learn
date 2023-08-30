@@ -11,7 +11,11 @@ using AKIRA.Editor.Git;
 namespace AKIRA.Editor {
     [CustomPropertyDrawer(typeof(ModuleConfig))]
     public class ModuleConfigDrawer : PropertyDrawer {
-        public override async void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
+        private string[] extensions = new string[] {
+            ".cs", ".meta", ".asset", ".prefab"
+        };
+
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
             EditorGUI.BeginProperty(position, label, property);
 
             // 绘制默认的面板
@@ -64,7 +68,7 @@ namespace AKIRA.Editor {
                     isLoadedProp.boolValue = DeleteModule(pathsProp);
             } else {
                 if (pathsProp.arraySize != 0 && GUILayout.Button("Load Module"))
-                    isLoadedProp.boolValue = await DownloadModule(pathsProp);
+                    DownloadModule(pathsProp, isLoadedProp);
             }
             
             EditorGUI.EndProperty();
@@ -151,7 +155,7 @@ namespace AKIRA.Editor {
             for (int i = 0; i < count; i++) {
                 var productPath = GetProductPath(pathProp.GetArrayElementAtIndex(i).stringValue);
 
-                if (File.Exists(productPath))
+                if (File.Exists(productPath) || Directory.Exists(productPath))
                     existCount++;
                 else
                     $"File Not Found：{productPath}".Log(GameData.Log.Warn);
@@ -166,13 +170,13 @@ namespace AKIRA.Editor {
         /// </summary>
         /// <param name="pathProp"></param>
         /// <returns></returns>
-        private async Task<bool> DownloadModule(SerializedProperty pathProp) {
+        private async void DownloadModule(SerializedProperty pathProp, SerializedProperty property) {
             try {
                 var count = pathProp.arraySize;
                 for (int i = 0; i < count; i++) {
                     var gitPath = pathProp.GetArrayElementAtIndex(i).stringValue;
 
-                    if (!(gitPath.Contains(".cs") || gitPath.Contains(".meta")))
+                    if (!CheckEffectivePath(gitPath))
                         continue;
 
                     var productPath = GetProductPath(gitPath);
@@ -198,12 +202,24 @@ namespace AKIRA.Editor {
                         await stream.DisposeAsync();
                     }
                 }
+                property.boolValue = true;
                 AssetDatabase.Refresh();
-                return true;
             } catch (Exception e) {
                 $"Download Error: {e}".Error();
-                return false;
             }
+        }
+
+        /// <summary>
+        /// 判断有效后缀
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        private bool CheckEffectivePath(string path) {
+            foreach (var extension in extensions)
+                if (path.Contains(extension))
+                    return true;
+                
+            return false;
         }
 
         /// <summary>
@@ -234,5 +250,6 @@ namespace AKIRA.Editor {
         private string GetProductPath(string gitPath) {
             return Path.Combine(Application.dataPath, gitPath.Split("Assets/")[1]);
         }
+
     }
 }
