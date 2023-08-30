@@ -10,6 +10,7 @@
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
 /[Bb]uild/
+/[Aa]ssets/Unity.VisualScripting.Generated/
 /[Aa]ssets/[Ss]cripts/[Tt]est/
 
 # MemoryCaptures can get excessive in size.
@@ -71,5 +72,4 @@ crashlytics-build.properties
 /[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/*/*.bin*
 
 # Temporary auto-generated Android Assets
-/[Aa]ssets/[Ss]treamingAssets/aa.meta
-/[Aa]ssets/[Ss]treamingAssets/aa/*
+/Assets/Unity.VisualScripting.Generated.meta
