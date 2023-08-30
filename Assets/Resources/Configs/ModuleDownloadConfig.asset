@@ -13,19 +13,53 @@ MonoBehaviour:
   m_Name: ModuleDownloadConfig
   m_EditorClassIdentifier: 
   configs:
+  - moduleName: Persistence
+    gitPath: https://github.com/AKIRA-natsu/URP_DOTS_Learn/tree/Dev_0.0.2_Persistence
+    isLoaded: 1
+    paths:
+    - https://github.com/AKIRA-natsu/URP_DOTS_Learn/tree/Dev_0.0.2_Persistence\Assets/Scripts/Editor/Module/Persistence
+    - https://github.com/AKIRA-natsu/URP_DOTS_Learn/tree/Dev_0.0.2_Persistence\Assets/Scripts/Editor/Module/Persistence.meta
+    - https://github.com/AKIRA-natsu/URP_DOTS_Learn/tree/Dev_0.0.2_Persistence\Assets/Scripts/Editor/Module/Persistence/Excel
+    - https://github.com/AKIRA-natsu/URP_DOTS_Learn/tree/Dev_0.0.2_Persistence\Assets/Scripts/Editor/Module/Persistence/Excel.meta
+    - https://github.com/AKIRA-natsu/URP_DOTS_Learn/tree/Dev_0.0.2_Persistence\Assets/Scripts/Editor/Module/Persistence/Excel/ExcelHelp.cs
+    - https://github.com/AKIRA-natsu/URP_DOTS_Learn/tree/Dev_0.0.2_Persistence\Assets/Scripts/Editor/Module/Persistence/Excel/ExcelHelp.cs.meta
+    - https://github.com/AKIRA-natsu/URP_DOTS_Learn/tree/Dev_0.0.2_Persistence\Assets/Scripts/Runtime/Module/Persistence
+    - https://github.com/AKIRA-natsu/URP_DOTS_Learn/tree/Dev_0.0.2_Persistence\Assets/Scripts/Runtime/Module/Persistence.meta
+    - https://github.com/AKIRA-natsu/URP_DOTS_Learn/tree/Dev_0.0.2_Persistence\Assets/Scripts/Runtime/Module/Persistence/Json
+    - https://github.com/AKIRA-natsu/URP_DOTS_Learn/tree/Dev_0.0.2_Persistence\Assets/Scripts/Runtime/Module/Persistence/Json.meta
+    - https://github.com/AKIRA-natsu/URP_DOTS_Learn/tree/Dev_0.0.2_Persistence\Assets/Scripts/Runtime/Module/Persistence/Json/IJson.cs
+    - https://github.com/AKIRA-natsu/URP_DOTS_Learn/tree/Dev_0.0.2_Persistence\Assets/Scripts/Runtime/Module/Persistence/Json/IJson.cs.meta
+    - https://github.com/AKIRA-natsu/URP_DOTS_Learn/tree/Dev_0.0.2_Persistence\Assets/Scripts/Runtime/Module/Persistence/Json/JsonHelp.cs
+    - https://github.com/AKIRA-natsu/URP_DOTS_Learn/tree/Dev_0.0.2_Persistence\Assets/Scripts/Runtime/Module/Persistence/Json/JsonHelp.cs.meta
+    - https://github.com/AKIRA-natsu/URP_DOTS_Learn/tree/Dev_0.0.2_Persistence\Assets/Scripts/Runtime/Module/Persistence/PlayerPrefs
+    - https://github.com/AKIRA-natsu/URP_DOTS_Learn/tree/Dev_0.0.2_Persistence\Assets/Scripts/Runtime/Module/Persistence/PlayerPrefs.meta
+    - https://github.com/AKIRA-natsu/URP_DOTS_Learn/tree/Dev_0.0.2_Persistence\Assets/Scripts/Runtime/Module/Persistence/PlayerPrefs/PlayerPrefsHelp.cs
+    - https://github.com/AKIRA-natsu/URP_DOTS_Learn/tree/Dev_0.0.2_Persistence\Assets/Scripts/Runtime/Module/Persistence/PlayerPrefs/PlayerPrefsHelp.cs.meta
+    - https://github.com/AKIRA-natsu/URP_DOTS_Learn/tree/Dev_0.0.2_Persistence\Assets/Scripts/Runtime/Module/Persistence/Xml
+    - https://github.com/AKIRA-natsu/URP_DOTS_Learn/tree/Dev_0.0.2_Persistence\Assets/Scripts/Runtime/Module/Persistence/Xml.meta
+    - https://github.com/AKIRA-natsu/URP_DOTS_Learn/tree/Dev_0.0.2_Persistence\Assets/Scripts/Runtime/Module/Persistence/Xml/XML.cs
+    - https://github.com/AKIRA-natsu/URP_DOTS_Learn/tree/Dev_0.0.2_Persistence\Assets/Scripts/Runtime/Module/Persistence/Xml/XML.cs.meta
   - moduleName: EventSystem
     gitPath: https://github.com/AKIRA-natsu/URP_DOTS_Learn/tree/Dev_0.0.3_EventSystem
-    isLoaded: 0
+    isLoaded: 1
     paths:
     - https://github.com/AKIRA-natsu/URP_DOTS_Learn/tree/Dev_0.0.3_EventSystem\Assets/Scripts/Runtime/Module/Event/EventSystem.cs
     - https://github.com/AKIRA-natsu/URP_DOTS_Learn/tree/Dev_0.0.3_EventSystem\Assets/Scripts/Runtime/Module/Event/EventSystem.cs.meta
-  - moduleName: Unity-ActFG
-    gitPath: https://github.com/AKIRA-natsu/Unity-ActFG
+    - https://github.com/AKIRA-natsu/URP_DOTS_Learn/tree/Dev_0.0.3_EventSystem\Assets/Scripts/Runtime/Module/Event
+    - https://github.com/AKIRA-natsu/URP_DOTS_Learn/tree/Dev_0.0.3_EventSystem\Assets/Scripts/Runtime/Module/Event.meta
+  - moduleName: UIFramework
+    gitPath: https://github.com/AKIRA-natsu/URP_DOTS_Learn/tree/Dev_0.0.5_UIFramework
     isLoaded: 0
     paths: []
-  - moduleName: CharacterRigTest
-    gitPath: https://github.com/keijiro/CharacterRigTest/tree/main
+  - moduleName: Pool
+    gitPath: https://github.com/AKIRA-natsu/URP_DOTS_Learn/tree/Dev_0.0.7_Pool
     isLoaded: 0
-    paths:
-    - https://github.com/keijiro/CharacterRigTest/tree/main\Assets/Scripts/Header.cs
-    - https://github.com/keijiro/CharacterRigTest/tree/main\Assets/Scripts/Header.cs.meta
+    paths: []
+  - moduleName: UpdateSystem
+    gitPath: https://github.com/AKIRA-natsu/URP_DOTS_Learn/tree/Dev_0.0.8_UpdateSystem
+    isLoaded: 0
+    paths: []
+  - moduleName: CameraSystem
+    gitPath: https://github.com/AKIRA-natsu/URP_DOTS_Learn/tree/Dev_0.0.9_CameraSystem
+    isLoaded: 0
+    paths: []

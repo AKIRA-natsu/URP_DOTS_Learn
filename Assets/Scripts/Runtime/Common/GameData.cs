@@ -31,6 +31,10 @@ namespace AKIRA {
             /// 模块下载配置
             /// </summary>
             public const string ModuleDownloadConfig = "Configs/ModuleDownloadConfig";
+            /// <summary>
+            /// UI配置
+            /// </summary>
+            public const string UIConfig = "Config/UIRuleConfig";
         }
         #endregion
 
