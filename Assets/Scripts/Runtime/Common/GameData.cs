@@ -94,5 +94,55 @@ namespace AKIRA {
             public const string Test = "Test";
         }
         #endregion
+    
+        #region 更新组
+        public class Group {
+            /// <summary>
+            /// 默认
+            /// </summary>
+            public const string Default = "Default";
+            /// <summary>
+            /// UI
+            /// </summary>
+            public const string UI = "UI";
+            /// <summary>
+            /// 其他
+            /// </summary>
+            public const string Other = "Other";
+            /// <summary>
+            /// 组件
+            /// </summary>
+            public const string Component = "Component";
+            /// <summary>
+            /// 人形
+            /// </summary>
+            public const string Animator = "Animator";
+            /// <summary>
+            /// 动画
+            /// </summary>
+            public const string Animation = "Aniamtion";
+        }
+        #endregion
+    
+        #region 摄像机
+        public class Camera {
+            /// <summary>
+            /// 主
+            /// </summary>
+            public const string Main = "Main";
+            /// <summary>
+            /// 子
+            /// </summary>
+            public const string Sub = "Sub";
+            /// <summary>
+            /// 渲染
+            /// </summary>
+            public const string Render = "Render";
+            /// <summary>
+            /// UI
+            /// </summary>
+            public const string UI = "UI";
+        }
+        #endregion
     }
 }
