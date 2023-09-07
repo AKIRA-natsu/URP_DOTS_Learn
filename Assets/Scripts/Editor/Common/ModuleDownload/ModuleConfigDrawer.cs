@@ -64,12 +64,15 @@ namespace AKIRA.Editor {
                 isLoadedProp.boolValue = CheckModuleLoad(pathsProp);
             
             if (isLoadedProp.boolValue) {
+                GUI.color = Color.red;
                 if (GUILayout.Button("Delete Module"))
                     isLoadedProp.boolValue = DeleteModule(pathsProp);
             } else {
+                GUI.color = Color.green;
                 if (pathsProp.arraySize != 0 && GUILayout.Button("Load Module"))
                     DownloadModule(pathsProp, isLoadedProp);
             }
+            GUI.color = Color.white;
             
             EditorGUI.EndProperty();
         }
@@ -101,6 +104,8 @@ namespace AKIRA.Editor {
 
             // 遍歷獲得子節點
             gitObject = await GetChildren(gitObject, assetsUrl.Replace("/Assets", ""));
+            EditorUtility.ClearProgressBar();
+            EditorUtility.DisplayDialog("Completed", "Get Module Completed!", "ok");
 
             ModuleDownloadWindow.ShowWindow(moduleName, gitObject);
         }
@@ -113,14 +118,15 @@ namespace AKIRA.Editor {
         /// <returns></returns>
         private async Task<GitObject> GetChildren(GitObject git, string assetsPath) {
             var items = git.payload.tree.items;
-            foreach (var item in items) {
+            for (int i = 0; i < items.Length; i++) {
+                var item = items[i];
                 if (item.ContentType == TreeItem.ItemType.File)
                     continue;
                 var path = Path.Combine(assetsPath, item.path);
                 GitObject child = JsonUtility.FromJson<GitObject>(await GetRequest(path));
                 git.children.Add(item.path, child);
-                $"{item.path} 添加子節點 {path}".Log();
                 child = await GetChildren(child, assetsPath);
+                EditorUtility.DisplayProgressBar("Get Module Paths", path, (float)i / items.Length);
             }
             return git;
         }
@@ -175,6 +181,7 @@ namespace AKIRA.Editor {
                 var count = pathProp.arraySize;
                 for (int i = 0; i < count; i++) {
                     var gitPath = pathProp.GetArrayElementAtIndex(i).stringValue;
+                    EditorUtility.DisplayProgressBar("Download Module", $"download {gitPath}", (float)i / count);
 
                     if (!CheckEffectivePath(gitPath))
                         continue;
@@ -183,7 +190,6 @@ namespace AKIRA.Editor {
                     if (File.Exists(productPath))
                         continue;
                     
-                    $"Download File：{gitPath}".Log();
                     var data = JsonUtility.FromJson<GitObject>(await GetRequest(gitPath));
 
                     var lastIndex = productPath.LastIndexOf('/') + 1;
@@ -202,9 +208,16 @@ namespace AKIRA.Editor {
                         await stream.DisposeAsync();
                     }
                 }
+                EditorUtility.ClearProgressBar();
+                EditorUtility.DisplayDialog("Download Module", $"Download {count} files", "OK");
+                
                 property.boolValue = true;
+
+                AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
             } catch (Exception e) {
+                EditorUtility.ClearProgressBar();
+                EditorUtility.DisplayDialog("Download Failed", $"Watch log see details...", "OK");
                 $"Download Error: {e}".Error();
             }
         }
@@ -231,13 +244,15 @@ namespace AKIRA.Editor {
             var count = pathProp.arraySize;
             for (int i = 0; i < count; i++) {
                 var gitPath = pathProp.GetArrayElementAtIndex(i).stringValue;
+                EditorUtility.DisplayProgressBar("Delete Module", $"Delete {gitPath}", (float)i / count);
                 var productPath = GetProductPath(gitPath);
                 if (!File.Exists(productPath))
                     continue;
                 
-                $"Delete File: {productPath}".Log();
                 File.Delete(productPath);
             }
+            EditorUtility.ClearProgressBar();
+            EditorUtility.DisplayDialog("Delete Complete", $"Delete {count} files", "OK");
             AssetDatabase.Refresh();
             return false;
         }
