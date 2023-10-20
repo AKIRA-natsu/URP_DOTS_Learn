@@ -56,7 +56,7 @@ public class PlayerPrefsHelpWindow : EditorWindow {
     }
 
     private void OnEnable() {
-        path = Path.Combine(Application.dataPath, "Resources", "~PlayerPrefs Save Files");
+        path = Path.Combine(Application.dataPath, "streamingAssets", "~PlayerPrefs Save Files");
         if (!Directory.Exists(path))
             Directory.CreateDirectory(path);
         
