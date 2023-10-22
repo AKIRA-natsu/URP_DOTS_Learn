@@ -34,7 +34,7 @@ public class PlayerPrefsHelpWindow : EditorWindow {
     // 是否删除全部存档后再写入
     private bool deleteAllSave = false;
     
-    [MenuItem("Tools/PlayerPrefsWindow")]
+    [MenuItem("Tools/AKIRA.Framework/Common/PlayerPrefsHelpWindow")]
     private static void OpenWindow() {
         var window = GetWindow<PlayerPrefsHelpWindow>();
         window.titleContent = new GUIContent("PlayerPrefsHelpWindow");
@@ -56,7 +56,7 @@ public class PlayerPrefsHelpWindow : EditorWindow {
     }
 
     private void OnEnable() {
-        path = Path.Combine(Application.dataPath, "streamingAssets", "~PlayerPrefs Save Files");
+        path = Path.Combine(Application.dataPath, "StreamingAssets", "~PlayerPrefs Save Files");
         if (!Directory.Exists(path))
             Directory.CreateDirectory(path);
         
