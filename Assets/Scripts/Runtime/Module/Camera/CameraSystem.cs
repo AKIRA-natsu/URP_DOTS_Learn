@@ -139,7 +139,8 @@ namespace AKIRA.Behaviour.Camera {
         protected override void OnUpdate() {
 #if ENABLE_INPUT_SYSTEM
     #if UNITY_ANDROID || UNITY_IOS
-            if (Touch.activeTouches.Count > 0)
+            if (Touch.activeTouches.Count > 0) {
+                Ray ray = CameraExtend.MainCamera.ScreenPointToRay(Touch.fingers[0].screenPosition);
     #else
             if (Mouse.current.leftButton.wasPressedThisFrame) {
                 Ray ray = CameraExtend.MainCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
