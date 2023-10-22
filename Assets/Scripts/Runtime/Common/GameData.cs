@@ -148,5 +148,18 @@ namespace AKIRA {
             public const string UI = "UI";
         }
         #endregion
+    
+        #region 事件
+        public class Event {
+            /// <summary>
+            /// 加载完成
+            /// </summary>
+            public const string OnLoadCompleted = "OnLoadCompleted";
+            /// <summary>
+            /// 系统初始化完成
+            /// </summary>
+            public const string OnInitSystemCompleted = "OnInitSystemCompleted";
+        }
+        #endregion
     }
 }

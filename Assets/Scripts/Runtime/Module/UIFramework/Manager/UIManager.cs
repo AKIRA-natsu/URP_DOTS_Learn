@@ -19,7 +19,8 @@ namespace AKIRA.UIFramework {
 
         private UIManager() {
             // 默认 [UI] 为UI根节点
-            var root = UI.UIManagerPath.Load<GameObject>();
+            // var root = UI.UIManagerPath.Load<GameObject>();
+            var root = AssetSystem.Instance.LoadObject<GameObject>(UI.UIManagerPath);
             if (root == null)
                 throw new ArgumentNullException($"{UI.UIManagerPath} 不存在");
             UI.Initialize(root.Instantiate().DontDestory());
