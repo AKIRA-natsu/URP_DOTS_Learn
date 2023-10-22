@@ -34,7 +34,11 @@ namespace AKIRA {
             /// <summary>
             /// UI配置
             /// </summary>
-            public const string UIConfig = "Config/UIRuleConfig";
+            public const string UIConfig = "Configs/UIRuleConfig";
+            /// <summary>
+            /// ab包配置
+            /// </summary>
+            public const string AssetBundleConfig = "Configs/AssetBundleConfig";
         }
         #endregion
 

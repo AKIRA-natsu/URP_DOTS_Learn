@@ -5,6 +5,7 @@ using System.Linq;
 // using AKIRA.UIFramework;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEditor;
 
 public static class Extend {
     #region GameObject
@@ -26,6 +27,19 @@ public static class Extend {
     public static T Load<T>(this string path) where T : UnityEngine.Object {
         return Resources.Load<T>(path);
     }
+
+#if UNITY_EDITOR
+    /// <summary>
+    /// <para>编辑器模式下，加载T</para>
+    /// <para> AssetDatabase.LoadAssetAtPath </para>
+    /// </summary>
+    /// <param name="path"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public static T LoadAssetAtPath<T>(this string path) where T : UnityEngine.Object {
+        return AssetDatabase.LoadAssetAtPath<T>(path);
+    }
+#endif
 
     /// <summary>
     /// 实例化

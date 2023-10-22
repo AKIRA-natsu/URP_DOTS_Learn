@@ -61,3 +61,16 @@
       ![](./Assets/Res/ReadmeLinks/Version_0.0.4/6.png)
     * 遗留问题（未解决）：下载之后提示InvalidOperationException: Stack empty.的报错，并且够不会isloaded的勾不会勾上
     * 还需要更多测试！
+
+**Version: 0.1.1**
+
+* AB包管理
+  * AB包面板 Unity官网面板
+    ![](./Assets/Res/ReadmeLinks/Version_0.1.1/1.png)
+  * AssetBundleConfig
+    ![](./Assets/Res/ReadmeLinks/Version_0.1.1/2.png)
+    * Simulation：编辑器下读取AB模拟运行，非勾选状态下直接AssetDataBase.LoadAsset
+    * Use Web Request Test：给未来服务器下载准备，用WebRequest Url读取测试AB包
+    * paths：AB包路径（暂停StreamingAssets下）
+  * 简单测试PC和Android平台运行
+

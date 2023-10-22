@@ -3,7 +3,7 @@ using UnityEngine;
 namespace AKIRA.UIFramework {
     public static class UI {
         // UIManager路径
-        internal const string UIManagerPath = "Prefabs/UI/[UIManager]";
+        internal const string UIManagerPath = "Assets/Res/MainBundle/Prefabs/UI/[UIManager].prefab";
         // 根节点
         public static GameObject ManagerGo { get; private set; }
         // Canvas
