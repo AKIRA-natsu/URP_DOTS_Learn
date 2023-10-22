@@ -99,5 +99,14 @@ namespace AKIRA.Manager {
             }
             return default;
         }
+
+        /// <summary>
+        /// 卸载所有AB包
+        /// </summary>
+        /// <param name="unloadAllObjects"></param>
+        public void UnloadAssetBundles(bool unloadAllObjects = false) {
+            // 如果是true，会把加载的资源一同卸载了
+            AssetBundle.UnloadAllAssetBundles(unloadAllObjects);
+        }
     }
 }
