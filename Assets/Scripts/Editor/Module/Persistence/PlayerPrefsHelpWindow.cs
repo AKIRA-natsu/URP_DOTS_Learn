@@ -34,7 +34,7 @@ public class PlayerPrefsHelpWindow : EditorWindow {
     // 是否删除全部存档后再写入
     private bool deleteAllSave = false;
     
-    [MenuItem("Tools/PlayerPrefsWindow")]
+    [MenuItem("Tools/AKIRA.Framework/Common/PlayerPrefsHelpWindow")]
     private static void OpenWindow() {
         var window = GetWindow<PlayerPrefsHelpWindow>();
         window.titleContent = new GUIContent("PlayerPrefsHelpWindow");
