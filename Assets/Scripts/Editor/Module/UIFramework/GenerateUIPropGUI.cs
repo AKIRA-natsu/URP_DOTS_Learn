@@ -4,8 +4,8 @@ using System.IO;
 using AKIRA;
 
 public class GenerateUIPropGUI : EditorWindow {
-    [MenuItem("Tools/AKIRA.Framework/Module/UI/CreateUIProp(Select Gameobects)")]
-    internal static void CreateUIProp() {
+    [MenuItem("Tools/AKIRA.Framework/Module/UI/CreateUIComponent(Select Gameobects)")]
+    internal static void CreateUIComponent() {
         var objs = Selection.gameObjects;
         if (objs == null || objs.Length == 0)
             $"未选择物体".Log(GameData.Log.Warn);
@@ -15,8 +15,8 @@ public class GenerateUIPropGUI : EditorWindow {
         }
     }
 
-    [MenuItem("Tools/AKIRA.Framework/Module/UI/UpdateUIProp(Select Gameobects)")]
-    internal static void UpdateUIProp() {
+    [MenuItem("Tools/AKIRA.Framework/Module/UI/UpdateUIComponentProp(Select Gameobects)")]
+    internal static void UpdateUIComponent() {
         var objs = Selection.gameObjects;
         if (objs == null || objs.Length == 0)
             $"未选择物体".Log(GameData.Log.Warn);

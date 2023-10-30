@@ -161,5 +161,11 @@ namespace AKIRA {
             public const string OnInitSystemCompleted = "OnInitSystemCompleted";
         }
         #endregion
+
+        #region 标签
+        public class Tag {
+
+        }
+        #endregion
     }
 }

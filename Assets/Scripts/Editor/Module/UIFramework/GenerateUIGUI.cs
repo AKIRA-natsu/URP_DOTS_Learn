@@ -12,7 +12,7 @@ using AKIRA;
 /// </summary>
 public class GenerateUIGUI : EditorWindow {
 #region MenuItem Tools
-    [MenuItem("Tools/AKIRA.Framework/Module/UI/CreateUI(Select Gameobjects)")]
+    [MenuItem("Tools/AKIRA.Framework/Module/UI/CreateUI(Select Gameobject)")]
     internal static void CreateUI() {
         var objs = Selection.gameObjects;
         if (objs == null || objs.Length == 0)
@@ -224,9 +224,16 @@ $@"    }}
     /// <param name="path"></param>
     private static void TraverseUI(Transform parent, string path) {
         path += $"/{parent.name}";
-        if (parent.childCount != 0)
-            for (int i = 0; i < parent.childCount; i++)
-                TraverseUI(parent.GetChild(i), path);
+        if (parent.childCount != 0) {
+            // 省略
+            if (parent.GetComponent<IUIIgnore>() != null)
+                return;
+            
+            // 如果是Component，添加自身但省略子节点
+            if ($"{parent.name}Component".GetConfigTypeByAssembley() == null)
+                for (int i = 0; i < parent.childCount; i++)
+                    TraverseUI(parent.GetChild(i), path);
+        }
 
         nodes.Add(new UINode(parent.name, path));
     }

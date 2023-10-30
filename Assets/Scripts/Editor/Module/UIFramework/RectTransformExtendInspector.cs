@@ -18,7 +18,7 @@ public class RectTransformExtendInspector : DecoratorEditor {
         var panelType = $"{target.name}Panel".GetConfigTypeByAssembley();
         if (panelType != null) {
             EditorGUILayout.Space();
-            DrawUpdatePropsBtn((target as RectTransform).gameObject);
+            DrawUpdatePropsBtn((target as RectTransform).gameObject, false);
             DrawEditBtn($"{target.name}Panel");
             if (Application.isPlaying) {
                 DrawActiveBtn(UIManager.Instance.Get(panelType));
@@ -29,9 +29,9 @@ public class RectTransformExtendInspector : DecoratorEditor {
 
         #region Component部分
         var componentType = $"{target.name}Component".GetConfigTypeByAssembley();
-        if (componentType != null) {
+        if (componentType != null && componentType.IsSubclassOf(typeof(UIBase))) {
             EditorGUILayout.Space();
-            DrawUpdatePropsBtn((target as RectTransform).gameObject);
+            DrawUpdatePropsBtn((target as RectTransform).gameObject, true);
             DrawEditBtn($"{target.name}Component");
             if (Application.isPlaying) {
                 var componentProp = GetComponentPropObject(FindComponentParentPanel(target as RectTransform), componentType);
@@ -76,12 +76,16 @@ public class RectTransformExtendInspector : DecoratorEditor {
     /// 绘制更新Props按钮
     /// </summary>
     /// <param name="go"></param>
-    private void DrawUpdatePropsBtn(GameObject go) {
+    private void DrawUpdatePropsBtn(GameObject go, bool isComponent) {
         if (Application.isPlaying)
             return;
 
         if (GUILayout.Button("Update Props")) {
-            GenerateUIGUI.UpdateUI(go);
+            if (isComponent) {
+                GenerateUIPropGUI.UpdateUIProp(go);
+            } else {
+                GenerateUIGUI.UpdateUI(go);
+            }
         }
     }
 
