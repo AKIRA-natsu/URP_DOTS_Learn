@@ -29,9 +29,21 @@ namespace AKIRA.Manager {
             // Systems Init
             UIManager.Instance.Initialize();
 
-            
+            EventSystem.Instance.TriggerEvent(GameData.Event.OnInitSystemCompleted);
 
             GameObject.Destroy(this.gameObject);
         }
+
+        /// <summary>
+        /// 创建带Controller的Manager，用Init替代Start和Awake
+        /// </summary>
+        /// <param name="root"></param>
+        /// <typeparam name="T"></typeparam>
+        private void CreateSystem<T>(GameObject root) where T : MonoSingleton<T> {
+            var system = new GameObject($"[{typeof(T).Name}]").AddComponent<T>();
+            system.SetParent(root.transform);
+            system.Initialize();
+        }
+
     }
 }

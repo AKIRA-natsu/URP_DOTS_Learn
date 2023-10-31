@@ -34,13 +34,13 @@ public class GenerateUIPropGUI : EditorWindow {
     internal static void CreateUIProp(GameObject obj) {
         if (!Directory.Exists("Assets/Scripts/UI/Component"))
             Directory.CreateDirectory("Assets/Scripts/UI/Component");
-        if (!Directory.Exists(Application.dataPath + $"/Resources/Prefabs/UI/Component"))
-            Directory.CreateDirectory(Application.dataPath + $"/Resources/Prefabs/UI/Component");
+        if (!Directory.Exists(Application.dataPath + $"/Res/MainBundle/Prefabs/UI/Component"))
+            Directory.CreateDirectory(Application.dataPath + $"/Res/MainBundle/Prefabs/UI/Component");
         
         var name = obj.name;
         var panelComponentPath = $"Assets/Scripts/UI/Component/{name}Component.cs";
         var componentPropPath = $"Assets/Scripts/UI/Component/{name}ComponentProp.cs";
-        var objPath = Application.dataPath + $"/Resources/Prefabs/UI/Component/{name}.prefab";
+        var objPath = Application.dataPath + $"/Res/MainBundle/Prefabs/UI/Component/{name}.prefab";
 
         // =============================================================================================================================
 
@@ -95,7 +95,7 @@ $@"        }}
         
         // 检查是否存在预制体
         if (File.Exists(objPath)) {
-            $"已经存在预制体{obj}\n进行删除，路径为{objPath}".Log(GameData.Log.Warn);
+            $"已经存在预制体{obj}\n进行删除, 路径为{objPath}".Log(GameData.Log.Warn);
             File.Delete(objPath);
         }
 

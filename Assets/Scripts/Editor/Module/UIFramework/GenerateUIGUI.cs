@@ -44,19 +44,19 @@ public class GenerateUIGUI : EditorWindow {
     internal static void CreateUI(string @enum, GameObject obj) {
         if (!Directory.Exists("Assets/Scripts/UI"))
             Directory.CreateDirectory("Assets/Scripts/UI");
-        if (!Directory.Exists(Application.dataPath + $"/Resources/Prefabs/UI"))
-            Directory.CreateDirectory(Application.dataPath + $"/Resources/Prefabs/UI");
+        if (!Directory.Exists(Application.dataPath + $"/Res/MainBundle/Prefabs/UI"))
+            Directory.CreateDirectory(Application.dataPath + $"/Res/MainBundle/Prefabs/UI");
 
         var name = obj.name;
         var panelPath = $"Assets/Scripts/UI/{name}Panel.cs";
         var propPath = $"Assets/Scripts/UI/{name}PanelProp.cs";
-        var objPath = Application.dataPath + $"/Resources/Prefabs/UI/{name}.prefab";
+        var objPath = Application.dataPath + $"/Res/MainBundle/Prefabs/UI/{name}.prefab";
         var parent = obj.transform.parent.gameObject;
 
         // =============================================================================================================================
 
         if (File.Exists(propPath)) {
-            $"已经存在prop文件\n进行删除，路劲为{propPath}".Log(GameData.Log.Warn);
+            $"已经存在prop文件\n进行删除, 路劲为{propPath}".Log(GameData.Log.Warn);
             File.Delete(propPath);
         }
         string propContent =

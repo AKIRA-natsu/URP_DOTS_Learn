@@ -1,10 +1,16 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 namespace AKIRA.Manager {
     /// <summary>
     /// System Base
     /// </summary>
-    public interface ISystem { }
+    public interface ISystem {
+        /// <summary>
+        /// 初始化
+        /// </summary>
+        void Initialize();
+    }
+
+    /// <summary>
+    /// Controller Base
+    /// </summary>
+    public interface IController : ISystem { }
 }

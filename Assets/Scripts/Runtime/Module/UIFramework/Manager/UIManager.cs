@@ -19,11 +19,10 @@ namespace AKIRA.UIFramework {
 
         private UIManager() {
             // 默认 [UI] 为UI根节点
-            // var root = UI.UIManagerPath.Load<GameObject>();
-            var root = AssetSystem.Instance.LoadObject<GameObject>(UI.UIManagerPath);
+            var root = AssetSystem.Instance.LoadObject<GameObject>(GameData.Asset.UIManager);
             if (root == null)
-                throw new ArgumentNullException($"{UI.UIManagerPath} 不存在");
-            UI.Initialize(root.Instantiate().DontDestory());
+                throw new ArgumentNullException($"{GameData.Asset.UIManager} 不存在");
+            UI.Initialize(root.Instantiate());
         }
 
         /// <summary>
@@ -31,7 +30,7 @@ namespace AKIRA.UIFramework {
         /// <para>Map 添加 UICom</para>
         /// <para>UI Awake</para>
         /// </summary>
-        public void Initialize() {
+        public override void Initialize() {
             var wins = ReflectionHelp.Handle<WinAttribute>();
             foreach (var win in wins) {
                 // attribute运行了两次！

@@ -8,8 +8,8 @@ namespace AKIRA.UIFramework {
     /// </summary>
     public abstract class UIComponentProp : UIComponent {
         public override void Awake(object obj) {
-            this.transform = (Transform)obj;
-            this.gameObject = this.transform.gameObject;
+            this.gameObject = (GameObject)obj;
+            this.transform = this.gameObject.transform;
             BindFields();
             group = this.gameObject.AddComponent<CanvasGroup>();
         }

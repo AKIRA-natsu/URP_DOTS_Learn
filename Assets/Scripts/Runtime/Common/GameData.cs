@@ -167,5 +167,14 @@ namespace AKIRA {
 
         }
         #endregion
+
+        #region 资源
+        public class Asset {
+            /// <summary>
+            /// UIManager
+            /// </summary>
+            public const string UIManager = "Assets/Res/MainBundle/Prefabs/UI/[UIManager].prefab";
+        }
+        #endregion
     }
 }

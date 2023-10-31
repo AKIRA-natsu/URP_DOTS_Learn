@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 namespace AKIRA.Manager {
     /// <summary>
@@ -8,19 +10,10 @@ namespace AKIRA.Manager {
     [DisallowMultipleComponent]
     public class MonoSingleton<T> : MonoBehaviour, ISystem where T : MonoSingleton<T> {
         private static T instance;
-        // 舍弃自动生成Manager防止报错的方式
-        // public static T Instance {
-        //     get {
-        //         if (instance == null) {
-        //             // 直接 return 初始化前被调用导致会报错
-        //             GameObject manager = new GameObject($"[{typeof(T).Name}]").DontDestory();
-        //             instance = manager.AddComponent(typeof(T)) as T;
-        //         }
-        //         return instance;
-        //     }
-        // }
-
         public static T Instance => instance;
+
+        protected List<IController> controllers = new();
+
 
         /// <summary>
         /// 获得或创建默认Instance
@@ -44,6 +37,35 @@ namespace AKIRA.Manager {
         protected virtual void OnDestroy() {
             if (instance == this)
                 instance = null;
+        }
+
+        public virtual void Initialize() {}
+
+        /// <summary>
+        /// 生成Controller实例
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        protected void CreateController<U>() where U : IController {
+            IController controller = default;
+            if (typeof(U).IsSubclassOf(typeof(Component))) {
+                var component = new GameObject($"[{typeof(U).Name}]").AddComponent(typeof(U));
+                component.SetParent(this);
+                controller = component as IController;
+            } else {
+                controller = typeof(U).CreateInstance<U>();
+            }
+            controller.Initialize();
+            controllers.Add(controller);
+        }
+
+        /// <summary>
+        /// 获得Controller
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public U GetController<U>() where U : IController {
+            return (U)controllers.SingleOrDefault(controller => controller is U);
         }
     }
 }

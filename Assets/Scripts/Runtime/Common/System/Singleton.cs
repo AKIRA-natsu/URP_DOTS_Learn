@@ -42,5 +42,7 @@ namespace AKIRA.Manager {
         /// 构造函数，避免外界new
         /// </summary>
         protected Singleton() {}
+
+        public virtual void Initialize() {}
     }
 }

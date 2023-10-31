@@ -1,9 +1,8 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace AKIRA.UIFramework {
     public static class UI {
-        // UIManager路径
-        internal const string UIManagerPath = "Assets/Res/MainBundle/Prefabs/UI/[UIManager].prefab";
         // 根节点
         public static GameObject ManagerGo { get; private set; }
         // Canvas
@@ -17,6 +16,9 @@ namespace AKIRA.UIFramework {
         public static GameObject Background { get; private set; }
         // 顶部 最上层
         public static GameObject Top { get; private set; }
+
+        // 视图大小
+        public static Vector2 CanvasSize { get; private set; }
 
         private static Camera uiCamera;
         /// <summary>
@@ -42,6 +44,8 @@ namespace AKIRA.UIFramework {
             View = Rect.Find("Root/View").gameObject;
             Background = Rect.Find("Root/Background").gameObject;
             Top = Rect.Find("Root/Top").gameObject;
+
+            CanvasSize = Canvas.GetComponent<CanvasScaler>().referenceResolution;
         }
     }
 }

@@ -37,7 +37,7 @@ namespace AKIRA.UIFramework {
         public override void Awake(object obj) {
             WinType type = (WinType)obj;
             // 初始化创建
-            this.gameObject = UIDataManager.Instance.GetUIData(this).path.Load<GameObject>()
+            this.gameObject = AssetSystem.Instance.LoadObject<GameObject>(UIDataManager.Instance.GetUIData(this).path)
                                                 .Instantiate()
                                                 .SetParent(GetParent(type), true);
             this.transform = gameObject.transform;
