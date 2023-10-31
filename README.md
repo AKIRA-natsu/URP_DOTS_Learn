@@ -74,3 +74,13 @@
     * paths：AB包路径（暂停StreamingAssets下）
   * 简单测试PC和Android平台运行
 
+**Version: 0.1.2**
+
+* 指引
+  * 配置面板
+    ![](./Assets/Res/ReadmeLinks/Version_0.1.2/1.png)
+  * 区分3D，2D
+    * 脚本继承IGuide接口特殊处理（但也要配置在面板里）
+    * 坑点待填：3D物体必须放在[Guidence]预制体下（考虑要不要去掉3D纯用IGuide接口替代）
+  * xml存储
+
