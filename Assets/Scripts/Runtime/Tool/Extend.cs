@@ -6,6 +6,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEditor;
+using AKIRA.UIFramework;
 
 public static class Extend {
     #region GameObject
@@ -342,70 +343,70 @@ public static class Extend {
     #endregion
 
     #region UI
-    // /// <summary>
-    // /// 屏幕坐标转 UGUI 坐标
-    // /// </summary>
-    // /// <param name="screenpos"></param>
-    // /// <returns></returns>
-    // public static Vector2 ScreenToUGUI(this Vector3 screenpos) {
-    //     Vector2 screenpos2 = new Vector2(screenpos.x - (Screen.width / 2), screenpos.y - (Screen.height / 2));
-    //     var UISize = UI.Rect.sizeDelta;
-    //     Vector2 uipos;
-    //     uipos.x = (screenpos2.x / Screen.width) * UISize.x;
-    //     uipos.y = (screenpos2.y / Screen.height) * UISize.y;
-    //     return uipos;
-    // }
+    /// <summary>
+    /// 屏幕坐标转 UGUI 坐标
+    /// </summary>
+    /// <param name="screenpos"></param>
+    /// <returns></returns>
+    public static Vector2 ScreenToUGUI(this Vector3 screenpos) {
+        Vector2 screenpos2 = new Vector2(screenpos.x - (Screen.width / 2), screenpos.y - (Screen.height / 2));
+        var UISize = UI.Rect.sizeDelta;
+        Vector2 uipos;
+        uipos.x = (screenpos2.x / Screen.width) * UISize.x;
+        uipos.y = (screenpos2.y / Screen.height) * UISize.y;
+        return uipos;
+    }
 
-    // /// <summary>
-    // /// 屏幕坐标转UGUI坐标
-    // /// </summary>
-    // /// <param name="screenpos"></param>
-    // /// <returns></returns>
-    // public static Vector2 ScreenToUGUI(this Vector2 screenpos) {
-    //     Vector2 screenpos2 = new Vector2(screenpos.x - (Screen.width / 2), screenpos.y - (Screen.height / 2));
-    //     var UISize = UI.Rect.sizeDelta;
-    //     Vector2 uipos;
-    //     uipos.x = (screenpos2.x / Screen.width) * UISize.x;
-    //     uipos.y = (screenpos2.y / Screen.height) * UISize.y;
-    //     return uipos;
-    // }
+    /// <summary>
+    /// 屏幕坐标转UGUI坐标
+    /// </summary>
+    /// <param name="screenpos"></param>
+    /// <returns></returns>
+    public static Vector2 ScreenToUGUI(this Vector2 screenpos) {
+        Vector2 screenpos2 = new Vector2(screenpos.x - (Screen.width / 2), screenpos.y - (Screen.height / 2));
+        var UISize = UI.Rect.sizeDelta;
+        Vector2 uipos;
+        uipos.x = (screenpos2.x / Screen.width) * UISize.x;
+        uipos.y = (screenpos2.y / Screen.height) * UISize.y;
+        return uipos;
+    }
 
-    // /// <summary>
-    // /// 屏幕坐标转 UGUI 坐标
-    // /// UI静态类没有初始化的时候添加Canvas.RectTransform使用
-    // /// </summary>
-    // /// <param name="screenpos"></param>
-    // /// <param name="canvasRect">Canvas.RectTransform</param>
-    // /// <returns></returns>
-    // public static Vector2 ScreenToUGUI(this Vector3 screenpos, RectTransform canvasRect) {
-    //     Vector2 screenpos2 = new Vector2(screenpos.x - (Screen.width / 2), screenpos.y - (Screen.height / 2));
-    //     var UISize = canvasRect.sizeDelta;
-    //     Vector2 uipos;
-    //     uipos.x = (screenpos2.x / Screen.width) * UISize.x;
-    //     uipos.y = (screenpos2.y / Screen.height) * UISize.y;
-    //     return uipos;
-    // }
+    /// <summary>
+    /// 屏幕坐标转 UGUI 坐标
+    /// UI静态类没有初始化的时候添加Canvas.RectTransform使用
+    /// </summary>
+    /// <param name="screenpos"></param>
+    /// <param name="canvasRect">Canvas.RectTransform</param>
+    /// <returns></returns>
+    public static Vector2 ScreenToUGUI(this Vector3 screenpos, RectTransform canvasRect) {
+        Vector2 screenpos2 = new Vector2(screenpos.x - (Screen.width / 2), screenpos.y - (Screen.height / 2));
+        var UISize = canvasRect.sizeDelta;
+        Vector2 uipos;
+        uipos.x = (screenpos2.x / Screen.width) * UISize.x;
+        uipos.y = (screenpos2.y / Screen.height) * UISize.y;
+        return uipos;
+    }
 
-    // /// <summary>
-    // /// 世界坐标转 UGUI 坐标
-    // /// </summary>
-    // public static Vector2 WorldToUGUI(this Vector3 position) {
-    //     Vector2 ScreenPoint = CameraExtend.MainCamera.WorldToScreenPoint(position);
-    //     Vector2 ScreenSize = new Vector2(Screen.width, Screen.height);
-    //     ScreenPoint -= ScreenSize / 2;//将屏幕坐标变换为以屏幕中心为原点
-    //     Vector2 anchorPos = ScreenPoint / ScreenSize * UI.Rect.sizeDelta;//缩放得到UGUI坐标
-    //     return anchorPos;
-    // }
+    /// <summary>
+    /// 世界坐标转 UGUI 坐标
+    /// </summary>
+    public static Vector2 WorldToUGUI(this Vector3 position) {
+        Vector2 ScreenPoint = Camera.main.WorldToScreenPoint(position);
+        Vector2 ScreenSize = new Vector2(Screen.width, Screen.height);
+        ScreenPoint -= ScreenSize / 2;//将屏幕坐标变换为以屏幕中心为原点
+        Vector2 anchorPos = ScreenPoint / ScreenSize * UI.Rect.sizeDelta;//缩放得到UGUI坐标
+        return anchorPos;
+    }
 
-    // /// <summary>
-    // /// 世界坐标转Canvas坐标
-    // /// </summary>
-    // /// <param name="position"></param>
-    // /// <returns></returns>
-    // public static Vector2 WorldToCanvas(this Vector3 position) {
-    //     RectTransformUtility.ScreenPointToLocalPointInRectangle(UI.Rect, UI.UICamera.WorldToScreenPoint(position), UI.UICamera, out Vector2 canvasPosition);
-    //     return canvasPosition;
-    // }
+    /// <summary>
+    /// 世界坐标转Canvas坐标
+    /// </summary>
+    /// <param name="position"></param>
+    /// <returns></returns>
+    public static Vector2 WorldToCanvas(this Vector3 position) {
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(UI.Rect, UI.UICamera.WorldToScreenPoint(position), UI.UICamera, out Vector2 canvasPosition);
+        return canvasPosition;
+    }
 
     /// <summary>
     /// <para>运行模式下Texture转换成Texture2D</para>

@@ -1,5 +1,6 @@
 using System;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace AKIRA.Manager {
     /// <summary>
@@ -43,6 +44,8 @@ namespace AKIRA.Manager {
         /// </summary>
         protected Singleton() {}
 
-        public virtual void Initialize() {}
+        public async virtual Task Initialize() {
+            await Task.Yield();
+        }
     }
 }

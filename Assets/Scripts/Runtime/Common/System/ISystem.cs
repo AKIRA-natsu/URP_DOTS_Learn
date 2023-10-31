@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+
 namespace AKIRA.Manager {
     /// <summary>
     /// System Base
@@ -6,7 +8,7 @@ namespace AKIRA.Manager {
         /// <summary>
         /// 初始化
         /// </summary>
-        void Initialize();
+        Task Initialize();
     }
 
     /// <summary>

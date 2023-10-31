@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace AKIRA.Manager {
@@ -39,7 +40,9 @@ namespace AKIRA.Manager {
                 instance = null;
         }
 
-        public virtual void Initialize() {}
+        public async virtual Task Initialize() {
+            await Task.Yield();
+        }
 
         /// <summary>
         /// 生成Controller实例

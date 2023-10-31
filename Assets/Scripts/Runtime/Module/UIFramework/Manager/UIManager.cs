@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using AKIRA.Manager;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace AKIRA.UIFramework {
     /// <summary>
@@ -30,9 +31,10 @@ namespace AKIRA.UIFramework {
         /// <para>Map 添加 UICom</para>
         /// <para>UI Awake</para>
         /// </summary>
-        public override void Initialize() {
+        public async override Task Initialize() {
             var wins = ReflectionHelp.Handle<WinAttribute>();
             foreach (var win in wins) {
+                await Task.Yield();
                 // attribute运行了两次！
                 var com = win.CreateInstance<UIComponent>();
                 // var com = (UIComponent)AttributeHelp<WinAttribute>.Type2Obj(win);

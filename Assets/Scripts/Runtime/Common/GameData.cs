@@ -159,12 +159,16 @@ namespace AKIRA {
             /// 系统初始化完成
             /// </summary>
             public const string OnInitSystemCompleted = "OnInitSystemCompleted";
+            /// <summary>
+            /// 指引完成
+            /// </summary>
+            public const string OnGuidenceCompleted = "OnGuidenceCompleted";
         }
         #endregion
 
         #region 标签
         public class Tag {
-
+            public const string Player = "Player";
         }
         #endregion
 
@@ -174,6 +178,25 @@ namespace AKIRA {
             /// UIManager
             /// </summary>
             public const string UIManager = "Assets/Res/MainBundle/Prefabs/UI/[UIManager].prefab";
+            /// <summary>
+            /// 指引3D物体父类
+            /// </summary>
+            public const string Guide3DRoot = "Assets/Res/MainBundle/Prefabs/Guidence/[Guidence].prefab";
+            /// <summary>
+            /// 指引3D箭头
+            /// </summary>
+            public const string GuideArrow = "Assets/Res/MainBundle/Prefabs/Guidence/Arrow.prefab";
+            /// <summary>
+            /// 指引2D箭头
+            /// </summary>
+            public const string GuideArrow2D = "Assets/Res/MainBundle/Prefabs/Guidence/Arrow2D.prefab";
+        }
+        #endregion
+
+        #region 存储
+        public class SaveKey {
+            public const string Guide = "GuideXML.xml";
+            public const string GuideIndexKey = "GuideIndexKey";
         }
         #endregion
     }
