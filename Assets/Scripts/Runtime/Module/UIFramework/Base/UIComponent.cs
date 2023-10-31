@@ -44,6 +44,7 @@ namespace AKIRA.UIFramework {
             BindFields();
 
             group = this.gameObject.AddComponent<CanvasGroup>();
+            Hide();
         }
 
         /// <summary>
