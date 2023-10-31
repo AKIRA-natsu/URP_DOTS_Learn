@@ -7,6 +7,8 @@ using UnityEditor;
 using AKIRA.Manager;
 using UnityEditorInternal;
 using AKIRA;
+using Unity.VisualScripting;
+using AKIRA.UIFramework;
 
 /// <summary>
 /// Guide Editor
@@ -94,11 +96,11 @@ public class GuideWindow : EditorWindow {
                         if (completeType == GuideCompleteType.UIWorld) {
                             // 查找预制体
                             var prefabName = path.Split("/")[0];
-                            var prefab = $"Prefabs/UI/{prefabName}".Load<GameObject>();
+                            var prefab = $"{prefabName}Panel".GetConfigTypeByAssembley().GetAttribute<WinAttribute>().Data.path.LoadAssetAtPath<GameObject>();
                             target = prefab.transform.Find(path.Replace($"{prefabName}/", "")).gameObject;
                         } else {
                             // 3D物体下简单找到对象
-                            target = GameData.Asset.Guide3DRoot.Load<Transform>().Find(path).gameObject;
+                            target = GameData.Asset.Guide3DRoot.LoadAssetAtPath<Transform>().Find(path).gameObject;
                         }
 
                         infos.Add(new GuideInfo() {

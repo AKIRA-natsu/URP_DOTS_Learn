@@ -1,1 +1,7 @@
-<Data />
+<Data>
+  <Guide0 ID="0" GuideCompleteType="1" ShowMaskOrBg="0" Dialog="this is first" GuideDialogDirection="2" UseArrow="0" ArrowTargetPath="Guide/Dialog" ReachDistance="0" ControlByIGuide="0" />
+  <Guide1 ID="1" GuideCompleteType="1" ShowMaskOrBg="1" Dialog="this is left square" GuideDialogDirection="4" UseArrow="0" ArrowTargetPath="Test/Img1" ReachDistance="0" ControlByIGuide="0" />
+  <Guide2 ID="2" GuideCompleteType="2" ShowMaskOrBg="0" Dialog="" GuideDialogDirection="0" UseArrow="1" ArrowTargetPath="Cube" ReachDistance="1" ControlByIGuide="0" />
+  <Guide3 ID="3" GuideCompleteType="2" ShowMaskOrBg="0" Dialog="" GuideDialogDirection="0" UseArrow="0" ArrowTargetPath="Cube (1)" ReachDistance="3" ControlByIGuide="0" />
+  <Guide4 ID="4" GuideCompleteType="1" ShowMaskOrBg="1" Dialog="" GuideDialogDirection="0" UseArrow="0" ArrowTargetPath="Test/Img2" ReachDistance="0" ControlByIGuide="0" />
+</Data>

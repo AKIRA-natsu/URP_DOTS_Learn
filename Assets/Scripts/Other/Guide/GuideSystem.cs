@@ -237,13 +237,6 @@ namespace AKIRA.Manager {
         public void ResumeGuide() {
             StartGuide(currentIndex);
         }
-
-#if UNITY_EDITOR
-        [ContextMenu("DeleteGuideKey")]
-        private void DeleteGuideKey() {
-            GameData.SaveKey.GuideIndexKey.Delete();
-        }
-#endif
     }
 
     /// <summary>
