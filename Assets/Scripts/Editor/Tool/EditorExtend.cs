@@ -18,4 +18,13 @@ public static class EditorExtend {
         }
         return default;
     }
+
+    /// <summary>
+    /// 编辑器下生成预制体
+    /// </summary>
+    /// <param name="script">预制体源文件</param>
+    /// <returns></returns>
+    public static Object CreatePrefab(this Object prefab) {
+        return PrefabUtility.InstantiatePrefab(prefab);
+    }
 }
