@@ -1,5 +1,6 @@
 using System;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace AKIRA.Manager {
     /// <summary>
@@ -42,5 +43,9 @@ namespace AKIRA.Manager {
         /// 构造函数，避免外界new
         /// </summary>
         protected Singleton() {}
+
+        public async virtual Task Initialize() {
+            await Task.Yield();
+        }
     }
 }
