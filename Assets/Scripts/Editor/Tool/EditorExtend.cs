@@ -1,6 +1,10 @@
+using System;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 public static class EditorExtend {
     /// <summary>
@@ -26,5 +30,26 @@ public static class EditorExtend {
     /// <returns></returns>
     public static Object CreatePrefab(this Object prefab) {
         return PrefabUtility.InstantiatePrefab(prefab);
+    }
+
+    /// <summary>
+    /// 获得资源路径
+    /// </summary>
+    /// <param name="path">
+    ///     例：C://Demo/Assets/Res/Textures/Test.png => Assets/Res/Textures/Test.png
+    /// </param>
+    /// <returns></returns>
+    public static string GetRelativeAssetsPath(this string path) {
+        return "Assets" + Path.GetFullPath(path).Replace(Path.GetFullPath(Application.dataPath), "").Replace('\\', '/');
+    }
+
+    /// <summary>
+    /// 清空控制台
+    /// </summary>
+    public static void ClearConsole() {
+        Assembly assembly = Assembly.GetAssembly(typeof(SceneView));
+        Type logEntries = assembly.GetType("UnityEditor.LogEntries");
+        MethodInfo clearConsoleMethod = logEntries.GetMethod("Clear");
+        clearConsoleMethod.Invoke(new object(), null);
     }
 }
