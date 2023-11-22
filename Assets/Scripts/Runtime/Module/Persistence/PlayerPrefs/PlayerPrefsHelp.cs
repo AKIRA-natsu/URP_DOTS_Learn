@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 /// <summary>
@@ -32,6 +33,24 @@ public static class PlayerPrefsHelp {
     }
 
     /// <summary>
+    /// (Extend)PlayerPrefs save Enum
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="data"></param>
+    public static void Save(this string key, Enum data) {
+        key.Save(data?.ToString());
+    }
+
+    /// <summary>
+    /// (Extend)PlayerPrefs save bool
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="data"></param>
+    public static void Save(this string key, bool data) {
+        key.Save(data ? 1 : 0);
+    }
+
+    /// <summary>
     /// default return 1
     /// </summary>
     /// <param name="key"></param>
@@ -59,6 +78,28 @@ public static class PlayerPrefsHelp {
     /// <returns></returns>
     public static float GetFloat(this string key, float @default = 0) {
         return PlayerPrefs.GetFloat(key, @default);
+    }
+
+    /// <summary>
+    /// default return Enum.default
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="default"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public static T GetEnum<T>(this string key, T @default = default) where T : Enum {
+        var value = key.GetString(@default?.ToString());
+        return (T)Enum.Parse(typeof(T), value);
+    }
+
+    /// <summary>
+    /// default return false
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="default"></param>
+    /// <returns></returns>
+    public static bool GetBool(this string key, bool @default = default) {
+        return key.GetInt(@default ? 0 : 1) != 0;
     }
 
     /// <summary>

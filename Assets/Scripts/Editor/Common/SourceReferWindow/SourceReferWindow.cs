@@ -229,8 +229,9 @@ namespace AKIRA.Editor {
         private Vector2 view;
 
         public PreviewType previewType;
+        private string key = "PreviewElementViewType";
 
-        public PreviewElementView() : base() { }
+        public PreviewElementView() : base() { previewType = key.EditorGetEnum(PreviewType.Inspector); }
 
         /// <summary>
         /// 更新预览
@@ -249,6 +250,7 @@ namespace AKIRA.Editor {
             if (previewType == type)
                 return;
             previewType = type;
+            key.EditorSave(type);
             ShowPreview();
         }
 
