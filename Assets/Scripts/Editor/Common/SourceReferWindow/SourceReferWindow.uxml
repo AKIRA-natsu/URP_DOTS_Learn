@@ -2,15 +2,21 @@
     <Style src="project://database/Assets/Scripts/Editor/Common/SourceReferWindow/SourceReferWindow.uss?fileID=7433441132597879392&amp;guid=9a0d69ff0880db34eae3b7c1f7b6b789&amp;type=3#SourceReferWindow" />
     <ui:VisualElement name="MainMune" style="position: relative; height: 20px; flex-direction: row; background-color: rgb(47, 47, 47); align-items: stretch;">
         <uie:Toolbar name="ToolBar" style="border-left-width: 0; border-right-width: 0; border-top-width: 0; border-bottom-width: 0; background-color: rgb(47, 47, 47); flex-shrink: 1; flex-grow: 0; margin-left: 2px; margin-right: 2px; height: 20px;">
-            <uie:ToolbarMenu display-tooltip-when-elided="true" name="PreviewMenu" text="PreviewType" style="border-left-color: rgba(47, 47, 47, 255); border-right-color: rgba(47, 47, 47, 255); border-top-color: rgba(47, 47, 47, 255); border-bottom-color: rgba(47, 47, 47, 255);" />
+            <uie:ToolbarMenu display-tooltip-when-elided="true" name="PreviewMenu" text="PreviewType" style="border-left-color: rgb(47, 47, 47); border-right-color: rgb(47, 47, 47); border-top-color: rgb(47, 47, 47); border-bottom-color: rgb(47, 47, 47);" />
             <uie:ToolbarButton text="Refresh" display-tooltip-when-elided="true" name="RefreshBtn" style="border-left-color: rgb(47, 47, 47); border-right-color: rgb(47, 47, 47); border-top-color: rgb(47, 47, 47); border-bottom-color: rgb(47, 47, 47); -unity-text-align: upper-center; -unity-text-outline-width: 0; word-spacing: 0; letter-spacing: 0;" />
         </uie:Toolbar>
+        <uie:ToolbarPopupSearchField focusable="true" name="SearchField" />
     </ui:VisualElement>
     <ui:VisualElement name="Container">
         <ui:VisualElement name="LeftPanel" />
         <ui:VisualElement name="RightPanel">
             <ui:VisualElement name="RightTopPanel" />
-            <ui:VisualElement name="RightBottomPanel" />
+            <ui:VisualElement name="RightBottomPanel">
+                <ui:VisualElement name="ReplaceElement" style="flex-direction: row;">
+                    <uie:ObjectField label="Replace Field" name="ReplaceField" type="UnityEngine.Object, UnityEngine.CoreModule" style="width: 401px;" />
+                    <ui:Button text="Replace" display-tooltip-when-elided="true" name="ReplaceBtn" style="position: absolute; right: 5px;" />
+                </ui:VisualElement>
+            </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

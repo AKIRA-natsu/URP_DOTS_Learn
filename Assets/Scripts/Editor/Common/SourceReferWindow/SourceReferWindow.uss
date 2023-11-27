@@ -6,26 +6,23 @@
     flex-direction: row;
 }
 
+#SearchField {
+    right: 0;
+    position: absolute;
+}
+
 #Container {
     display: flex;
     flex-direction: row;
     width: auto;
-    border-left-color: rgb(35, 35, 35);
-    border-right-color: rgb(35, 35, 35);
-    border-top-color: rgb(35, 35, 35);
-    border-bottom-color: rgb(35, 35, 35);
     flex-grow: 1;
+    min-height: 520px;
 }
 
 #RightPanel {
     position: relative;
     flex: 1;
     width: auto;
-    border-width: 2px;
-    border-left-color: rgb(56, 56, 56);
-    border-right-color: rgb(56, 56, 56);
-    border-top-color: rgb(56, 56, 56);
-    border-bottom-color: rgb(56, 56, 56);
 }
 
 #LeftPanel {
@@ -33,31 +30,34 @@
     -unity-text-align: middle-center;
     flex: 1;
     width: auto;
-    border-width: 2px;
-    border-bottom-color: rgb(47, 47, 47);
-    border-left-color: rgb(47, 47, 47);
-    border-right-color: rgb(47, 47, 47);
-    border-top-color: rgb(47, 47, 47);
 }
 
 #RightTopPanel {
-    border-width: 1px;
     -unity-text-align: middle-center;
     display: flex;
     flex: 1;
-    border-left-color: rgb(47, 47, 47);
-    border-right-color: rgb(47, 47, 47);
-    border-top-color: rgb(47, 47, 47);
-    border-bottom-color: rgb(47, 47, 47);
 }
 
 #RightBottomPanel {
-    border-width: 1px;
     -unity-text-align: middle-center;
     display: flex;
     flex: 1;
-    border-left-color: rgb(47, 47, 47);
-    border-right-color: rgb(47, 47, 47);
-    border-top-color: rgb(47, 47, 47);
-    border-bottom-color: rgb(47, 47, 47);
+}
+
+.unity-box {
+    flex: 1 0 0;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    margin-right: 2px;
+    margin-left: 2px;
+}
+
+.element:focus {
+    background-color: rgb(128, 128, 128);
+}
+
+.focusable {
+    margin-left: 10px;
+    margin-right: 10px;
+    -unity-text-align: middle-left;
 }

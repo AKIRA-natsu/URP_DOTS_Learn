@@ -4,24 +4,29 @@ using UnityEngine.UIElements;
 using UnityEditor.UIElements;
 using System.IO;
 using System.Linq;
-using UnityEditorInternal;
-using System;
-using System.Collections;
+using System;   
 using Object = UnityEngine.Object;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace AKIRA.Editor {
     public class SourceReferWindow : EditorWindow {
         // 去除后缀
         private readonly string[] withoutExtensions = {
-            ".meta", ".asmdef", ".json", ".cs", ".dll", ".xml", ".p7s", ".txt", ".nupkj"
+            ".meta", ".asmdef", ".json", ".cs", ".dll", ".xml", ".p7s", ".txt", ".nupkg", ".unitypackage", ".psd", ".pdf", ".url"
         };
 
-        // 右下列表父物体
-        private VisualElement referview;
-        // 预览窗口
+        // 视图
+        private SourceViewElement sourceView;
+        private SourceViewElement referView;
         private PreviewElementView preview;
+
+        // replace element
+        private ObjectField replaceField;
+
+        // 是否正在忙碌
+        private bool isbusying = false;
 
         [MenuItem("Tools/AKIRA.Framework/Common/SourceReferWindow")]
         public static void ShowWindow() {
@@ -43,42 +48,94 @@ namespace AKIRA.Editor {
             // Bind Mune Click Actions
             var previewMenu = root.Q<ToolbarMenu>("PreviewMenu");
             previewMenu.menu.AppendAction("Default is never shown", a => {}, a => DropdownMenuAction.Status.None);
-            previewMenu.menu.AppendAction("Inspector", a => preview.SwitchPreview(PreviewElementView.PreviewType.Inspector), a => DropdownMenuAction.Status.Normal);
-            previewMenu.menu.AppendAction("Preview", a => preview.SwitchPreview(PreviewElementView.PreviewType.Preview), a => DropdownMenuAction.Status.Normal);
+            previewMenu.menu.AppendAction("Inspector", a => preview.SwitchPreview(PreviewElementView.PreviewType.Inspector), a => preview.GetStatus(PreviewElementView.PreviewType.Inspector));
+            previewMenu.menu.AppendAction("Preview", a => preview.SwitchPreview(PreviewElementView.PreviewType.Preview), a => preview.GetStatus(PreviewElementView.PreviewType.Preview));
 
             var refreshBtn = root.Q<ToolbarButton>("RefreshBtn");
             refreshBtn.clickable.clicked += RefreshResources;
 
+            // Search Field
+            var searchField = root.Q<ToolbarPopupSearchField>("SearchField");
+            searchField.RegisterValueChangedCallback(OnSearchRes);
+
             // SourceView
-            root.Q<VisualElement>("LeftPanel").Add(new SourceElementView(GetResources(), SearchReferences));
+            sourceView = new SourceViewElement(root.Q<VisualElement>("LeftPanel"), GetResources(), OnUpdateReferView);
             // ReferView save parent
-            referview = root.Q<VisualElement>("RightBottomPanel");
+            referView = new SourceViewElement(root.Q<VisualElement>("RightBottomPanel"));
             // Preview
-            preview = new PreviewElementView();
-            root.Q<VisualElement>("RightTopPanel").Add(preview);
+            preview = new PreviewElementView(root.Q<VisualElement>("RightTopPanel"));
+            // Replace Element
+            replaceField = root.Q<ObjectField>("ReplaceField");
+            root.Q<Button>("ReplaceBtn").clickable.clicked += OnReplaceRefer;
         }
 
         /// <summary>
-        /// 刷新资源
-        /// 重新找找一遍资源塞到左侧列表
+        /// 替换引用
         /// </summary>
-        private void RefreshResources() {
-            VisualElement leftPanel = rootVisualElement.Q<VisualElement>("LeftPanel");
-            leftPanel.Clear();
-            leftPanel.Add(new SourceElementView(GetResources(), SearchReferences));
-            referview.Clear();
-            preview.UpdatePreview(null);
+        private void OnReplaceRefer() {
+            if (isbusying)
+                return;
+
+            var selectAsset = preview.asset;
+            if (selectAsset == null) {
+                $"未选择替换目标".Log(GameData.Log.Error);
+                return;
+            }
+
+            var replaceAsset = replaceField.value;
+            if (replaceAsset == null) {
+                $"未选择替换对象".Log(GameData.Log.Error);
+                return;
+            }
+
+            if (replaceAsset.GetType() != selectAsset.GetType()) {
+                $"替换对象和替换目标的类型不一致".Log(GameData.Log.Error);
+                return;
+            }
+
+            var oldGuid = AssetDatabase.GUIDFromAssetPath(AssetDatabase.GetAssetPath(selectAsset)).ToString();
+            var newGuid = AssetDatabase.GUIDFromAssetPath(AssetDatabase.GetAssetPath(replaceAsset)).ToString();
+            var refers = referView.Sources;
+
+            if (refers.Count == 0) {
+                $"替换完成，没有需要替换的资源".Log(GameData.Log.Success);
+                return;
+            }
+
+            isbusying = true;
+            var index = 0;
+            EditorApplication.update = () => {
+                var file = refers.ElementAt(index);
+                bool isCancel = EditorUtility.DisplayCancelableProgressBar("Replace refer", file, (float)index / refers.Count);
+
+                var content = File.ReadAllText(file);
+                content = content.Replace(oldGuid, newGuid);
+                File.WriteAllText(file, content);
+
+                if (isCancel || ++index >= refers.Count) {
+                    EditorUtility.ClearProgressBar();
+                    EditorApplication.update = null;
+                    isbusying = false;
+                    AssetDatabase.Refresh();
+                    $"替换完成".Log(GameData.Log.Success);
+
+                    // 正常替换成功就是空的，，偷懒了
+                    referView.FreshViewSources(default);
+                }
+            };
         }
 
         /// <summary>
-        /// 获得所有去除后缀的资源
+        /// 更新引用视图
         /// </summary>
-        /// <returns></returns>
-        private string[] GetResources() {
-            return Directory.GetFiles(Application.dataPath, "*.*", SearchOption.AllDirectories).Where(s => !withoutExtensions.Contains(Path.GetExtension(s).ToLower())).ToArray();
-        }
+        /// <param name="list"></param>
+        /// <param name="element"></param>
+        private void OnUpdateReferView(VisualElement element) {
+            if (isbusying)
+                return;
 
-        private void SearchReferences(ReorderableList list, string res) {
+            var list = sourceView.Sources;
+            var res = element.name;
             // 更新预览
             preview.UpdatePreview(res.GetRelativeAssetsPath().LoadAssetAtPath<Object>());
 
@@ -88,128 +145,142 @@ namespace AKIRA.Editor {
 
             List<string> referFiles = new();
             int startIndex = 0;
+            isbusying = true;
             EditorApplication.update = () => {
-                var file = list.list[startIndex].ToString();
-                bool isCancel = EditorUtility.DisplayCancelableProgressBar("Find Match Resources", file, (float)startIndex / list.count);
+                var file = list.ElementAt(startIndex);
+                bool isCancel = EditorUtility.DisplayCancelableProgressBar("Find Match Resources", file, (float)startIndex / list.Count);
 
-                if (Regex.IsMatch(File.ReadAllText(file), guid)) {
-                    // file.Log(context : AssetDatabase.LoadAssetAtPath<Object>(GetRelativeAssetsPath(file)));
+                if (Regex.IsMatch(File.ReadAllText(file), guid))
                     referFiles.Add(file);
-                }
 
-                if (isCancel || ++startIndex >= list.count) {
+                if (isCancel || ++startIndex >= list.Count) {
                     EditorUtility.ClearProgressBar();
                     EditorApplication.update = null;
-                    referview.Clear();
-                    referview.Add(new ReferElementView(referFiles, res.Split('\\').Last()));
+                    referView.FreshViewSources(referFiles.ToArray());
+                    isbusying = false;
                 }
             };
         }
+
+        /// <summary>
+        /// 模糊查询
+        /// </summary>
+        /// <param name="evt"></param>
+        private void OnSearchRes(ChangeEvent<string> evt) {
+            sourceView.UpdateView(evt.newValue?.ToLower());
+        }
+
+        /// <summary>
+        /// 刷新资源
+        /// 重新找找一遍资源塞到左侧列表
+        /// </summary>
+        private void RefreshResources() {
+            sourceView.FreshViewSources(GetResources());
+            referView.FreshViewSources(default);
+            preview.UpdatePreview(null);
+            replaceField.value = null;
+        }
+
+        /// <summary>
+        /// 获得所有去除后缀的资源
+        /// </summary>
+        /// <returns></returns>
+        private string[] GetResources() {
+            return Directory.GetFiles(Application.dataPath, "*.*", SearchOption.AllDirectories).Where(s => !withoutExtensions.Contains(Path.GetExtension(s).ToLower())).ToArray();
+        }
     }
 
-    #region ReorderableList Element => IMGUIContainer
+    #region Scroll View Element => VisualElement
     /// <summary>
-    /// ReorderableList Base Type
+    /// 资源试图
     /// </summary>
-    public abstract class ReorderableListElementView : IMGUIContainer {
-        // 滑条
-        private Vector2 view;
-        // 列表
-        protected ReorderableList ViewList { get; private set; }
+    public class SourceViewElement : VisualElement {
+        // ScrollView
+        private ScrollView view;
+        // 标签
+        private Label label;
+        // 资源列表
+        private List<string> sources = new();
+        public IReadOnlyCollection<string> Sources => sources;
 
-        public ReorderableListElementView(IList elements, Type elementType) : base() {
-            ViewList = new ReorderableList(elements, elementType);
-            ViewList.drawHeaderCallback = DrawHeader;
-            ViewList.drawElementCallback = DrawElement;
-            OnInitReorderList(ViewList);
+        // 元素点击事件
+        private Action<VisualElement> forcedEvent;
 
-            onGUIHandler = OnGUIHandler;
+        public SourceViewElement(VisualElement parent, string[] sources = default, Action<VisualElement> forcedEvent = default) : base() {
+            parent.Add(this);
+            this.forcedEvent = forcedEvent;
+            DrawView(parent);
+            FreshViewSources(sources);
         }
 
-        protected virtual void OnGUIHandler() {
-            view = EditorGUILayout.BeginScrollView(view);
-            EditorGUILayout.BeginHorizontal();
-            ViewList.DoLayoutList();
-            EditorGUILayout.EndHorizontal();
-            EditorGUILayout.EndScrollView();
-        }
-
-        protected virtual void OnInitReorderList(ReorderableList list) {}
-        protected abstract void DrawElement(Rect rect, int index, bool isActive, bool isFocused);
-        protected abstract void DrawHeader(Rect rect);
-    }
-
-    /// <summary>
-    /// 资源ReorderList
-    /// </summary>
-    public class SourceElementView : ReorderableListElementView {
-        private Action<ReorderableList, string> onElementFocused;
-        private int focusIndex = -1;
-
-        public SourceElementView(IList sources, Action<ReorderableList, string> onElementFocused) : base(sources, typeof(string)) {
-            this.onElementFocused = onElementFocused;
-        }
-
-        protected override void DrawElement(Rect rect, int index, bool isActive, bool isFocused) {
-            var res = ViewList.list[index].ToString();
-            GUILayout.BeginVertical();
-            GUI.enabled = false;
-            var asset = res.GetRelativeAssetsPath().LoadAssetAtPath<Object>();
-            if (asset == null) {
-                GUI.color = Color.red;
-                EditorGUI.LabelField(rect, res);
-                GUI.color = Color.white;
+        /// <summary>
+        /// 更新元素
+        /// </summary>
+        /// <param name="sources"></param>
+        public virtual void FreshViewSources(string[] sources) {
+            if (sources == default) {
+                this.sources = new();
             } else {
-                EditorGUI.ObjectField(rect, asset, typeof(Object), false);
+                this.sources = new List<string>(sources);
             }
-
-            GUI.enabled = true;
-
-            GUILayout.EndVertical();
-
-            if (isFocused && focusIndex != index) {
-                focusIndex = index;
-                onElementFocused?.Invoke(ViewList, res);
-            }
+            UpdateView(default);
         }
 
-        protected override void DrawHeader(Rect rect) {
-            GUI.Label(rect, $"Resources({ViewList.count})");
-        }
-    }
-
-    /// <summary>
-    /// 引用ReorderList
-    /// </summary>
-    public class ReferElementView : ReorderableListElementView {
-        // title
-        private string title;
-
-        public ReferElementView(IList refers, string title) : base(refers, typeof(string)) {
-            this.title = title;
+        /// <summary>
+        /// 绘制大体面板
+        /// </summary>
+        /// <param name="parent"></param>
+        protected virtual void DrawView(VisualElement parent) {
+            var box = new Box();
+            parent.Add(box);
+            box.Add(label = new Label());
+            box.Add(view = new ScrollView());
         }
 
-        protected override void DrawElement(Rect rect, int index, bool isActive, bool isFocused) {
-            var res = ViewList.list[index].ToString();
-            GUILayout.BeginVertical();
-            GUI.enabled = false;
-            var asset = res.GetRelativeAssetsPath().LoadAssetAtPath<Object>();
-            if (asset == null) {
-                GUI.color = Color.red;
-                EditorGUI.LabelField(rect, res);
-                GUI.color = Color.white;
+        /// <summary>
+        /// 更新面板
+        /// </summary>
+        /// <param name="match"></param>
+        public void UpdateView(string match) {
+            var result = new List<string>(sources);
+            if (!string.IsNullOrEmpty(match)) {
+                result = result.Where(res => Regex.IsMatch(res.Split("\\").Last().ToLower(), match)).ToList();
+                label.text = $"<b>Search {match} Found in Project</b> : {result.Count}".Colorful(System.Drawing.Color.Orange);
             } else {
-                EditorGUI.ObjectField(rect, asset, typeof(Object), false);
+                label.text = $"<b>Found in Project</b> : {result.Count}".Colorful(System.Drawing.Color.Orange);
             }
-
-            GUI.enabled = true;
-
-            GUILayout.EndVertical();
+            
+            view.Clear();
+            foreach (var res in result)
+                view.Add(DrawElement(res));
         }
 
-        protected override void DrawHeader(Rect rect) {
-            GUI.Label(rect, title);
+        /// <summary>
+        /// 绘制元素
+        /// </summary>
+        protected virtual VisualElement DrawElement(string res) {
+            var element = new VisualElement() {
+                focusable = true,
+                name = res,
+            };
+            element.AddToClassList("element");
+
+            var asset = new ObjectField() { value = res.GetRelativeAssetsPath().LoadAssetAtPath<Object>(), objectType = typeof(UnityEngine.Object) };
+            asset.SetEnabled(false);
+            asset.AddToClassList("focusable");
+            element.Add(asset);
+
+            element.RegisterCallback<FocusEvent>(OnFocused);
+
+            return element;
         }
+
+        /// <summary>
+        /// 焦点事件
+        /// </summary>
+        /// <param name="evt"></param>
+        protected virtual void OnFocused(FocusEvent evt) =>
+            forcedEvent?.Invoke(evt.currentTarget as VisualElement);
     }
     #endregion
 
@@ -217,27 +288,44 @@ namespace AKIRA.Editor {
     /// <summary>
     /// 预览窗口
     /// </summary>
-    public class PreviewElementView : IMGUIContainer {
+    public class PreviewElementView : VisualElement {
         public enum PreviewType {
             Inspector,
             Preview,
         }
 
         // 资产
-        private Object asset;
+        public Object asset { get; private set; }
         // 滑条
         private Vector2 view;
 
         public PreviewType previewType;
         private string key = "PreviewElementViewType";
 
-        public PreviewElementView() : base() { previewType = key.EditorGetEnum(PreviewType.Inspector); }
+        private Box box;
+        private Label label;
+        private Image image;
+        private IMGUIContainer container;
+
+        public PreviewElementView(VisualElement parent) : base() {
+            parent.Add(this);
+            previewType = key.EditorGetEnum(PreviewType.Inspector);
+
+            parent.Add(box = new Box());
+            box.Add(label = new Label());
+            image = new Image();
+            container = new IMGUIContainer();
+
+            label.text = $"Preview Type: {previewType}";
+        }
 
         /// <summary>
         /// 更新预览
         /// </summary>
         /// <param name="asset"></param>
         public void UpdatePreview(Object asset) {
+            if (this.asset == asset)
+                return;
             this.asset = asset;
             ShowPreview();
         }
@@ -258,37 +346,51 @@ namespace AKIRA.Editor {
         /// 实现面板
         /// </summary>
         private void ShowPreview() {
-            if (asset == null) {
-                onGUIHandler = null;
+            label.text = $"Preview Type: {previewType}({asset?.name})";
+            if (asset == null)
                 return;
-            }
 
             switch (previewType) {
                 case PreviewType.Inspector:
                     var assetEditor = UnityEditor.Editor.CreateEditor(asset);
-                    onGUIHandler = () => {
-                        EditorGUILayout.LabelField($"Preview Type: {previewType}");
+                    if (box.Contains(image))
+                        box.Remove(image);
+                    if (!box.Contains(container))
+                        box.Add(container);
+                    container.onGUIHandler = () => {
                         view = EditorGUILayout.BeginScrollView(view);
                         assetEditor.OnInspectorGUI();
                         EditorGUILayout.EndScrollView();
                     };
                 break;
                 case PreviewType.Preview:
-                    var texture = AssetPreview.GetAssetPreview(asset);
-                    var rect = new Rect(worldBound.x + worldBound.width / 2, worldBound.y + worldBound.height, worldBound.width, worldBound.height);
-                    onGUIHandler = () => {
-                        EditorGUILayout.LabelField($"Preview Type: {previewType}");
-                        view = EditorGUILayout.BeginScrollView(view);
-                        // FIXME: 图片不显示。
-                        rect.Log();
-                        if (texture != null)
-                            EditorGUI.DrawPreviewTexture(rect, texture);
-                        EditorGUILayout.EndScrollView();
-                    };
-                    
+                    if (box.Contains(container))
+                        box.Remove(container);
+                    if (!box.Contains(image))
+                        box.Add(image);
+                    WaitToSetImage();
                 break;
             }
         }
+
+        /// <summary>
+        /// 等待设置图片
+        /// </summary>
+        /// <returns></returns>
+        private async void WaitToSetImage() {
+            // 好像不会立刻生成图片，有一点延迟
+            // 但又不是所有Object都有预览，所以只延迟一帧
+            await Task.Yield();
+            image.image = AssetPreview.GetAssetPreview(asset);
+        }
+
+        /// <summary>
+        /// 获得下拉菜单状态
+        /// </summary>
+        /// <param name="targetType"></param>
+        /// <returns></returns>
+        public DropdownMenuAction.Status GetStatus(PreviewType targetType)
+            => targetType == previewType ? DropdownMenuAction.Status.Checked : DropdownMenuAction.Status.Normal;
     }
     #endregion
 }
