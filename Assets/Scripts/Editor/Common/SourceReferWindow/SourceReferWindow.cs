@@ -136,8 +136,14 @@ namespace AKIRA.Editor {
 
             var list = sourceView.Sources;
             var res = element.name;
+
+            var asset = res.GetRelativeAssetsPath().LoadAssetAtPath<Object>();
+            // 防止重复疯狂迭代
+            if (asset == preview.asset)
+                return;
+
             // 更新预览
-            preview.UpdatePreview(res.GetRelativeAssetsPath().LoadAssetAtPath<Object>());
+            preview.UpdatePreview(asset);
 
             // 序列化模式，可以手动unity设置，否则无法找到确实使用了资源的文件
             EditorSettings.serializationMode = SerializationMode.ForceText;
@@ -192,7 +198,7 @@ namespace AKIRA.Editor {
 
     #region Scroll View Element => VisualElement
     /// <summary>
-    /// 资源试图
+    /// 资源视图
     /// </summary>
     public class SourceViewElement : VisualElement {
         // ScrollView
