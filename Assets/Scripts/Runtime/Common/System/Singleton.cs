@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -46,6 +48,35 @@ namespace AKIRA.Manager {
 
         public async virtual Task Initialize() {
             await Task.Yield();
+        }
+
+        protected List<IController> controllers = new();
+
+        /// <summary>
+        /// <para>生成Controller实例</para>
+        /// <para>暂不支持MonoBehaviour版Controller</para>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        protected void CreateController<U>() where U : IController {
+            IController controller = default;
+            if (typeof(U).IsSubclassOf(typeof(UnityEngine.Component))) {
+                $"在 {this} 中尝试创建 Controller {typeof(U)}".Error();
+                return;
+            } else {
+                controller = typeof(U).CreateInstance<U>();
+            }
+            controller.Initialize();
+            controllers.Add(controller);
+        }
+
+        /// <summary>
+        /// 获得Controller
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public U GetController<U>() where U : IController {
+            return (U)controllers.SingleOrDefault(controller => controller is U);
         }
     }
 }

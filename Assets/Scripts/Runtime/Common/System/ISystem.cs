@@ -4,7 +4,7 @@ namespace AKIRA.Manager {
     /// <summary>
     /// System Base
     /// </summary>
-    public interface ISystem {
+    public interface IController {
         /// <summary>
         /// 初始化
         /// </summary>
@@ -14,5 +14,5 @@ namespace AKIRA.Manager {
     /// <summary>
     /// Controller Base
     /// </summary>
-    public interface IController : ISystem { }
+    public interface ISystem : IController { }
 }
