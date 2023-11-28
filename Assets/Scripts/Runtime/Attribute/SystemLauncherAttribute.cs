@@ -3,7 +3,7 @@ using System;
 namespace AKIRA.Attribute {
     /// <summary>
     /// <para>系统自动生成标签</para>
-    /// <para>实例化已经在EventSystem, AssetSystem, ObjectPool, UpdateSystem之后，在UIManager之前</para>
+    /// <para>实例化已经在UIManager, EventSystem, AssetSystem, ObjectPool, UpdateSystem之后</para>
     /// <para>具体看GameManager</para>
     /// <para>默认顺序 0</para>
     /// </summary>

@@ -17,6 +17,8 @@ namespace AKIRA.Manager {
 
         private async void Start() {
             EventSystem.Instance.AddEventListener(GameData.Event.OnLoadCompleted, InitSystems);
+            // UI初始化，加载需要
+            await CreateSystem<UIManager>(null);
             StartCoroutine(AssetSystem.Instance.LoadBundles());
 
             await UniTask.WaitUntil(() => AssetSystem.Instance.BundleLoadCompleted);
@@ -24,7 +26,7 @@ namespace AKIRA.Manager {
         }
 
         /// <summary>
-        /// UI初始化
+        /// 系统初始化
         /// </summary>
         /// <param name="data"></param>
         private async void InitSystems(object data) {
@@ -32,7 +34,7 @@ namespace AKIRA.Manager {
 
             var root = new GameObject("[Systems]").DontDestory();
             // base systems
-            await CreateSystem<ObjectPool>(root);
+            await CreateSystem<ObjectPool>(null);
             await CreateSystem<UpdateSystem>(root);
 
             // normal systems
@@ -57,9 +59,6 @@ namespace AKIRA.Manager {
                     await CreateSystem(root, type);
                 }
             }
-
-            // ui init
-            await CreateSystem<UIManager>(root);
 
             EventSystem.Instance.TriggerEvent(GameData.Event.OnInitSystemCompleted);
 
