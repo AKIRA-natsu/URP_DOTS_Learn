@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Xml;
+using AKIRA.Attribute;
 using AKIRA.UIFramework;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -11,6 +12,7 @@ namespace AKIRA.Manager {
     /// <summary>
     /// 指引管理器
     /// </summary>
+    [SystemLauncher(10)]
     public class GuideSystem : MonoSingleton<GuideSystem> {
         // 3d指引父物体
         private Transform Guide3DRoot;
