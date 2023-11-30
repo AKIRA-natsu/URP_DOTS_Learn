@@ -17,8 +17,6 @@ namespace AKIRA.Manager {
 
         private async void Start() {
             EventSystem.Instance.AddEventListener(GameData.Event.OnLoadCompleted, InitSystems);
-            // UI初始化，加载需要
-            await CreateSystem<UIManager>(null);
             StartCoroutine(AssetSystem.Instance.LoadBundles());
 
             await UniTask.WaitUntil(() => AssetSystem.Instance.BundleLoadCompleted);
@@ -36,6 +34,7 @@ namespace AKIRA.Manager {
             // base systems
             await CreateSystem<ObjectPool>(null);
             await CreateSystem<UpdateSystem>(root);
+            await CreateSystem<UIManager>(null);
 
             // normal systems
             SortedDictionary<int, List<Type>> map = new();
@@ -80,6 +79,7 @@ namespace AKIRA.Manager {
         /// <param name="root"></param>
         /// <typeparam name="T"></typeparam>
         private async UniTask CreateSystem(GameObject root, Type type) {
+            $"实例化 => {type}".Log(GameData.Log.Source);
             if (type.IsSubclassOf(typeof(Component))) {
                 var system = new GameObject($"[{type.Name}]").AddComponent(type);
                 system.SetParent(root.transform);
