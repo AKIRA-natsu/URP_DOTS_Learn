@@ -38,7 +38,7 @@ namespace AKIRA.Manager {
             await CreateSystem<UpdateSystem>(root);
 
             // normal systems
-            Dictionary<int, List<Type>> map = new();
+            SortedDictionary<int, List<Type>> map = new();
             var launchers = ReflectionHelp.Handle<SystemLauncherAttribute>();
             // sort by attribute significance
             foreach (var launcher in launchers) {
