@@ -98,7 +98,7 @@ $@"    }}
 $@"using UnityEngine;
 
 namespace AKIRA.UIFramework {{
-    [Win(WinEnum.{@enum}, ""Prefabs/UI/{name}"", {@type})]
+    [Win(WinEnum.{@enum}, ""{objPath.GetRelativeAssetsPath()}"", {@type})]
     public class {name}Panel : {name}PanelProp {{
         public override void Awake(object obj) {{
             base.Awake(obj);";
@@ -230,9 +230,11 @@ $@"    }}
                 return;
             
             // 如果是Component，添加自身但省略子节点
-            if ($"{parent.name}Component".GetConfigTypeByAssembley() == null)
+            // 但如果遍历的是Component也会省略，判断节点是否为0，如果是0说明遍历Component
+            if ($"{parent.name}Component".GetConfigTypeByAssembley() == null || nodes.Count == 0) {
                 for (int i = 0; i < parent.childCount; i++)
                     TraverseUI(parent.GetChild(i), path);
+            }
         }
 
         nodes.Add(new UINode(parent.name, path));

@@ -32,6 +32,27 @@ public static class ReflectionHelp {
     /// <param name="type"></param>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
+    public static object CreateInstance(this Type type) {
+        return asm.CreateInstance(type.FullName);
+    }
+
+    /// <summary>
+    /// 生成实例，非默认程序集
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="dllName"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public static object CreateInstance(this Type type, string dllName) {
+        return Assembly.Load(dllName).CreateInstance(type.FullName);
+    }
+
+    /// <summary>
+    /// 生成实例
+    /// </summary>
+    /// <param name="type"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
     public static T CreateInstance<T>(this Type type) {
         return (T)asm.CreateInstance(type.FullName);
     }
