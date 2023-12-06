@@ -92,8 +92,17 @@ public static class ReflectionHelp {
     /// <param name="type"></param>
     /// <returns></returns>
     public static object ConvertTo(this object convertibleValue, Type type) {
+        // 非空会包DNULL啥的报错
+        if (string.IsNullOrEmpty(convertibleValue?.ToString()))
+            return default;
+
         if (!type.IsGenericType) {
-            return Convert.ChangeType(convertibleValue, type);
+            if (type.IsEnum) {
+                // Enum无法转过去,convertibleValue.ToString()值为Enum.ToString()
+                return Enum.Parse(type, convertibleValue.ToString());
+            } else {
+                return Convert.ChangeType(convertibleValue, type);
+            }
         } else {
             Type genericTypeDefinition = type.GetGenericTypeDefinition();
             if (genericTypeDefinition == typeof(Nullable<>)) {

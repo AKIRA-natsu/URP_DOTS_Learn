@@ -100,7 +100,11 @@ namespace AKIRA.Manager {
                 if (!bundle.Contains(path))
                     continue;
                 
-                return bundle.LoadAsset<T>(path);
+                // 如果是Component，拿到的是GameObject，需要重新GetComponent返回T
+                if (typeof(T).IsSubclassOf(typeof(Component)))
+                    return bundle.LoadAsset<GameObject>(path).GetComponent(typeof(T)) as T;
+                else
+                    return bundle.LoadAsset<T>(path);
             }
             return default;
         }
