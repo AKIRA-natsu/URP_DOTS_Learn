@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using AKIRA;
@@ -8,16 +9,30 @@ using AKIRA;
 /// </summary>
 public static class ReflectionHelp {
     // 程序集
-    private static Assembly asm = Assembly.Load(GameData.DLL.Default);
+    private static Dictionary<string, Assembly> assemblies = new();
+
+    /// <summary>
+    /// 获得程序集
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    private static Assembly GetAssembly(string name) {
+        if (assemblies.ContainsKey(name)) {
+            return assemblies[name];
+        } else {
+            var asm = Assembly.Load(name);
+            assemblies[name] = asm;
+            return asm;
+        }
+    }
 
     /// <summary>
     /// 不同程序集查找类型
     /// </summary>
     /// <param name="className"></param>
     /// <returns></returns>
-    public static Type GetConfigTypeByAssembley(this string className) {
-        // var types = Assembly.Load(DLLName).GetTypes();
-        var types = asm.GetTypes();
+    public static Type GetConfigTypeByAssembley(this string className, string dllName = GameData.DLL.Default) {
+        var types = GetAssembly(dllName).GetTypes();
         foreach (var type in types) {
             if (type.Name.Equals(className)) {
                 return type;
@@ -27,45 +42,23 @@ public static class ReflectionHelp {
     }
 
     /// <summary>
-    /// 生成实例
-    /// </summary>
-    /// <param name="type"></param>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
-    public static object CreateInstance(this Type type) {
-        return asm.CreateInstance(type.FullName);
-    }
-
-    /// <summary>
-    /// 生成实例，非默认程序集
+    /// 生成实例 object
     /// </summary>
     /// <param name="type"></param>
     /// <param name="dllName"></param>
-    /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    public static object CreateInstance(this Type type, string dllName) {
-        return Assembly.Load(dllName).CreateInstance(type.FullName);
+    public static object CreateInstance(this Type type, string dllName = GameData.DLL.Default) {
+        return GetAssembly(dllName).CreateInstance(type.FullName);
     }
 
     /// <summary>
-    /// 生成实例
+    /// 生成实例 T
     /// </summary>
     /// <param name="type"></param>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    public static T CreateInstance<T>(this Type type) {
-        return (T)asm.CreateInstance(type.FullName);
-    }
-
-    /// <summary>
-    /// 生成实例，非默认程序集
-    /// </summary>
-    /// <param name="type"></param>
-    /// <param name="dllName"></param>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
-    public static T CreateInstance<T>(this Type type, string dllName) {
-        return (T)Assembly.Load(dllName).CreateInstance(type.FullName);
+    public static T CreateInstance<T>(this Type type, string dllName = GameData.DLL.Default) {
+        return (T)GetAssembly(dllName).CreateInstance(type.FullName);
     }
 
     /// <summary>
@@ -73,8 +66,8 @@ public static class ReflectionHelp {
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    public static Type[] Handle<T>() {
-        var types = asm.GetExportedTypes();
+    public static Type[] Handle<T>(string dllName = GameData.DLL.Default) {
+        var types = GetAssembly(dllName).GetExportedTypes();
         return types.Where(type => {
             var attributes = Attribute.GetCustomAttributes(type, false);
             foreach (var attribute in attributes) {
