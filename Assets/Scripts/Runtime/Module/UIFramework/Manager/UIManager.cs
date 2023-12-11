@@ -96,8 +96,8 @@ namespace AKIRA.UIFramework {
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        public UIComponent Get(WinType type) {
-            return UIMap.SingleOrDefault(kvp => UIDataManager.Instance.GetUIData(kvp.Value).type.Equals(type)).Value;
+        public UIComponent Get(WinEnum type) {
+            return UIMap.SingleOrDefault(kvp => UIDataManager.Instance.GetUIData(kvp.Value).@enum.Equals(type)).Value;
         }
 
         /// <summary>
@@ -113,6 +113,7 @@ namespace AKIRA.UIFramework {
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="type"></param>
         /// <param name="method"></param>
         /// <param name="args"></param>
         /// <typeparam name="T"></typeparam>
@@ -123,10 +124,11 @@ namespace AKIRA.UIFramework {
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="type"></param>
         /// <param name="method"></param>
         /// <param name="args"></param>
         /// <typeparam name="T"></typeparam>
-        public void Invoke(WinType type, string method, params object[] args) {
+        public void Invoke(WinEnum type, string method, params object[] args) {
             Get(type)?.Invoke(method, args);
         }
 

@@ -89,23 +89,6 @@ namespace AKIRA.UIFramework {
         }
 
         /// <summary>
-        /// 内部获得UI
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        protected T Get<T>() where T : UIComponent {
-            return UIManager.Instance.Get<T>();
-        }
-
-        /// <summary>
-        /// 内部注册UI事件
-        /// </summary>
-        /// <param name="action"></param>
-        protected void RegistAfterUIInited(Action action) {
-            UIManager.Instance.RegistAfterUIIInitAction(action);
-        }
-
-        /// <summary>
         /// 显示
         /// </summary>
         public virtual void Show() {
@@ -132,6 +115,27 @@ namespace AKIRA.UIFramework {
         /// </summary>
         public virtual void Destory() {
             this.gameObject.Destory();
+        }
+
+        /// <summary>
+        /// 获得Props数组
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        protected T[] GetComponentProps<T>(RectTransform parent) where T : UIComponentProp, new() {
+            var count = parent.childCount;
+            List<T> result = new();
+            var typeName = typeof(T).Name;
+            for (int i = 0; i < count; i++) {
+                var child = parent.GetChild(i);
+                if (!typeName.Contains(child.name))
+                    continue;
+                var component = new T();
+                component.Awake(child);
+                result.Add(component);
+            }
+            return result.ToArray();
         }
 
         public override void Invoke(string name, params object[] args) { }
