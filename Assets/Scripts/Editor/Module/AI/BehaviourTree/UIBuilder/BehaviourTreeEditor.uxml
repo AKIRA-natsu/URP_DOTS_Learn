@@ -1,0 +1,24 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="project://database/Assets/Scripts/Core/Modules/AI/BehaviourTree/Editor/UIBuilder/BehaviourTreeEditor.uss?fileID=7433441132597879392&amp;guid=d26690a98bf9c9847b1fc233d7b9b6ef&amp;type=3#BehaviourTreeEditor" />
+    <uie:Toolbar>
+        <uie:ToolbarMenu display-tooltip-when-elided="true" text="Assets" />
+    </uie:Toolbar>
+    <AKIRA.Editor.AI.SplitView fixed-pane-initial-dimension="250">
+        <ui:VisualElement name="left-panel">
+            <AKIRA.Editor.AI.SplitView orientation="Vertical" fixed-pane-initial-dimension="250">
+                <ui:VisualElement name="inspector-container" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0);">
+                    <ui:Label text="Inspector" display-tooltip-when-elided="true" style="background-color: rgb(35, 35, 35);" />
+                    <AKIRA.Editor.AI.InspectorView />
+                </ui:VisualElement>
+                <ui:VisualElement name="blackboard-container" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0);">
+                    <ui:Label tabindex="-1" text="Blackboard" display-tooltip-when-elided="true" style="background-color: rgb(35, 35, 35);" />
+                    <ui:IMGUIContainer />
+                </ui:VisualElement>
+            </AKIRA.Editor.AI.SplitView>
+        </ui:VisualElement>
+        <ui:VisualElement name="right-panel">
+            <ui:Label text="TreeView" display-tooltip-when-elided="true" style="background-color: rgb(40, 40, 40);" />
+            <AKIRA.Editor.AI.BehaviourTreeView focusable="true" style="flex-grow: 1;" />
+        </ui:VisualElement>
+    </AKIRA.Editor.AI.SplitView>
+</ui:UXML>
