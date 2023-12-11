@@ -21,6 +21,7 @@ namespace AKIRA.Editor.AI {
         {
             BehaviourTreeEditor wnd = GetWindow<BehaviourTreeEditor>();
             wnd.titleContent = new GUIContent("BehaviourTreeEditor");
+            wnd.minSize = new Vector2(1080, 560);
         }
 
         [OnOpenAsset]
