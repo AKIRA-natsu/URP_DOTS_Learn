@@ -84,3 +84,11 @@
     * 坑点待填：3D物体必须放在[Guidence]预制体下（考虑要不要去掉3D纯用IGuide接口替代）
   * xml存储
 
+**Version: 0.1.3**
+
+* 引用查找和替换的面板
+  * 面板图片（分图片预览和编辑器面板）
+    ![](./Assets/Res/ReadmeLinks/Version_0.1.3/1.png)
+    ![](./Assets/Res/ReadmeLinks/Version_0.1.3/2.png)
+  * 使用UIBuilder绘制的面板
+
