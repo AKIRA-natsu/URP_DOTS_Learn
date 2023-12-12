@@ -175,7 +175,7 @@ $@"    }}
     internal static StringBuilder LinkControlContent(Transform _transform) {
         if (nodes.Count != 0) nodes.Clear();
         if (btns.Count != 0) btns.Clear();
-        if (rule == null) rule = GameData.Path.UIConfig.Load<UIRuleConfig>();
+        if (rule == null) rule = GameConfig.Instance.GetConfig<UIRuleConfig>();
         TraverseUI(_transform.transform, "");
         StringBuilder content = new StringBuilder();
         // 最后一个是transform根节点

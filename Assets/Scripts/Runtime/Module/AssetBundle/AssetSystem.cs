@@ -25,7 +25,7 @@ namespace AKIRA.Manager {
         private AssetBundle[] bundles;
 
         protected AssetSystem() {
-            config = GameData.Path.AssetBundleConfig.Load<AssetBundleConfig>();
+            config = GameConfig.Instance.GetConfig<AssetBundleConfig>();
             preformPath = 
 #if UNITY_ANDROID && !UNITY_EDITOR
                 "jar:file://" + Application.dataPath + "!/assets";

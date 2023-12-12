@@ -15,7 +15,7 @@ namespace AKIRA.Manager {
         private bool fully;
         
         protected LogSystem() {
-            config = GameData.Path.LogConfig.Load<LogConfig>();
+            config = GameConfig.Instance.GetConfig<LogConfig>();
             fully = config?.logfully ?? true;
 
             // 默认四种

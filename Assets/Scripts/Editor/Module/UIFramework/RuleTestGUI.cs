@@ -32,11 +32,11 @@ public class RuleTestGUI : EditorWindow {
         EditorGUILayout.LabelField("自动生成 UI (GUI)");
         EditorGUILayout.Space();
 
-        rule = GameData.Path.UIConfig.Load<UIRuleConfig>();
+        rule = GameConfig.Instance.GetConfig<UIRuleConfig>();
 
         if (rule == null) {
             EditorGUI.BeginDisabledGroup(true);
-            EditorGUILayout.LabelField($"路径下没有规则文件 => {GameData.Path.UIConfig}");
+            EditorGUILayout.LabelField($"配置文件没有规则文件");
             EditorGUI.EndDisabledGroup();
 
             // if (GUILayout.Button("规则文件位置")) {

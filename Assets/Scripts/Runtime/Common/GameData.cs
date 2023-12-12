@@ -21,27 +21,6 @@ namespace AKIRA {
         }
         #endregion
 
-        #region 路径
-        public class Path {
-            /// <summary>
-            /// 日志配置文件
-            /// </summary>
-            public const string LogConfig = "Configs/LogConfig";
-            /// <summary>
-            /// 模块下载配置
-            /// </summary>
-            public const string ModuleDownloadConfig = "Configs/ModuleDownloadConfig";
-            /// <summary>
-            /// UI配置
-            /// </summary>
-            public const string UIConfig = "Configs/UIRuleConfig";
-            /// <summary>
-            /// ab包配置
-            /// </summary>
-            public const string AssetBundleConfig = "Configs/AssetBundleConfig";
-        }
-        #endregion
-
         #region 日志
         public class Log {
             /// <summary>

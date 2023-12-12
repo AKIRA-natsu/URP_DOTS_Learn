@@ -16,7 +16,7 @@ namespace AKIRA.Editor {
         public static ModuleDownloadConfig Config {
             get {
                 if (config == null)
-                    config = GameData.Path.ModuleDownloadConfig.Load<ModuleDownloadConfig>();
+                    config = GameConfig.Instance.GetConfig<ModuleDownloadConfig>();
                 return config;
             }
         }
