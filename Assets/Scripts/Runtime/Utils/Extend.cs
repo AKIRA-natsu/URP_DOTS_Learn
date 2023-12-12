@@ -162,15 +162,38 @@ public static class Extend {
         return child.GetComponent<T>();
     }
 
-    // /// <summary>
-    // /// UI 获得组件
-    // /// </summary>
-    // /// <param name="com"></param>
-    // /// <typeparam name="T"></typeparam>
-    // /// <returns></returns>
-    // public static T GetComponent<T>(this UIComponent com) {
-    //     return com.transform.GetComponent<T>();
-    // }
+    /// <summary>
+    /// UI 获得组件
+    /// </summary>
+    /// <param name="com"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public static T GetComponent<T>(this UIComponent com) {
+        return com.transform.GetComponent<T>();
+    }
+
+    
+
+    /// <summary>
+    /// 获得Props数组
+    /// </summary>
+    /// <param name="parent"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public static T[] GetComponentProps<T>(this UIComponent com, RectTransform parent) where T : UIComponentProp, new() {
+        var count = parent.childCount;
+        List<T> result = new();
+        var typeName = typeof(T).Name;
+        for (int i = 0; i < count; i++) {
+            var child = parent.GetChild(i);
+            if (!typeName.Contains(child.name))
+                continue;
+            var component = new T();
+            component.Awake(child);
+            result.Add(component);
+        }
+        return result.ToArray();
+    }
 
     /// <summary>
     /// 获得物体大小
