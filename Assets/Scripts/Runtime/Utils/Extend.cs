@@ -172,25 +172,25 @@ public static class Extend {
         return com.transform.GetComponent<T>();
     }
 
-    
-
     /// <summary>
     /// 获得Props数组
     /// </summary>
     /// <param name="parent"></param>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    public static T[] GetComponentProps<T>(this UIComponent com, RectTransform parent) where T : UIComponentProp, new() {
+    public static T[] GetComponentProps<T>(this UIComponent com, Transform parent) where T : UIComponentProp, new() {
         var count = parent.childCount;
         List<T> result = new();
         var typeName = typeof(T).Name;
         for (int i = 0; i < count; i++) {
             var child = parent.GetChild(i);
-            if (!typeName.Contains(child.name))
-                continue;
-            var component = new T();
-            component.Awake(child);
-            result.Add(component);
+            if (!typeName.Contains(child.name)) {
+                result.AddRange(com.GetComponentProps<T>(child));        
+            } else {
+                var component = new T();
+                component.Awake(child);
+                result.Add(component);
+            }
         }
         return result.ToArray();
     }
