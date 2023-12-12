@@ -25,7 +25,7 @@ namespace AKIRA.Editor {
         private List<Type> selections;
         private List<string> selectionNames;
 
-        [MenuItem("Tools/AKIRA.Framework/Common/GameConfigs")]
+        [MenuItem("Tools/AKIRA.Framework/Common/Select GameConfig")]
         private static void SelectConfig() {
             var paths = Directory.GetFiles(Path.Combine(Application.dataPath, "Resources"), "*.asset", SearchOption.AllDirectories);
             foreach (var path in paths) {
