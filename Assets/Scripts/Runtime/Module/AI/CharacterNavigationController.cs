@@ -16,11 +16,11 @@ namespace AKIRA.Behaviour.AI {
         // public float turnSpeed = 1f;
 
         public override void Recycle(object data = null) {
-            StopUpdate();
+            this.Remove(GameData.Group.Animator, mode);
         }
 
         public override void Wake(object data = null) {
-            BeginUpdate();
+            this.Regist(GameData.Group.Animator, mode);
         }
         
         public override void GameUpdate() {

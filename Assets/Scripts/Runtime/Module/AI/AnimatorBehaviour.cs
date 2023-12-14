@@ -80,7 +80,7 @@ namespace AKIRA.Behaviour.AI {
         //     }
         // }
 
-        private void OnAnimatorIK(int layerIndex) {
+        protected virtual void OnAnimatorIK(int layerIndex) {
             // 矫正双手
             animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, 1);
             animator.SetIKPositionWeight(AvatarIKGoal.RightHand, 1);

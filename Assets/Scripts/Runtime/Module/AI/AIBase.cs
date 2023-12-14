@@ -30,25 +30,5 @@ namespace AKIRA.Behaviour.AI {
         public abstract void GameUpdate();
         public abstract void OnUpdateStop();
         public abstract void OnUpdateResume();
-
-        /// <summary>
-        /// 开始更新
-        /// </summary>
-        #if UNITY_EDITOR
-        [ContextMenu("Begin Update")]
-        #endif
-        public void BeginUpdate() {
-            this.Regist(GameData.Group.Animator, mode);
-        }
-
-        /// <summary>
-        /// 结束更新
-        /// </summary>
-        #if UNITY_EDITOR
-        [ContextMenu("Stop Update")]
-        #endif
-        public void StopUpdate() {
-            this.Remove(GameData.Group.Animator, mode);
-        }
     }
 }

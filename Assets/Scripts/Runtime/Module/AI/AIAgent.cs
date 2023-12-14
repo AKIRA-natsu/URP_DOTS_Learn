@@ -50,7 +50,8 @@ namespace AKIRA.Behaviour.AI {
     [RequireComponent(typeof(NavMeshAgent))]
     public abstract class AIAgent : AIBase, IPool {
         // state
-        public AIState state { get; private set; } = AIState.None;
+        [SerializeField]
+        private AIState state = AIState.None;
         // unityengine ai agent
         protected NavMeshAgent agent { get; private set; }
         // behaviour tree
@@ -95,8 +96,8 @@ namespace AKIRA.Behaviour.AI {
             if (!Application.isPlaying)
                 return;
             #endif
+            $"{this} 更新动画 => {state}".Log(GameData.Log.Test);
             Animation?.SwitchAnima(state);
-            "更新动画".Log();
         }
 
         /// <summary>

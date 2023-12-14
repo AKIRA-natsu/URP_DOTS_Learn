@@ -209,6 +209,18 @@ public class UpdateGroup : IPool {
             (update as IUpdateCallback).OnUpdateResume();
         }
     }
+
+    /// <summary>
+    /// 是否存在 <see cref="update" /> 更新
+    /// </summary>
+    /// <param name="update"></param>
+    /// <param name="mode"></param>
+    /// <returns></returns>
+    public bool IsUpdating(IUpdate update, UpdateMode mode) {
+        if (!updating)
+            return false;
+        return updateMap[mode].Contains(update) || spaceUpdateMap[mode].Exists(info => info.iupdate == update);
+    }
 }
 
 /// <summary>
@@ -293,18 +305,18 @@ public class UpdateSystem : MonoSingleton<UpdateSystem> {
         }
     }
 
-    /// <summary>
-    /// 移除组
-    /// </summary>
-    /// <param name="key"></param>
-    public void DetachGroup(string key) {
-        if (groupMap.ContainsKey(key)) {
-            this.Detach(groupMap[key]);
-            groupMap.Remove(key);
-        } else {
-            $"Update Log Message: Detach Group {key} Not Find!".Log(GameData.Log.Warn);
-        }
-    }
+    // /// <summary>
+    // /// 移除组
+    // /// </summary>
+    // /// <param name="key"></param>
+    // public void DetachGroup(string key) {
+    //     if (groupMap.ContainsKey(key)) {
+    //         this.Detach(groupMap[key]);
+    //         groupMap.Remove(key);
+    //     } else {
+    //         $"Update Log Message: Detach Group {key} Not Find!".Log(GameData.Log.Warn);
+    //     }
+    // }
 
     /// <summary>
     /// 开启/关闭组的更新
@@ -326,6 +338,21 @@ public class UpdateSystem : MonoSingleton<UpdateSystem> {
     public void EnableGroupUpdate(bool enable) {
         foreach (var value in groupMap.Values) {
             value.Updating = enable;
+        }
+    }
+
+    /// <summary>
+    /// 查找 <see cref="update" /> 是否在更新中
+    /// </summary>
+    /// <param name="update"></param>
+    /// <param name="key"></param>
+    /// <param name="mode"></param>
+    /// <returns></returns>
+    public bool IsUpdating(IUpdate update, string key = GameData.Group.Default, UpdateMode mode = UpdateMode.Update) {
+        if (groupMap.ContainsKey(key)) {
+            return groupMap[key].IsUpdating(update, mode);
+        } else {
+            return false;
         }
     }
 
@@ -364,10 +391,6 @@ public class UpdateSystem : MonoSingleton<UpdateSystem> {
                 info.lastUpdateTime = Time.time;
             }
         }
-    }
-
-    private void OnDisable() {
-        
     }
 }
 
@@ -426,5 +449,16 @@ public static class UpdateExtend {
     /// <param name="key"></param>
     public static void EnableGroupUpdate(this string key, bool updating) {
         UpdateSystem.Instance.EnableGroupUpdate(key, updating);
+    }
+
+    /// <summary>
+    /// 更新中
+    /// </summary>
+    /// <param name="update"></param>
+    /// <param name="key"></param>
+    /// <param name="mode"></param>
+    /// <returns></returns>
+    public static bool IsUpdating(this IUpdate update, string key = GameData.Group.Default, UpdateMode mode = UpdateMode.Update) {
+        return UpdateSystem.Instance.IsUpdating(update, key, mode);
     }
 }

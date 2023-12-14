@@ -33,9 +33,9 @@ public enum AttackGroup {
 }
 
 /// <summary>
-/// 攻击属性数据
+/// 属性数据
 /// </summary>
-public abstract class AttackPropertyData {}
+public abstract class PropertyData {}
 
 public interface IAttack {
     /// <summary>
@@ -47,7 +47,7 @@ public interface IAttack {
     /// 攻击属性数据
     /// </summary>
     /// <value></value>
-    AttackPropertyData Data { get; }
+    PropertyData Data { get; }
 }
 
 /// <summary>
