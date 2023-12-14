@@ -184,23 +184,24 @@ $@"    }}
             // 删去路径根节点  /_transform.name/
             node.path = node.path.Remove(0, _transform.name.Length + 2);
             var componentPropType = $"{node.name}Component".GetConfigTypeByAssembley();
+            var paramName = node.name.Replace(" ", "");
             if (componentPropType != null) {
                 if (rule.CheckMatchableControl(node.name)) {
-                    content.Append($"        [UIControl(\"{node.path}\", true)]\n        protected {componentPropType} {node.name};\n");
+                    content.Append($"        [UIControl(\"{node.path}\", true)]\n        protected {componentPropType} {paramName};\n");
                 } else {
-                    content.Append($"        [UIControl(\"{node.path}\")]\n        protected {componentPropType} {node.name};\n");
+                    content.Append($"        [UIControl(\"{node.path}\")]\n        protected {componentPropType} {paramName};\n");
                 }
                 continue;
             }
             if (rule.TryGetControlName(node.name, out string controlName)) {
                 if (rule.CheckMatchableControl(node.name)) {
-                    content.Append($"        [UIControl(\"{node.path}\", true)]\n        protected {controlName} {node.name};\n");
+                    content.Append($"        [UIControl(\"{node.path}\", true)]\n        protected {controlName} {paramName};\n");
                 } else {
-                    content.Append($"        [UIControl(\"{node.path}\")]\n        protected {controlName} {node.name};\n");
+                    content.Append($"        [UIControl(\"{node.path}\")]\n        protected {controlName} {paramName};\n");
                 }
                 if (controlName.Equals("Button"))
                     // btns.Add(node.path.Replace('/', '_').Replace("@", ""));
-                    btns.Add(node.name);
+                    btns.Add(paramName);
             }
         }
         return content;

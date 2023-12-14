@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8007395691727417672
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c595f27c35a967a489044a60ae73ce88, type: 3}
+  m_Name: ConsoleConfig
+  m_EditorClassIdentifier: 
+  maxHistoryCount: 50
+  wakeConfigs:
+  - window: 109
+    platforms: 0200000007000000
+    wakeInputs:
+    - <Keyboard>/tab
+    - <Keyboard>/backquote
+    shutInputs:
+    - <Keyboard>/escape
+  commands:
+  - command: help
+    description: Show Availiable Commands
+    withBooleanParam: 0
+  - command: clear
+    description: Clear Console Output
+    withBooleanParam: 0
+  - command: shut
+    description: Exit Game
+    withBooleanParam: 0
 --- !u!114 &-4453349924037599099
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -54,6 +85,9 @@ MonoBehaviour:
   - controlName: RawImage
     ruleNames:
     - Render
+  - controlName: TMP_InputField
+    ruleNames:
+    - Input
 --- !u!114 &-3596378399308982382
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -89,6 +123,7 @@ MonoBehaviour:
   runtimeConfigs:
   - {fileID: 687445742868141366}
   - {fileID: -3596378399308982382}
+  - {fileID: -8007395691727417672}
 --- !u!114 &687445742868141366
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -106,9 +141,6 @@ MonoBehaviour:
   - name: Editor
     color: {r: 0.53524387, g: 0.49247953, b: 0.8773585, a: 1}
     logable: 1
-  - name: GameState
-    color: {r: 0, g: 1, b: 0.9683552, a: 1}
-    logable: 1
   - name: Event
     color: {r: 0, g: 1, b: 0.63107514, a: 1}
     logable: 1
@@ -124,8 +156,8 @@ MonoBehaviour:
   - name: AI
     color: {r: 0.8666667, g: 0.627451, b: 0.8666667, a: 1}
     logable: 1
-  - name: Cheat
-    color: {r: 0.8716521, g: 0, b: 1, a: 1}
+  - name: Console
+    color: {r: 0, g: 1, b: 0.9686275, a: 1}
     logable: 1
   - name: Test
     color: {r: 0.36845854, g: 0.52357036, b: 0.6792453, a: 1}

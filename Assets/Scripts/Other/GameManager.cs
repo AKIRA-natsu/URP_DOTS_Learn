@@ -79,7 +79,7 @@ namespace AKIRA.Manager {
         /// <param name="root"></param>
         /// <typeparam name="T"></typeparam>
         private async UniTask CreateSystem(GameObject root, Type type) {
-            $"实例化 => {type}".Log(GameData.Log.Source);
+            $"Create Instance => {type}".Log(GameData.Log.Source);
             if (type.IsSubclassOf(typeof(Component))) {
                 var system = new GameObject($"[{type.Name}]").AddComponent(type);
                 system.SetParent(root.transform);

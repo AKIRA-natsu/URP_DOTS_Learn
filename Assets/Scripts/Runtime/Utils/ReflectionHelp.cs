@@ -66,7 +66,7 @@ public static class ReflectionHelp {
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    public static Type[] Handle<T>(string dllName = GameData.DLL.Default) {
+    public static Type[] Handle<T>(string dllName) {
         var types = GetAssembly(dllName).GetExportedTypes();
         return types.Where(type => {
             var attributes = Attribute.GetCustomAttributes(type, false);
@@ -76,6 +76,19 @@ public static class ReflectionHelp {
             }
             return false;
         }).ToArray();
+    }
+
+    /// <summary>
+    /// 从整个程序集类中获得含有 <paramref name="T"/> 的类集合
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public static Type[] Handle<T>() {
+        var fields = typeof(GameData.DLL).GetFields();
+        List<Type> res = new();
+        foreach (var field in fields)
+            res.AddRange(Handle<T>(field.GetRawConstantValue().ToString()));
+        return res.ToArray();
     }
 
     /// <summary>
