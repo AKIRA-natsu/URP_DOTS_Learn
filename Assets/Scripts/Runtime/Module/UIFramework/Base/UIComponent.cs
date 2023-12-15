@@ -91,7 +91,7 @@ namespace AKIRA.UIFramework {
         /// <summary>
         /// 显示
         /// </summary>
-        public virtual void Show() {
+        public virtual void Show(params object[] args) {
             group.alpha = 1f;
             group.blocksRaycasts = true;
             group.interactable = true;

@@ -11,7 +11,7 @@ namespace AKIRA.UIFramework {
             ConsoleInput.onEndEdit.AddListener(OnEndEdit);
         }
 
-        public override void Show() {
+        public override void Show(params object[] args) {
             base.Show();
             ConsoleInput.ActivateInputField();
         }
