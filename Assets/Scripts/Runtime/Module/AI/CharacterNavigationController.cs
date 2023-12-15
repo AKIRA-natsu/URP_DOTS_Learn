@@ -34,9 +34,13 @@ namespace AKIRA.Behaviour.AI {
         //     }
         }
 
-        public override void OnUpdateStop() {}
+        public override void OnUpdateStop() {
+            Animation.ChangeAnimationSpeed(0f);
+        }
 
-        public override void OnUpdateResume() {}
+        public override void OnUpdateResume() {
+            Animation.ChangeAnimationSpeed(1f);
+        }
 
         // /// <summary>
         // /// 是否朝向侵略者

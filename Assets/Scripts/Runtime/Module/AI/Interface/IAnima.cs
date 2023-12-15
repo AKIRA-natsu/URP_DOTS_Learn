@@ -11,5 +11,19 @@ namespace AKIRA.Behaviour.AI {
         /// <param name="state">状态 Aniamion Name</param>
         /// <param name="data">数据 float/bool</param>
         void SwitchAnima(AIState state, object data = null);
+
+        /// <summary>
+        /// 修改动画速度
+        /// </summary>
+        /// <param name="speed"></param>
+        void ChangeAnimationSpeed(float speed);
+    }
+
+    
+    /// <summary>
+    /// 动画
+    /// </summary>
+    public interface ILinkAnima {
+        IAnima Animation { get; }
     }
 }

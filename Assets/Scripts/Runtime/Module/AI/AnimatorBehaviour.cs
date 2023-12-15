@@ -19,6 +19,10 @@ namespace AKIRA.Behaviour.AI {
             animator = this.GetComponent<Animator>();
         }
 
+        public virtual void ChangeAnimationSpeed(float speed) {
+            animator.speed = speed;
+        }
+
         public virtual void SwitchAnima(AIState state, object data = null) {
             switch (state) {
                 case AIState.None:
