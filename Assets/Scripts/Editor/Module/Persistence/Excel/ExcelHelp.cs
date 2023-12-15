@@ -66,6 +66,12 @@ public static class ExcelHelp {
             return;
         }
 
+        // 判断是否存在文件夹
+        var directoryName = Path.GetDirectoryName(cs);
+        if (!Directory.Exists(directoryName)) {
+            Directory.CreateDirectory(directoryName);
+        }
+
 #region cs
         var scriptType = Path.GetFileNameWithoutExtension(cs);
         var content = 
@@ -155,6 +161,12 @@ public partial class {scriptType} {{";
         if (sheet.Rows.Count <= 1) {
             $"{excel} 不存在数据".Error();
             return;
+        }
+
+        // 判断是否存在文件夹
+        var directoryName = Path.GetDirectoryName(json);
+        if (!Directory.Exists(directoryName)) {
+            Directory.CreateDirectory(directoryName);
         }
 
         var scriptType = Path.GetFileNameWithoutExtension(json).GetConfigTypeByAssembley();

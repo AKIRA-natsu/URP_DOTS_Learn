@@ -6,7 +6,6 @@ using AKIRA;
 public class ExcelDataUtil : EditorWindow {
     // 路径
     private string loadPath;
-    private string savePath;
     // 更改路劲保存
     private const string LoadKey = "ExcelLoadPath";
     private string scriptPath;
