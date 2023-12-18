@@ -1,3 +1,4 @@
+#define UseAB
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -54,7 +55,11 @@ namespace AKIRA.Manager {
             // 空闲对象存在
             if (com != null) return com;
             // 池子中没有空闲对象，加载实例化
+#if UseAB
+            com = AssetSystem.Instance.LoadObject<T>(path);
+#else
             com = path.Load<T>();
+#endif
             if (com == null) {
                 $"{path} 下 {typeof(T).Name} 错误！".Log(GameData.Log.Warn);
                 return default;
@@ -164,7 +169,11 @@ namespace AKIRA.Manager {
             // 空闲对象存在
             if (go != null) return go;
             // 池子中没有空闲对象，加载实例化
+#if UseAB
+            go = AssetSystem.Instance.LoadObject<GameObject>(path);
+#else
             go = path.Load<GameObject>();
+#endif
             if (go == null) {
                 $"{path} 下 {poolParent.name} 错误！".Log(GameData.Log.Warn);
                 return default;

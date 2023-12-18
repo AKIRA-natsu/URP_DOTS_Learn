@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -9,6 +10,8 @@ namespace AKIRA.Manager {
         private AssetBundleConfig config;
         // 前缀
         private string preformPath;
+        // 前缀
+        public string PreformPath => preformPath;
 
         /// <summary>
         /// 资源是否加载完成
@@ -23,6 +26,11 @@ namespace AKIRA.Manager {
         /// 资源
         /// </summary>
         private AssetBundle[] bundles;
+
+        /// <summary>
+        /// 对加载过的物体做一个记录
+        /// </summary>
+        private Dictionary<string, Object> records = new();
 
         protected AssetSystem() {
             config = GameConfig.Instance.GetConfig<AssetBundleConfig>();
@@ -91,20 +99,29 @@ namespace AKIRA.Manager {
         }
 
         public T LoadObject<T>(string path) where T : Object {
+            if (records.ContainsKey(path))
+                return records[path] as T;
+
+            path.Log();
 #if UNITY_EDITOR
-            if (!config.simulation)
-                return path.LoadAssetAtPath<T>();
+            if (!config.simulation) {
+                var res = path.LoadAssetAtPath<T>();
+                records[path] = res;
+                return res;
+            }
 #endif
 
             foreach (var bundle in bundles) {
                 if (!bundle.Contains(path))
                     continue;
                 
-                // 如果是Component，拿到的是GameObject，需要重新GetComponent返回T
+                T res = default;
                 if (typeof(T).IsSubclassOf(typeof(Component)))
-                    return bundle.LoadAsset<GameObject>(path).GetComponent(typeof(T)) as T;
+                    res = bundle.LoadAsset<GameObject>(path).GetComponent(typeof(T)) as T;
                 else
-                    return bundle.LoadAsset<T>(path);
+                    res = bundle.LoadAsset<T>(path);
+                records[path] = res;
+                return res;
             }
             return default;
         }
