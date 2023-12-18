@@ -6,6 +6,8 @@ namespace AKIRA.Manager {
     /// 报告配置文件
     /// </summary>
     internal class ReportConfig : ScriptableObject {
+        [CNName("发件人")]
+        public string from;
         [CNName("开启 stmp 授权码")]
         public string authorizationCode;
         [CNName("授权端 QQ,163,网易等")]

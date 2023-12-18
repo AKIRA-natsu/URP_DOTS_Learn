@@ -42,6 +42,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9394b587b54a9847a8382560c27184b, type: 3}
   m_Name: ReportConfig
   m_EditorClassIdentifier: 
+  from: 1095885340@qq.com
   authorizationCode: rpsmuahnylayjjch
   smtpClient: smtp.qq.com
   port: 
