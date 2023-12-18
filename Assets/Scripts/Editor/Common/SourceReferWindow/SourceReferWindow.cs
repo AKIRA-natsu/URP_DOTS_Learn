@@ -386,8 +386,13 @@ namespace AKIRA.Editor {
         private async void WaitToSetImage() {
             // 好像不会立刻生成图片，有一点延迟
             // 但又不是所有Object都有预览，所以只延迟一帧
-            await Task.Yield();
-            image.image = AssetPreview.GetAssetPreview(asset);
+            // 最多迭代三次
+            int count = 3;
+            image.image = null;
+            while (image.image == null && count-- >= 0) {
+                await Task.Yield();
+                image.image = AssetPreview.GetAssetPreview(asset);
+            }
         }
 
         /// <summary>
