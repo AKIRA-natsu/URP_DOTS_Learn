@@ -67,9 +67,9 @@ namespace AKIRA.Manager {
         /// 
         /// </summary>
         private void OnConsoleCommand(object obj) {
-            var input = obj.ToString();
-            output.Append($"\n> {input}");
-            switch (obj) {
+            var inputs = obj.ToString();
+            output.Append($"\n> {inputs}");
+            switch (inputs.Split('[')[0].Trim()) {
                 case CommandVar.help:
                     var commands = config.Commands;
                     for (int i = 0; i < commands.Count; i++) {
@@ -88,8 +88,21 @@ namespace AKIRA.Manager {
                     UnityEngine.Application.Quit();
 #endif
                 return;
+                case CommandVar.test_emil:
+                    var email = inputs.Split('[').ElementAtOrDefault(1)?.Replace("]", "");
+                    if (string.IsNullOrEmpty(email)) {
+                        output.Append("\nemail is empty");
+                    } else {
+                        if (Utils.IsValidEmail(email)) {
+                            EventSystem.Instance.TriggerEvent(GameData.Event.OnTestReportEmail, email);
+                            output.Append($"\n{email} send success");
+                        } else {
+                            output.Append($"\n{email} is not a valid email");
+                        }
+                    }
+                break;
                 default:
-                    output.Append($"\nUnknown command: {input}");
+                    output.Append($"\nUnknown command: {inputs}");
                 break;
             }
             RepaintPanel();

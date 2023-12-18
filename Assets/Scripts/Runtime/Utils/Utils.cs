@@ -6,8 +6,10 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEditor;
 using AKIRA.UIFramework;
+using System.Text.RegularExpressions;
+using System.Globalization;
 
-public static class Extend {
+public static class Utils {
     #region GameObject
     /// <summary>
     /// GameObject Dont Destory
@@ -535,4 +537,54 @@ public static class Extend {
     }
     #endregion
 
+    #region regex
+    /// <summary>
+    /// <para>检测是否合法邮箱</para>
+    /// <para>来源微软官网：https://learn.microsoft.com/zh-cn/dotnet/standard/base-types/how-to-verify-that-strings-are-in-valid-email-format</para>
+    /// </summary>
+    /// <param name="email"></param>
+    /// <returns></returns>
+    public static bool IsValidEmail(string email)
+    {
+        if (string.IsNullOrWhiteSpace(email))
+            return false;
+
+        try
+        {
+            // Normalize the domain
+            email = Regex.Replace(email, @"(@)(.+)$", DomainMapper,
+                                  RegexOptions.None, TimeSpan.FromMilliseconds(200));
+
+            // Examines the domain part of the email and normalizes it.
+            string DomainMapper(Match match) {
+                // Use IdnMapping class to convert Unicode domain names.
+                var idn = new IdnMapping();
+
+                // Pull out and process domain name (throws ArgumentException on invalid)
+                string domainName = idn.GetAscii(match.Groups[2].Value);
+
+                return match.Groups[1].Value + domainName;
+            }
+        }
+        catch (RegexMatchTimeoutException)
+        {
+            return false;
+        }
+        catch (ArgumentException)
+        {
+            return false;
+        }
+
+        try
+            {
+            return Regex.IsMatch(email,
+                @"^[^@\s]+@[^@\s]+\.[^@\s]+$",
+                    RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250));
+        }
+        catch (RegexMatchTimeoutException)
+        {
+            return false;
+        }
+    }
+    #endregion
 }

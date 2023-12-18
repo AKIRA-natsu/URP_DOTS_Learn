@@ -142,6 +142,10 @@ namespace AKIRA {
             /// 命令行指令
             /// </summary>
             public const string OnConsoleCommand = "OnConsoleCommand";
+            /// <summary>
+            /// 邮箱测试
+            /// </summary>
+            public const string OnTestReportEmail = "OnTestReportEmail";
         }
         #endregion
 

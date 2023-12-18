@@ -24,13 +24,29 @@ MonoBehaviour:
   commands:
   - command: help
     description: Show Availiable Commands
-    withBooleanParam: 0
   - command: clear
     description: Clear Console Output
-    withBooleanParam: 0
   - command: shut
     description: Exit Game
-    withBooleanParam: 0
+  - command: test email
+    description: test email [emil], try report screenshot and debug log
+--- !u!114 &-4488722428647513249
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9394b587b54a9847a8382560c27184b, type: 3}
+  m_Name: ReportConfig
+  m_EditorClassIdentifier: 
+  authorizationCode: rpsmuahnylayjjch
+  smtpClient: smtp.qq.com
+  port: 
+  tos:
+  - 1095885340@qq.com
 --- !u!114 &-4453349924037599099
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -124,6 +140,7 @@ MonoBehaviour:
   - {fileID: 687445742868141366}
   - {fileID: -3596378399308982382}
   - {fileID: -8007395691727417672}
+  - {fileID: -4488722428647513249}
 --- !u!114 &687445742868141366
 MonoBehaviour:
   m_ObjectHideFlags: 0

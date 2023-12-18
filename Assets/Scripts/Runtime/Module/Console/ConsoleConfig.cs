@@ -42,6 +42,7 @@ namespace AKIRA.Manager {
         public const string help = "help";
         public const string clear = "clear";
         public const string shut = "shut";
+        public const string test_emil = "test email";
     }
 
     [CreateAssetMenu(fileName = "ConsoleConfig", menuName = "AKIRA.Framework/Module/ConsoleConfig", order = 0)]
