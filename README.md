@@ -62,6 +62,40 @@
     * 遗留问题（未解决）：下载之后提示InvalidOperationException: Stack empty.的报错，并且够不会isloaded的勾不会勾上
     * 还需要更多测试！
 
+# 整合更新
+
+**Version: 0.1.0**
+
+* 更新记录
+  * Excel2Json/Excel2Class
+    ![img](./Assets/Res/ReadmeLinks/Version_0.1.0.Update/1.png)
+    * 默认保存路径（面板OnEnable中修改）
+      脚本路径：`scriptPath = Path.Combine(Application.dataPath, "Scripts/Data");`
+      Json路径：`jsonPath = Path.Combine(Application.streamingAssetsPath, "Json");`
+    * 读取路径可以保存，但用的Editor.SaveString，同一时间正常只对同一个项目，应该问题不大
+    * excel表格式
+      | ##param | param1 | param2 | param3 | param4 |
+      | :----:  | :----: | :----: | :----: | :----: |
+      | ##type  |   int  | string |  bool  |  Enum  |
+      |##summary|summary1|summary2|summary3|summary4|
+      |   ##    |  xxx   |  ooo   |  xxx   |  ooo   |
+      |   ##    |whatever##|      |  xxx   |  ooo   |
+      |   ##    |        |        |  xxx   |  ooo   |
+      |         |   1    |  "1"   |  true  |  Name  |
+  * SourceReferWindow
+    * 资源引用查找及替换
+    * 提供预览窗口和面板窗口
+      * 预览窗口⬇
+      ![img](./Assets/Res/ReadmeLinks/Version_0.1.0.Update/2.png)
+      * 面板窗口⬇
+      ![img](./Assets/Res/ReadmeLinks/Version_0.1.0.Update/3.png)
+  * 统一ScriptObject文件：GameConfig
+    ![img](./Assets/Res/ReadmeLinks/Version_0.1.0.Update/4.png)
+    注：EditorConfigs不会打包进对应平台
+    * 菜单目录 `Tools/AKIRA.Framework/Common/Select GameConfig` 可快速选择（如果存在）
+    * 元素操作：移除，查看，移动
+    * 代码获取方式 `GameConfig.Instance.GetConfig<T>()`
+
 **Version: 0.1.1**
 
 * AB包管理
@@ -91,4 +125,3 @@
     ![](./Assets/Res/ReadmeLinks/Version_0.1.3/1.png)
     ![](./Assets/Res/ReadmeLinks/Version_0.1.3/2.png)
   * 使用UIBuilder绘制的面板
-
