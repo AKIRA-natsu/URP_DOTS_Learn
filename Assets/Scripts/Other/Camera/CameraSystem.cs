@@ -20,7 +20,7 @@ using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
 namespace AKIRA.Behaviour.Camera {
 #if UNITY_2022_1_OR_NEWER
     #region UNITY_2022 Entity System
-    // public partial struct CameraSystem : ISystem {
+    // public partial struct CameraSystem : Unity.Entities.ISystem {
     //     [BurstCompile]
     //     public void OnCreate(ref SystemState state) { }
 
