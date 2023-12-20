@@ -82,15 +82,8 @@
       |   ##    |whatever##|      |  xxx   |  ooo   |
       |   ##    |        |        |  xxx   |  ooo   |
       |         |   1    |  "1"   |  true  |  Name  |
-  * SourceReferWindow
-    * 资源引用查找及替换
-    * 提供预览窗口和面板窗口
-      * 预览窗口⬇
-      ![img](./Assets/Res/ReadmeLinks/Version_0.1.0.Update/2.png)
-      * 面板窗口⬇
-      ![img](./Assets/Res/ReadmeLinks/Version_0.1.0.Update/3.png)
   * 统一ScriptObject文件：GameConfig
-    ![img](./Assets/Res/ReadmeLinks/Version_0.1.0.Update/4.png)
+    ![img](./Assets/Res/ReadmeLinks/Version_0.1.0.Update/2.png)
     注：EditorConfigs不会打包进对应平台
     * 菜单目录 `Tools/AKIRA.Framework/Common/Select GameConfig` 可快速选择（如果存在）
     * 元素操作：移除，查看，移动
@@ -120,8 +113,10 @@
 
 **Version: 0.1.3**
 
-* 引用查找和替换的面板
-  * 面板图片（分图片预览和编辑器面板）
-    ![](./Assets/Res/ReadmeLinks/Version_0.1.3/1.png)
-    ![](./Assets/Res/ReadmeLinks/Version_0.1.3/2.png)
-  * 使用UIBuilder绘制的面板
+* SourceReferWindow
+  * 资源引用查找及替换
+  * 提供预览窗口和面板窗口，可以模糊查询资源
+    * 预览窗口⬇
+    ![img](./Assets/Res/ReadmeLinks/Version_0.1.3/1.png)
+    * 面板窗口⬇
+    ![img](./Assets/Res/ReadmeLinks/Version_0.1.3/2.png)
