@@ -68,10 +68,10 @@
 **Version: 0.1.0**
 
 * 更新记录
-  * Excel2Json/Excel2Class
+  * Excel2Json/Excel2Class  
     ![img](./Assets/Res/ReadmeLinks/Version_0.1.0.Update/1.png)
-    * 默认保存路径（面板OnEnable中修改）
-      脚本路径：`scriptPath = Path.Combine(Application.dataPath, "Scripts/Data");`
+    * 默认保存路径（面板OnEnable中修改）  
+      脚本路径：`scriptPath = Path.Combine(Application.dataPath, "Scripts/Data");`  
       Json路径：`jsonPath = Path.Combine(Application.streamingAssetsPath, "Json");`
     * 读取路径可以保存，但用的Editor.SaveString，同一时间正常只对同一个项目，应该问题不大
     * excel表格式  
