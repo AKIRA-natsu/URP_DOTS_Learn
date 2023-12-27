@@ -70,10 +70,9 @@
 * 更新记录
   * Excel2Json/Excel2Class  
     ![img](./Assets/Res/ReadmeLinks/Version_0.1.0.Update/1.png)
-    * 默认保存路径（面板OnEnable中修改）  
-      脚本路径：`scriptPath = Path.Combine(Application.dataPath, "Scripts/Data");`  
-      Json路径：`jsonPath = Path.Combine(Application.streamingAssetsPath, "Json");`
-    * 读取路径可以保存，但用的Editor.SaveString，同一时间正常只对同一个项目，应该问题不大
+    * 配置文件：`GameConfig.Instance.GetConfig<ExcelDataConfig>()`  
+      内部判断路径是否正确问题，output必须是 `Resources` 文件夹或者 `StreamingAssets` 文件夹  
+      `outputs path`: 需要转换output后手动点击`Refresh`按钮去刷新，`TableCollectionContorller`会进行加密检测和通过这些路径获得输出文件
     * excel表格式  
       |  ##param  |   param1   |  param2  |  param3  |  param4  |
       | :-------: | :--------: | :------: | :------: | :------: |
@@ -89,6 +88,7 @@
     * 菜单目录 `Tools/AKIRA.Framework/Common/Select GameConfig` 可快速选择（如果存在）
     * 元素操作：移除，查看，移动
     * 代码获取方式 `GameConfig.Instance.GetConfig<T>()`
+    * 2022版本好像会报错。。（实现在2021版本上）
   * 系统加载标签 `AKIRA.Attribute.SystemLauncherAttribute(int = 0)`
     * 添加标签默认在 `GameManager` 中实例化，标签类必须继承ISystem
     * 标签参数 `significance(重要程度) = 0` ，按照值进行排序实例化

@@ -40,7 +40,7 @@ internal static class EditorPrefsExtend {
 
     public static T EditorGetEnum<T>(this string key, T @default = default) where T : Enum {
         var value = key.EditorGetString(@default?.ToString());
-        return Enum.Parse<T>(value);
+        return (T)Enum.Parse(typeof(T), value);
     }
 
     public static bool EditorExist(this string key) {
@@ -51,7 +51,7 @@ internal static class EditorPrefsExtend {
         EditorPrefs.DeleteKey(key);
     }
 
-    [Obsolete("慎用")]
+    [Obsolete("慎用，会全部删除")]
     public static void EditorDelete() {
         EditorPrefs.DeleteAll();
     }

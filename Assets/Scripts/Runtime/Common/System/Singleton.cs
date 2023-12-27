@@ -58,16 +58,16 @@ namespace AKIRA.Manager {
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        protected void CreateController<U>() where U : IController {
-            IController controller = default;
+        protected async Task<U> CreateController<U>(string dll = GameData.DLL.Default) where U : IController {
             if (typeof(U).IsSubclassOf(typeof(UnityEngine.Component))) {
                 $"在 {this} 中尝试创建 Controller {typeof(U)}".Error();
-                return;
+                return default;
             } else {
-                controller = typeof(U).CreateInstance<U>();
+                var controller = typeof(U).CreateInstance<U>(dll);
+                await controller.Initialize();
+                controllers.Add(controller);
+                return controller;
             }
-            controller.Initialize();
-            controllers.Add(controller);
         }
 
         /// <summary>

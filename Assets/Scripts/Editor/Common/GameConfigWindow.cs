@@ -95,9 +95,11 @@ namespace AKIRA.Editor {
             // EditorGUILayout.LabelField($"{name}({property.arraySize})");
             extends[index] = EditorGUILayout.Foldout(extends[index], $"{name}({property.arraySize})");
 
-            selectionIndexs[index] = EditorGUILayout.Popup(selectionIndexs[index], selectionNames.ToArray(), GUILayout.Width(100f));
-            if (GUILayout.Button("+", GUILayout.Width(30f)) && selectionIndexs[index] != 0)
-                CreateConfig(property, selections[selectionIndexs[index] - 1]);
+            if (!Application.isPlaying) {
+                selectionIndexs[index] = EditorGUILayout.Popup(selectionIndexs[index], selectionNames.ToArray(), GUILayout.Width(100f));
+                if (GUILayout.Button("+", GUILayout.Width(30f)) && selectionIndexs[index] != 0)
+                    CreateConfig(property, selections[selectionIndexs[index] - 1]);
+            }
 
             EditorGUILayout.EndHorizontal();
 
@@ -107,7 +109,7 @@ namespace AKIRA.Editor {
                     var child = property.GetArrayElementAtIndex(i);
                     child.objectReferenceValue = EditorGUILayout.ObjectField(child.objectReferenceValue, typeof(ScriptableObject), false);
                     // 删除
-                    if (GUILayout.Button("-", GUILayout.Width(30f)))
+                    if (!Application.isPlaying && GUILayout.Button("-", GUILayout.Width(30f)))
                         DeleteConfig(property, i--);
                     // 查看
                     if (editor != null && editor.target.GetType() == child.objectReferenceValue.GetType())
@@ -152,10 +154,7 @@ namespace AKIRA.Editor {
             ScriptableObject config = ScriptableObject.CreateInstance(type);
             config.name = type.Name;
 
-            if (!Application.isPlaying)
-                AssetDatabase.AddObjectToAsset(config, target);
-            Undo.RegisterCreatedObjectUndo(config, "Behaviour Tree(Create node)");
-
+            AssetDatabase.AddObjectToAsset(config, target);
             AssetDatabase.SaveAssets();
             property.GetArrayElementAtIndex(property.arraySize - 1).objectReferenceValue = config;
             return config;

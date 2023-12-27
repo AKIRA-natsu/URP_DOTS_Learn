@@ -3,13 +3,12 @@ using UnityEditor;
 using System.IO;
 using AKIRA;
 
+/// <summary>
+/// excel 2 json/byte & class
+/// </summary>
 public class ExcelDataUtil : EditorWindow {
-    // 路径
-    private string loadPath;
-    // 更改路劲保存
-    private const string LoadKey = "ExcelLoadPath";
-    private string scriptPath;
-    private string jsonPath;
+    private ExcelDataConfig config;
+    private Editor configEditor;
 
     private Vector2 view;
 
@@ -25,43 +24,64 @@ public class ExcelDataUtil : EditorWindow {
     }
 
     private void OnEnable() {
-        loadPath = LoadKey.EditorGetString();
-        if (string.IsNullOrEmpty(loadPath))
-            loadPath = Application.dataPath;
-        
-        scriptPath = Path.Combine(Application.dataPath, "Scripts/Data");
-        jsonPath = Path.Combine(Application.streamingAssetsPath, "Json");
+        config = GameConfig.Instance.GetConfig<ExcelDataConfig>();
+
+        if (config == null) {
+            "ExcelDataConfig is null".Error();
+            return;
+        }
+
+        configEditor = Editor.CreateEditor(config);
         GetFiles();
     }
 
     private void OnGUI() {
-        EditorGUILayout.BeginHorizontal("frameBox");
-        loadPath = EditorGUILayout.TextField("LoadPath", loadPath);
-        if (GUILayout.Button("Save Path", GUILayout.Width(100f))) {
-            LoadKey.EditorSave(loadPath);
-            GetFiles();
+        if (config == null)
+            return;
+
+        EditorGUI.BeginDisabledGroup(true);
+        configEditor.OnInspectorGUI();
+        EditorGUI.EndDisabledGroup();
+        
+        if (!config.IsValid(out string message)) {
+            EditorGUILayout.HelpBox(message, MessageType.Error);
+            return;
         }
-        if (GUILayout.Button("Fresh Excels", GUILayout.Width(100f))) {
+
+        EditorGUILayout.BeginVertical("frameBox");
+        EditorGUILayout.BeginHorizontal("box");
+        if (GUILayout.Button("Refresh"))
             GetFiles();
+        
+        if (files == null || files.Length == 0) {
+            GUIUtility.ExitGUI();
+            return;
         }
+        if (GUILayout.Button("Create All Scripts"))
+            CreateAllScripts();
+        if (GUILayout.Button("Create All Outputs"))
+            CreateAllOutputs();
+
+        
         EditorGUILayout.EndHorizontal();
 
         view = EditorGUILayout.BeginScrollView(view);
-        EditorGUILayout.BeginVertical("frameBox");
-
         foreach (var file in files) {
             EditorGUILayout.BeginHorizontal("box");
             DrawFileElement(file);
             EditorGUILayout.EndHorizontal();
         }
+        EditorGUILayout.EndScrollView();
 
         EditorGUILayout.EndVertical();
-        EditorGUILayout.EndScrollView();
     }
 
     private void GetFiles() {
-        files = Directory.GetFiles(loadPath, "*.xls");
-        $"ExcelDataUtil: 获得{files.Length}文件".Log(GameData.Log.Editor);
+        if (string.IsNullOrEmpty(config.excelPath))
+            return;
+        files = Directory.GetFiles(config.excelPath, "*.xls");
+        config.UpdatePaths();
+        $"ExcelDataUtil: 获得{files.Length}文件, 已转化文件数量 {config.paths.Length}".Log(GameData.Log.Editor);
     }
 
     private void DrawFileElement(string path) {
@@ -75,20 +95,76 @@ public class ExcelDataUtil : EditorWindow {
         if (type == null) {
             if (GUILayout.Button("Create Script", GUILayout.Width(300))) {
                 // 生成
-                var file = Path.Combine(scriptPath, $"{scriptName}.cs");
+                var file = Path.Combine(config.scriptPath, $"{scriptName}.cs");
                 ExcelHelp.CreateExcelDataScript(path, file);
+                AssetDatabase.Refresh();
             }
         } else {
             if (GUILayout.Button("Update Script", GUILayout.Width(150))) {
                 // 覆盖
                 var file = scriptName.GetScriptLocation();
                 ExcelHelp.CreateExcelDataScript(path, file);
+                AssetDatabase.Refresh();
             }
 
-            if (GUILayout.Button("Update Json", GUILayout.Width(150))) {
-                var json = Path.Combine(jsonPath, $"{scriptName}.json");
-                ExcelHelp.CreateExcelJsonScript(path, json);
+            if (GUILayout.Button("Update Output", GUILayout.Width(150))) {
+                if (config.encrypt) {
+                    var @byte = Path.Combine(config.output, $"{scriptName}.bytes");
+                    ExcelHelp.CreateExcelByteScript(path, @byte, config.encryptKey, scriptName);
+                } else {
+                    var json = Path.Combine(config.output, $"{scriptName}.json");
+                    ExcelHelp.CreateExcelJsonScript(path, json);
+                }
+                AssetDatabase.Refresh();
             }
         }
+    }
+
+    /// <summary>
+    /// 更新创建所有类
+    /// </summary>
+    private void CreateAllScripts() {
+        for (int i = 0; i < files.Length; i++) {
+            var file = files[i];
+            var name = Path.GetFileNameWithoutExtension(file);
+            var scriptName = name.Split("（")[0];
+
+            var cancel = EditorUtility.DisplayCancelableProgressBar("Generator scripts", $"generator script {scriptName}.cs", (float)i / files.Length);
+            if (cancel)
+                break;   
+            
+            var type = scriptName.GetConfigTypeByAssembley();
+            string scriptPath = type == null ? Path.Combine(config.scriptPath, $"{scriptName}.cs") : scriptName.GetScriptLocation();
+            ExcelHelp.CreateExcelDataScript(file, scriptPath);
+        }
+
+        EditorUtility.ClearProgressBar();
+        AssetDatabase.Refresh();
+    }
+
+    /// <summary>
+    /// 更新输出文件
+    /// </summary>
+    private void CreateAllOutputs() {
+        for (int i = 0; i < files.Length; i++) {
+            var file = files[i];
+            var name = Path.GetFileNameWithoutExtension(file);
+            var outputName = name.Split("（")[0];
+
+            var cancel = EditorUtility.DisplayCancelableProgressBar("Generator output files", $"generator file {outputName}.json", (float)i / files.Length);
+            if (cancel)
+                break;
+
+            if (config.encrypt) {
+                var @byte = Path.Combine(config.output, $"{outputName}.bytes");
+                ExcelHelp.CreateExcelByteScript(file, @byte, config.encryptKey, outputName);
+            } else {
+                var jsonPath = Path.Combine(config.output.GetFullAssetsPath(), $"{outputName}.json");
+                ExcelHelp.CreateExcelJsonScript(file, jsonPath);
+            }
+        }
+
+        EditorUtility.ClearProgressBar();
+        AssetDatabase.Refresh();
     }
 }

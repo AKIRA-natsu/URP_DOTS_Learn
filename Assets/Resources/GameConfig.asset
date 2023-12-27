@@ -102,6 +102,24 @@ MonoBehaviour:
   paths:
   - Android/Android
   - Android/mainbundle
+--- !u!114 &-745551132546285038
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11b826e5e51b2f544b08ad8f2f17b31f, type: 3}
+  m_Name: ExcelDataConfig
+  m_EditorClassIdentifier: 
+  excelPath: 
+  scriptPath: 
+  output: 
+  encrypt: 0
+  encryptKey: 
+  paths: []
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -116,11 +134,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   editorConfigs:
   - {fileID: -4453349924037599099}
-  - {fileID: 0}
   runtimeConfigs:
   - {fileID: 687445742868141366}
   - {fileID: -3596378399308982382}
   - {fileID: -8007395691727417672}
+  - {fileID: -745551132546285038}
 --- !u!114 &687445742868141366
 MonoBehaviour:
   m_ObjectHideFlags: 0

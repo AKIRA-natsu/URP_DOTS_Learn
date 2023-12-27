@@ -4,8 +4,9 @@ using System.IO;
 using System.Data;
 using ExcelDataReader;
 using System.Linq;
-using UnityEditor;
 using Newtonsoft.Json;
+using System.Runtime.Serialization.Formatters.Binary;
+using AKIRA.Security;
 
 // ------------------------------------
 // ##param     param1 param2 param3
@@ -100,7 +101,8 @@ public partial class {scriptType} {{";
                     var @param = sheet.Rows[i][j].ToString();
                     if (string.IsNullOrEmpty(@param))
                         break;
-                    @params.Add(@param);
+                    // replace xx-oo to xx_oo
+                    @params.Add(@param.Replace("-", "_"));
                 }
             }
 
@@ -137,7 +139,6 @@ public partial class {scriptType} {{";
 ";
 
         File.WriteAllText(cs, content);
-        AssetDatabase.Refresh();
 #endregion
     }
 
@@ -148,19 +149,53 @@ public partial class {scriptType} {{";
     /// <param name="json"></param>
     /// <param name="sheetIndex"></param>
     public static void CreateExcelJsonScript(string excel, string json, int sheetIndex = 0) {
+        var text = GetExcelJsonData(excel, json, sheetIndex);
+        if (string.IsNullOrEmpty(text))
+            return;
+        File.WriteAllText(json, text);
+    }
+
+    /// <summary>
+    /// 创建Bytes二进制文件 
+    /// </summary>
+    /// <param name="excel"></param>
+    /// <param name="byte"></param>
+    /// <param name="key"></param>
+    /// <param name="lv"></param>
+    /// <param name="sheetIndex"></param>
+    public static void CreateExcelByteScript(string excel, string @byte, string key, string lv, int sheetIndex = 0) {
+        var text = GetExcelJsonData(excel, @byte, sheetIndex);
+        if (string.IsNullOrEmpty(text))
+            return;
+        using var memory = new MemoryStream();
+        var formatter = new BinaryFormatter();
+        formatter.Serialize(memory, text);
+        var bytes = SecurityTool.Encrypt(memory.ToArray(), key, lv);
+        using var file = new FileStream(@byte, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+        file.Write(bytes);
+    }
+
+    /// <summary>
+    /// 获得Json文件
+    /// </summary>
+    /// <param name="excel"></param>
+    /// <param name="json"></param>
+    /// <param name="sheetIndex"></param>
+    /// <returns></returns>
+    public static string GetExcelJsonData(string excel, string json, int sheetIndex = 0) {
         var table = excel.ReadExcel();
         DataTable sheet;
         try {
             sheet = table[sheetIndex];
         } catch {
             $"{excel} 读取错误".Error();
-            return;
+            return default;
         }
 
         // 没有数据
         if (sheet.Rows.Count <= 1) {
             $"{excel} 不存在数据".Error();
-            return;
+            return default;
         }
 
         // 判断是否存在文件夹
@@ -186,9 +221,8 @@ public partial class {scriptType} {{";
             instances.Add(data);
         }
 
-        File.WriteAllText(json, JsonConvert.SerializeObject(instances, Formatting.Indented));
-        AssetDatabase.Refresh();
 #endregion
+        return JsonConvert.SerializeObject(instances, Formatting.Indented);
     }
 
     // /// <summary>

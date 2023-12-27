@@ -49,17 +49,18 @@ namespace AKIRA.Manager {
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        protected void CreateController<U>() where U : IController {
+        protected async Task<U> CreateController<U>(string dll = GameData.DLL.Default) where U : IController {
             IController controller = default;
             if (typeof(U).IsSubclassOf(typeof(Component))) {
                 var component = new GameObject($"[{typeof(U).Name}]").AddComponent(typeof(U));
                 component.SetParent(this);
                 controller = component as IController;
             } else {
-                controller = typeof(U).CreateInstance<U>();
+                controller = typeof(U).CreateInstance<U>(dll);
             }
-            controller.Initialize();
+            await controller.Initialize();
             controllers.Add(controller);
+            return (U)controller;
         }
 
         /// <summary>

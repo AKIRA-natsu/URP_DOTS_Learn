@@ -8,7 +8,6 @@ using AKIRA.Manager;
 using System.Linq;
 using System.Threading.Tasks;
 
-
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #if UNITY_ANDROID || UNITY_IOS
@@ -33,7 +32,7 @@ namespace AKIRA.Behaviour.Camera {
     /// <para>跟随目标需要挂载CameraFollowAuthoring脚本</para>
     /// </summary>
     [UpdateInGroup(typeof(LateSimulationSystemGroup))]
-    public partial struct CameraFollowSystem : ISystem {
+    public partial struct CameraFollowSystem : Unity.Entities.ISystem {
         // 跟随实体
         private Entity target;
 
