@@ -70,6 +70,9 @@ public class ExcelDataConfig : ScriptableObject {
     /// Editor 用
     /// </summary>
     public void UpdatePaths() {
+        // 修复空报错
+        if (string.IsNullOrEmpty(output))
+            return;
         string extense = encrypt ? "*.bytes" : "*.json";
         var files = Directory.GetFiles(output, extense);
         paths = new string[files.Length];
