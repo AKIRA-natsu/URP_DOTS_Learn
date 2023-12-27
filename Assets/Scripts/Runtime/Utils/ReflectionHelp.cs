@@ -42,6 +42,17 @@ public static class ReflectionHelp {
     }
 
     /// <summary>
+    /// 不同程序集，查找含 <see cref="interfaceName" /> 接口的类型集合
+    /// </summary>
+    /// <param name="interfaceName"></param>
+    /// <param name="dllName"></param>
+    /// <returns></returns>
+    public static Type[] GetConfigTypeByInterface(this string interfaceName, string dllName = GameData.DLL.Default) {
+        var types = GetAssembly(dllName).GetTypes();
+        return types.Where(type => type.GetInterface(interfaceName) != null)?.ToArray();
+    }
+
+    /// <summary>
     /// 生成实例 object
     /// </summary>
     /// <param name="type"></param>

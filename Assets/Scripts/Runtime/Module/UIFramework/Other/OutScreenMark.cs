@@ -255,7 +255,7 @@ public static class OutScreenMark {
     public static void UILookAt(Transform ctrlObj, Vector3 dir, Vector3 lookAxis) {
         Quaternion quaternion = Quaternion.identity;
         quaternion.SetFromToRotation(lookAxis, dir);
-        ctrlObj.eulerAngles = Vector3.Lerp(ctrlObj.eulerAngles, new Vector3(quaternion.eulerAngles.x, 0, quaternion.eulerAngles.z), Time.deltaTime * 10f);
-        // ctrlObj.eulerAngles = new Vector3(quaternion.eulerAngles.x, 0, quaternion.eulerAngles.z);
+        // ctrlObj.eulerAngles = Vector3.Lerp(ctrlObj.eulerAngles, new Vector3(quaternion.eulerAngles.x, 0, quaternion.eulerAngles.z), Time.deltaTime * 10f);
+        ctrlObj.eulerAngles = new Vector3(quaternion.eulerAngles.x, 0, quaternion.eulerAngles.z);
     }
 }
