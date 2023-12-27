@@ -7,21 +7,32 @@ public class ExcelDataConfigInspector : Editor {
 
     public override void OnInspectorGUI() {
         base.OnInspectorGUI();
-        
-        ExcelDataConfig config = target as ExcelDataConfig;
 
+        var config = target as ExcelDataConfig;
+        
         EditorGUILayout.BeginVertical("framebox");
-        DrawFolderField("Excel", ref config.excelPath);
-        DrawFolderField("Script", ref config.scriptPath);
-        DrawFolderField("Output", ref config.output);
+        DrawFolderField("Excel", serializedObject.FindProperty("excelPath"));
+        DrawFolderField("Script", serializedObject.FindProperty("scriptPath"));
+        DrawFolderField("Output", serializedObject.FindProperty("output"));
 
         EditorGUILayout.Space();
         EditorGUILayout.HelpBox("With encrypt will output bytes, else output json", MessageType.Info);
-        config.encrypt = EditorGUILayout.Toggle("Encrypt", config.encrypt);
-        if (config.encrypt) {
-            config.encryptKey = EditorGUILayout.TextField("Encrypt Key", config.encryptKey);
-            if (string.IsNullOrEmpty(config.encryptKey))
-                config.encryptKey = Application.productName;
+
+        EditorGUI.BeginChangeCheck();        
+        var encryptProperty = serializedObject.FindProperty("encrypt");
+        EditorGUILayout.PropertyField(encryptProperty);
+        if (EditorGUI.EndChangeCheck())
+            serializedObject.ApplyModifiedProperties();
+
+        if (encryptProperty.boolValue) {
+            EditorGUI.BeginChangeCheck();
+            var keyProperty = serializedObject.FindProperty("encryptKey");
+            EditorGUILayout.PropertyField(keyProperty);
+            if (EditorGUI.EndChangeCheck()) {
+                if (string.IsNullOrEmpty(keyProperty.stringValue))
+                    keyProperty.stringValue = Application.productName;
+                serializedObject.ApplyModifiedProperties();
+            }
         }
 
         EditorGUI.BeginDisabledGroup(true);
@@ -35,16 +46,20 @@ public class ExcelDataConfigInspector : Editor {
         EditorGUILayout.EndVertical();
     }
 
-    private void DrawFolderField(string name, ref string value) {
+    private void DrawFolderField(string name, SerializedProperty property) {
         EditorGUILayout.BeginHorizontal();
         EditorGUILayout.LabelField(name, GUILayout.Width(50f));
+        var value = property.stringValue;
         EditorGUILayout.TextField(value);
         if (GUILayout.Button("Choose", GUILayout.Width(70f))) {
-            value = EditorUtility.OpenFolderPanel("Choose Excel Path", string.IsNullOrEmpty(value) ? Application.dataPath : value, "");
-            if (value.Contains(Application.dataPath))
-                value = value.GetRelativeAssetsPath();
-            GUIUtility.ExitGUI();
-            AssetDatabase.Refresh();
+            // 来源: https://forum.unity.com/threads/editorutility-openfilepanel-causes-error-log-for-endlayoutgroup.1389873/
+            EditorApplication.delayCall += () => {
+                value = EditorUtility.OpenFolderPanel($"Choose {name} Path", string.IsNullOrEmpty(value) ? Application.dataPath : value, "");
+                if (value.Contains(Application.dataPath))
+                    value = value.GetRelativeAssetsPath();
+                property.stringValue = value;
+                serializedObject.ApplyModifiedProperties();
+            };
         }
         EditorGUILayout.EndHorizontal();
     }
