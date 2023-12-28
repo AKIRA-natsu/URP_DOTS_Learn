@@ -11,7 +11,7 @@ namespace AKIRA.Manager {
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public abstract class Singleton<T> : ISystem where T : class {
-        private static T _instance = null;
+        private static T instance = null;
 
         // 多线程安全机制
         private static readonly object locker = new object();
@@ -20,7 +20,7 @@ namespace AKIRA.Manager {
             get {
                 // 线程锁
                 lock (locker) {
-                    if (null == _instance) {
+                    if (null == instance) {
                         // 反射获取实例
                         var octors = typeof(T).GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic) ;
     
@@ -34,9 +34,9 @@ namespace AKIRA.Manager {
                         }
     
                         // 实例化
-                        _instance = octor.Invoke(null) as T;
+                        instance = octor.Invoke(null) as T;
                     }
-                    return _instance;
+                    return instance;
                 }
             }
         }

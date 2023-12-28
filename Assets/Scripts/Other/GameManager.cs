@@ -59,6 +59,7 @@ namespace AKIRA.Manager {
                 }
             }
 
+            World.Init();
             EventSystem.Instance.TriggerEvent(GameData.Event.OnInitSystemCompleted);
 
             GameObject.Destroy(this.gameObject);
