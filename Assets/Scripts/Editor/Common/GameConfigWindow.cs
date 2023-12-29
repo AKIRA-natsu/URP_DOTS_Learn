@@ -71,7 +71,6 @@ namespace AKIRA.Editor {
             
             DrawList(0, editorProperty, target => MoveToOtherProperty(runtimeProperty, target));
             DrawList(1, runtimeProperty, target => MoveToOtherProperty(editorProperty, target));
-            serializedObject.ApplyModifiedProperties();
             
             if (editor == null)
                 return;
@@ -92,13 +91,12 @@ namespace AKIRA.Editor {
             EditorGUILayout.BeginHorizontal("box");
             var name = property.name;
             name = name.Replace(name.First().ToString(), name.First().ToString().ToUpper());
-            // EditorGUILayout.LabelField($"{name}({property.arraySize})");
             extends[index] = EditorGUILayout.Foldout(extends[index], $"{name}({property.arraySize})");
 
             if (!Application.isPlaying) {
                 selectionIndexs[index] = EditorGUILayout.Popup(selectionIndexs[index], selectionNames.ToArray(), GUILayout.Width(100f));
                 if (GUILayout.Button("+", GUILayout.Width(30f)) && selectionIndexs[index] != 0)
-                    CreateConfig(property, selections[selectionIndexs[index] - 1]);
+                    EditorApplication.delayCall += () => CreateConfig(property, selections[selectionIndexs[index] - 1]);
             }
 
             EditorGUILayout.EndHorizontal();
@@ -109,8 +107,11 @@ namespace AKIRA.Editor {
                     var child = property.GetArrayElementAtIndex(i);
                     child.objectReferenceValue = EditorGUILayout.ObjectField(child.objectReferenceValue, typeof(ScriptableObject), false);
                     // 删除
-                    if (!Application.isPlaying && GUILayout.Button("-", GUILayout.Width(30f)))
-                        DeleteConfig(property, i--);
+                    if (!Application.isPlaying && GUILayout.Button("-", GUILayout.Width(30f))) {
+                        // 延迟删除，保存删除的键值
+                        var deleteIndex = i;
+                        EditorApplication.delayCall += () => DeleteConfig(property, deleteIndex);
+                    }
                     // 查看
                     if (editor != null && editor.target.GetType() == child.objectReferenceValue.GetType())
                         GUI.color = System.Drawing.Color.GreenYellow.ToUnityColor();
@@ -121,6 +122,7 @@ namespace AKIRA.Editor {
                     if (GUILayout.Button("->", GUILayout.Width(30f))) {
                         onMoveToOtherProperty.Invoke(child.objectReferenceValue);
                         property.DeleteArrayElementAtIndex(i--);
+                        serializedObject.ApplyModifiedProperties();
                     }
                     EditorGUILayout.EndHorizontal();
                 }
@@ -135,29 +137,31 @@ namespace AKIRA.Editor {
         /// <param name="property"></param>
         /// <param name="type"></param>
         /// <returns></returns>
-        private ScriptableObject CreateConfig(SerializedProperty property, Type type) {
+        private void CreateConfig(SerializedProperty property, Type type) {
             for (int i = 0; i < editorProperty.arraySize; i++) {
                 if (editorProperty.GetArrayElementAtIndex(i).objectReferenceValue.GetType().Equals(type)) {
                     $"已经在EditorConfig中加入了Config {type}".Log(GameData.Log.Warn);
-                    return default;
+                    return;
                 }
             }
             for (int i = 0; i < runtimeProperty.arraySize; i++) {
                 if (runtimeProperty.GetArrayElementAtIndex(i).objectReferenceValue.GetType().Equals(type)) {
                     $"已经在RuntimeConfig加入了Config {type}".Log(GameData.Log.Warn);
-                    return default;
+                    return;
                 }
             }
-
-            property.InsertArrayElementAtIndex(property.arraySize);
 
             ScriptableObject config = ScriptableObject.CreateInstance(type);
             config.name = type.Name;
 
             AssetDatabase.AddObjectToAsset(config, target);
-            AssetDatabase.SaveAssets();
+            // 顺序问题，如果addtoasset放在apply后，objectreferencevalue一直赋的空的
+            // https://discussions.unity.com/t/help-with-serializedproperty-objectreferencevalue/233724
+            property.InsertArrayElementAtIndex(property.arraySize);
             property.GetArrayElementAtIndex(property.arraySize - 1).objectReferenceValue = config;
-            return config;
+            serializedObject.ApplyModifiedProperties();
+
+            AssetDatabase.SaveAssets();
         }
 
         /// <summary>
@@ -170,6 +174,7 @@ namespace AKIRA.Editor {
             property.DeleteArrayElementAtIndex(index);
             if (editor != null && editor.target.GetType() == config.GetType())
                 editor = null;
+            serializedObject.ApplyModifiedProperties();
 
             AssetDatabase.RemoveObjectFromAsset(config);
             AssetDatabase.SaveAssets();
