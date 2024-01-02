@@ -127,7 +127,7 @@ public class ExcelDataUtil : EditorWindow {
         for (int i = 0; i < files.Length; i++) {
             var file = files[i];
             var name = Path.GetFileNameWithoutExtension(file);
-            var scriptName = name.Split("（")[0];
+            var scriptName = $"{name.Split("（")[0]}Data";
 
             var cancel = EditorUtility.DisplayCancelableProgressBar("Generator scripts", $"generator script {scriptName}.cs", (float)i / files.Length);
             if (cancel)
@@ -149,18 +149,18 @@ public class ExcelDataUtil : EditorWindow {
         for (int i = 0; i < files.Length; i++) {
             var file = files[i];
             var name = Path.GetFileNameWithoutExtension(file);
-            var outputName = name.Split("（")[0];
+            var outputName = $"{name.Split("（")[0]}Data";
 
-            var cancel = EditorUtility.DisplayCancelableProgressBar("Generator output files", $"generator file {outputName}.json", (float)i / files.Length);
+            var cancel = EditorUtility.DisplayCancelableProgressBar("Generator output files", $"generator file {outputName}", (float)i / files.Length);
             if (cancel)
                 break;
 
             if (config.encrypt) {
-                var @byte = Path.Combine(config.output, $"{outputName}.bytes");
-                ExcelHelp.CreateExcelByteScript(file, @byte, config.encryptKey, outputName);
+                var outputPath = Path.Combine(config.output, $"{outputName}.bytes");
+                ExcelHelp.CreateExcelByteScript(file, outputPath, config.encryptKey, outputName);
             } else {
-                var jsonPath = Path.Combine(config.output.GetFullAssetsPath(), $"{outputName}.json");
-                ExcelHelp.CreateExcelJsonScript(file, jsonPath);
+                var outputPath = Path.Combine(config.output, $"{outputName}.json");
+                ExcelHelp.CreateExcelJsonScript(file, outputPath);
             }
         }
 
