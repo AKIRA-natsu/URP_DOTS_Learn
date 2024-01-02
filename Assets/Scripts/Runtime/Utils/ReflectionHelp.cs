@@ -90,15 +90,22 @@ public static class ReflectionHelp {
     }
 
     /// <summary>
-    /// 从整个程序集类中获得含有 <paramref name="T"/> 的类集合
+    /// <para>从整个程序集类中获得含有 <paramref name="T"/> 的类集合</para>
+    /// <para>打包后会把含名字含 Editor 的去掉</para>
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
     public static Type[] Handle<T>() {
         var fields = typeof(GameData.DLL).GetFields();
         List<Type> res = new();
-        foreach (var field in fields)
-            res.AddRange(Handle<T>(field.GetRawConstantValue().ToString()));
+        foreach (var field in fields) {
+            var dllName = field.GetRawConstantValue().ToString();
+#if !UNITY_EDITOR
+            if (dllName.ToLower().Contains("editor"))
+                continue;
+#endif
+            res.AddRange(Handle<T>(dllName));
+        }
         return res.ToArray();
     }
 
