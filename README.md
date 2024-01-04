@@ -76,12 +76,12 @@
     * excel表格式  
       |  ##param  |   param1   |  param2  |  param3  |  param4  |
       | :-------: | :--------: | :------: | :------: | :------: |
-      |  ##type  |    int    |  string  |   bool   |   Enum   |
+      |  ##type   |    int     |  string  |   bool   |   Enum   |
       | ##summary |  summary1  | summary2 | summary3 | summary4 |
-      |    ##    |    xxx    |   ooo   |   xxx   |   ooo   |
-      |    ##    | whatever## |          |   xxx   |   ooo   |
-      |    ##    |            |          |   xxx   |   ooo   |
-      |          |     1     |   "1"   |   true   |   Name   |
+      |    ##     |    xxx     |   ooo    |   xxx    |   ooo    |
+      |    ##     | whatever## |          |   xxx    |   ooo    |
+      |    ##     |            |          |   xxx    |   ooo    |
+      |           |     1      |   "1"    |   true   |   Name   |
   * 统一ScriptObject文件：GameConfig  
     ![img](./Assets/Res/ReadmeLinks/Version_0.1.0.Update/2.png)  
     注：EditorConfigs不会打包进对应平台
@@ -101,6 +101,7 @@
       * 在 `ConsoleSystem` 中去注册事件
   * 优化存档面板（操作按钮事件待补充）
     ![img](./Assets/Res/ReadmeLinks/Version_0.1.0.Update/5.png)
+  * 分支测试时可以在场景空物体添加`TempLoader`脚本，在`OnSystemInitializeCompleted`事件结束后生成对应预制体
 
 **Version: 0.1.1**
 

@@ -224,6 +224,10 @@ $@"    }}
     /// <param name="parent"></param>
     /// <param name="path"></param>
     private static void TraverseUI(Transform parent, string path) {
+        // 去掉TexturePro Sprite的影响
+        if (parent.name.Contains("[TextMeshPro/Sprite]"))
+            return;
+            
         path += $"/{parent.name}";
         if (parent.childCount != 0) {
             // 省略

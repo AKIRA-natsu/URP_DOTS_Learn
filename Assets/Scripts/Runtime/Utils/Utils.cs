@@ -7,7 +7,7 @@ using UnityEngine.EventSystems;
 using UnityEditor;
 using AKIRA.UIFramework;
 
-public static class Extend {
+public static class Utils {
     #region GameObject
     /// <summary>
     /// GameObject Dont Destory
