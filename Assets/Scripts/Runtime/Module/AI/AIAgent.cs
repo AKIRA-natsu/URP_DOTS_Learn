@@ -55,7 +55,6 @@ namespace AKIRA.Behaviour.AI {
         // unityengine ai agent
         protected NavMeshAgent agent { get; private set; }
         // behaviour tree
-        [SerializeField]
         public BehaviourTree tree;
 
         /// <summary>

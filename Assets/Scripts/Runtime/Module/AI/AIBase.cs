@@ -1,3 +1,4 @@
+using AKIRA.Behaviour.Aniamtion;
 using UnityEngine;
 
 namespace AKIRA.Behaviour.AI {
@@ -5,17 +6,17 @@ namespace AKIRA.Behaviour.AI {
     /// 基类
     /// </summary>
     [SelectionBase]
-    public abstract class AIBase : MonoBehaviour, IUpdateCallback, ILinkAnima {
+    public abstract class AIBase : MonoBehaviour, IUpdateCallback {
         // parameters
-        private IAnima ianima;
+        private AnimationController ianima;
         /// <summary>
         /// 动画
         /// </summary>
         /// <value></value>
-        public IAnima Animation {
+        public AnimationController Animation {
             get {
                 if (ianima == null)
-                    ianima = this.GetComponentInChildren<IAnima>();
+                    ianima = this.GetComponentInChildren<AnimationController>();
                 return ianima;
             }
         }
