@@ -9,7 +9,7 @@ using AKIRA;
 /// RectTransform 扩展更新UI组件
 /// </summary>
 [CustomEditor(typeof(RectTransform))]
-public class RectTransformExtendInspector : DecoratorEditor {
+public partial class RectTransformExtendInspector : DecoratorEditor {
     public RectTransformExtendInspector(): base("RectTransformEditor"){}
 
     public override void OnInspectorGUI() {
@@ -23,6 +23,8 @@ public class RectTransformExtendInspector : DecoratorEditor {
             if (Application.isPlaying) {
                 DrawActiveBtn(UIManager.Instance.Get(panelType));
                 DrawMethodBtns(panelType, UIManager.Instance.Get(panelType) ?? null);
+            } else {
+                DrawAnimationPop();
             }
         }
         #endregion
@@ -37,6 +39,8 @@ public class RectTransformExtendInspector : DecoratorEditor {
                 var componentProp = GetComponentPropObject(FindComponentParentPanel(target as RectTransform), componentType);
                 DrawActiveBtn(componentProp);
                 DrawMethodBtns(componentType, componentProp);
+            } else {
+                DrawAnimationPop();
             }
         }
         #endregion
@@ -134,5 +138,41 @@ public class RectTransformExtendInspector : DecoratorEditor {
                 info.Invoke(target, null);
             }
         }
+    }
+}
+
+public partial class RectTransformExtendInspector {
+    private string[] names;
+    private Type[] types;
+    private int selected = 0;
+    private GUIStyle style;
+
+    private void DrawAnimationPop() {
+        var rect = target as RectTransform;
+        var animation = rect.GetComponent(typeof(IUIAnimation));
+        
+        style ??= new GUIStyle {
+                richText = true
+            };
+
+        EditorGUILayout.BeginHorizontal();
+        if (animation == null) {
+            if (types == null) {
+                types = typeof(IUIAnimation).Name.GetConfigTypeByInterface();
+                names = new string[types.Length];
+                for (int i = 0; i < types.Length; i++)
+                    names[i] = types[i].Name;
+            }
+            selected = EditorGUILayout.Popup(selected, names);
+            if (GUILayout.Button("Add", GUILayout.Width(70f))) {
+                rect.gameObject.AddComponent(types[selected]);
+            }
+        } else {
+            EditorGUILayout.LabelField($"<b>Animed: {animation}</b>".Colorful(Color.white), style);
+            if (GUILayout.Button("Remove", GUILayout.Width(70f))) {
+                GameObject.DestroyImmediate(animation, true);
+            }
+        }
+        EditorGUILayout.EndHorizontal();
     }
 }

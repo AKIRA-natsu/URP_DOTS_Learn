@@ -44,6 +44,17 @@ public static class EditorExtend {
     }
 
     /// <summary>
+    /// 获得详细路径
+    /// </summary>
+    /// <param name="path">
+    ///     例：Assets/Res/Textures/Test.png => C://Demo/Assets/Res/Textures/Test.png
+    /// </param>
+    /// <returns></returns>
+    public static string GetFullAssetsPath(this string path) {
+        return Path.Combine(Application.dataPath, path.Replace("Assets/", ""));
+    }
+
+    /// <summary>
     /// 清空控制台
     /// </summary>
     public static void ClearConsole() {

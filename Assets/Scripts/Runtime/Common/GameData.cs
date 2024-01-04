@@ -21,27 +21,6 @@ namespace AKIRA {
         }
         #endregion
 
-        #region 路径
-        public class Path {
-            /// <summary>
-            /// 日志配置文件
-            /// </summary>
-            public const string LogConfig = "Configs/LogConfig";
-            /// <summary>
-            /// 模块下载配置
-            /// </summary>
-            public const string ModuleDownloadConfig = "Configs/ModuleDownloadConfig";
-            /// <summary>
-            /// UI配置
-            /// </summary>
-            public const string UIConfig = "Configs/UIRuleConfig";
-            /// <summary>
-            /// ab包配置
-            /// </summary>
-            public const string AssetBundleConfig = "Configs/AssetBundleConfig";
-        }
-        #endregion
-
         #region 日志
         public class Log {
             /// <summary>
@@ -65,10 +44,6 @@ namespace AKIRA {
             /// </summary>
             public const string Editor = "Editor";
             /// <summary>
-            /// 游戏状态
-            /// </summary>
-            public const string GameState = "GameState";
-            /// <summary>
             /// 事件
             /// </summary>
             public const string Event = "Event";
@@ -91,7 +66,7 @@ namespace AKIRA {
             /// <summary>
             /// 作弊
             /// </summary>
-            public const string Cheat = "Cheat";
+            public const string Console = "Console";
             /// <summary>
             /// 测试
             /// </summary>
@@ -163,6 +138,10 @@ namespace AKIRA {
             /// 指引完成
             /// </summary>
             public const string OnGuidenceCompleted = "OnGuidenceCompleted";
+            /// <summary>
+            /// 命令行指令
+            /// </summary>
+            public const string OnConsoleCommand = "OnConsoleCommand";
         }
         #endregion
 

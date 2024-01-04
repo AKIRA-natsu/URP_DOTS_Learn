@@ -175,7 +175,7 @@ $@"    }}
     internal static StringBuilder LinkControlContent(Transform _transform) {
         if (nodes.Count != 0) nodes.Clear();
         if (btns.Count != 0) btns.Clear();
-        if (rule == null) rule = GameData.Path.UIConfig.Load<UIRuleConfig>();
+        if (rule == null) rule = GameConfig.Instance.GetConfig<UIRuleConfig>();
         TraverseUI(_transform.transform, "");
         StringBuilder content = new StringBuilder();
         // 最后一个是transform根节点
@@ -184,23 +184,24 @@ $@"    }}
             // 删去路径根节点  /_transform.name/
             node.path = node.path.Remove(0, _transform.name.Length + 2);
             var componentPropType = $"{node.name}Component".GetConfigTypeByAssembley();
+            var paramName = node.name.Replace(" ", "");
             if (componentPropType != null) {
                 if (rule.CheckMatchableControl(node.name)) {
-                    content.Append($"        [UIControl(\"{node.path}\", true)]\n        protected {componentPropType} {node.name};\n");
+                    content.Append($"        [UIControl(\"{node.path}\", true)]\n        protected {componentPropType} {paramName};\n");
                 } else {
-                    content.Append($"        [UIControl(\"{node.path}\")]\n        protected {componentPropType} {node.name};\n");
+                    content.Append($"        [UIControl(\"{node.path}\")]\n        protected {componentPropType} {paramName};\n");
                 }
                 continue;
             }
             if (rule.TryGetControlName(node.name, out string controlName)) {
                 if (rule.CheckMatchableControl(node.name)) {
-                    content.Append($"        [UIControl(\"{node.path}\", true)]\n        protected {controlName} {node.name};\n");
+                    content.Append($"        [UIControl(\"{node.path}\", true)]\n        protected {controlName} {paramName};\n");
                 } else {
-                    content.Append($"        [UIControl(\"{node.path}\")]\n        protected {controlName} {node.name};\n");
+                    content.Append($"        [UIControl(\"{node.path}\")]\n        protected {controlName} {paramName};\n");
                 }
                 if (controlName.Equals("Button"))
                     // btns.Add(node.path.Replace('/', '_').Replace("@", ""));
-                    btns.Add(node.name);
+                    btns.Add(paramName);
             }
         }
         return content;
@@ -223,6 +224,10 @@ $@"    }}
     /// <param name="parent"></param>
     /// <param name="path"></param>
     private static void TraverseUI(Transform parent, string path) {
+        // 去掉TexturePro Sprite的影响
+        if (parent.name.Contains("[TextMeshPro/Sprite]"))
+            return;
+            
         path += $"/{parent.name}";
         if (parent.childCount != 0) {
             // 省略

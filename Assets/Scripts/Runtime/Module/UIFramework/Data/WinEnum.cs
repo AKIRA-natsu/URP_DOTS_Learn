@@ -42,7 +42,7 @@ namespace AKIRA.UIFramework {
         /// <summary>
         /// 作弊指令界面
         /// </summary>
-        Cheat,
+        Console,
         /// <summary>
         /// 测试
         /// </summary>

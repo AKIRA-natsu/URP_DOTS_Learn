@@ -8,7 +8,7 @@ namespace AKIRA.UIFramework {
     /// <para>UI 基类</para>
     /// <para>拿取获得的基类</para>
     /// </summary>
-    public abstract class UIComponent : UIBase {
+    public abstract partial class UIComponent : UIBase {
         public GameObject gameObject { get; protected set; }
         public Transform transform { get; protected set; }
         // 优化UI页面的显示与隐藏
@@ -44,7 +44,11 @@ namespace AKIRA.UIFramework {
             BindFields();
 
             group = this.gameObject.AddComponent<CanvasGroup>();
-            Hide();
+            animation = this.transform.GetComponent<IUIAnimation>();
+            animation?.OnInit(group);
+            
+            ActiveCanvasGroup(false);
+            active = false;
         }
 
         /// <summary>
@@ -89,23 +93,39 @@ namespace AKIRA.UIFramework {
         }
 
         /// <summary>
-        /// 显示
+        /// 
         /// </summary>
-        public virtual void Show() {
-            group.alpha = 1f;
-            group.blocksRaycasts = true;
-            group.interactable = true;
+        /// <param name="active"></param>
+        private void ActiveCanvasGroup(bool active) {
+            group.alpha = active ? 1f : 0f;
+            group.blocksRaycasts = active;
+            group.interactable = active;
+        }
+
+        /// <summary>
+        /// <para>显示</para>
+        /// <para>如果有IUIAnimation，group失效，显示交给IUIAnimatino控制</para>
+        /// </summary>
+        public virtual void Show(params object[] args) {
+            if (animation == null) {
+                ActiveCanvasGroup(true);
+            } else {
+                animation.OnShow(OnShowStart, OnShowEnd);
+            }
             active = true;
             this.OnEnter();
         }
 
         /// <summary>
-        /// 隐藏
+        /// <para>隐藏</para>
+        /// <para>如果有IUIAnimation，group失效，隐藏交给IUIAnimatino控制</para>
         /// </summary>
         public virtual void Hide() {
-            group.alpha = 0f;
-            group.blocksRaycasts = false;
-            group.interactable = false;
+            if (animation == null) {
+                ActiveCanvasGroup(false);
+            } else {
+                animation.OnHide(OnHideStart, OnHideEnd);
+            }
             active = false;
             this.OnExit();
         }
@@ -117,27 +137,27 @@ namespace AKIRA.UIFramework {
             this.gameObject.Destory();
         }
 
-        /// <summary>
-        /// 获得Props数组
-        /// </summary>
-        /// <param name="parent"></param>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        protected T[] GetComponentProps<T>(RectTransform parent) where T : UIComponentProp, new() {
-            var count = parent.childCount;
-            List<T> result = new();
-            var typeName = typeof(T).Name;
-            for (int i = 0; i < count; i++) {
-                var child = parent.GetChild(i);
-                if (!typeName.Contains(child.name))
-                    continue;
-                var component = new T();
-                component.Awake(child);
-                result.Add(component);
-            }
-            return result.ToArray();
-        }
-
         public override void Invoke(string name, params object[] args) { }
+    }
+
+    public partial class UIComponent {
+        private IUIAnimation animation;
+
+        /// <summary>
+        /// 如果有IUIAnimation，OnShow函数的OnShowStart事件会走此函数
+        /// </summary>
+        public virtual void OnShowStart() {}
+        /// <summary>
+        /// 如果有IUIAnimation，OnShow函数的OnShowEnd事件会走此函数
+        /// </summary>
+        public virtual void OnShowEnd() {}
+        /// <summary>
+        /// 如果有IUIAnimation，OnHide函数的OnHideStart事件会走此函数
+        /// </summary>
+        public virtual void OnHideStart() {}
+        /// <summary>
+        /// 如果有IUIAnimation，OnHide函数的OnHideEnd事件会走此函数
+        /// </summary>
+        public virtual void OnHideEnd() {}
     }
 }

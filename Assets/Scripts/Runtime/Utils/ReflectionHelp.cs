@@ -42,6 +42,17 @@ public static class ReflectionHelp {
     }
 
     /// <summary>
+    /// 不同程序集，查找含 <see cref="interfaceName" /> 接口的类型集合
+    /// </summary>
+    /// <param name="interfaceName"></param>
+    /// <param name="dllName"></param>
+    /// <returns></returns>
+    public static Type[] GetConfigTypeByInterface(this string interfaceName, string dllName = GameData.DLL.Default) {
+        var types = GetAssembly(dllName).GetTypes();
+        return types.Where(type => type.GetInterface(interfaceName) != null)?.ToArray();
+    }
+
+    /// <summary>
     /// 生成实例 object
     /// </summary>
     /// <param name="type"></param>
@@ -66,7 +77,7 @@ public static class ReflectionHelp {
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    public static Type[] Handle<T>(string dllName = GameData.DLL.Default) {
+    public static Type[] Handle<T>(string dllName) {
         var types = GetAssembly(dllName).GetExportedTypes();
         return types.Where(type => {
             var attributes = Attribute.GetCustomAttributes(type, false);
@@ -76,6 +87,26 @@ public static class ReflectionHelp {
             }
             return false;
         }).ToArray();
+    }
+
+    /// <summary>
+    /// <para>从整个程序集类中获得含有 <paramref name="T"/> 的类集合</para>
+    /// <para>打包后会把含名字含 Editor 的去掉</para>
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public static Type[] Handle<T>() {
+        var fields = typeof(GameData.DLL).GetFields();
+        List<Type> res = new();
+        foreach (var field in fields) {
+            var dllName = field.GetRawConstantValue().ToString();
+#if !UNITY_EDITOR
+            if (dllName.ToLower().Contains("editor"))
+                continue;
+#endif
+            res.AddRange(Handle<T>(dllName));
+        }
+        return res.ToArray();
     }
 
     /// <summary>

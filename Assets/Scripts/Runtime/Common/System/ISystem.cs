@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 
 namespace AKIRA.Manager {
     /// <summary>
-    /// System Base
+    /// Controller Base
     /// </summary>
     public interface IController {
         /// <summary>
@@ -12,7 +12,7 @@ namespace AKIRA.Manager {
     }
 
     /// <summary>
-    /// Controller Base
+    /// System Base
     /// </summary>
     public interface ISystem : IController { }
 }

@@ -28,7 +28,7 @@ namespace AKIRA.UIFramework {
         /// <para>UI Awake</para>
         /// </summary>
         public async override Task Initialize() {
-            var wins = ReflectionHelp.Handle<WinAttribute>();
+            var wins = ReflectionHelp.Handle<WinAttribute>(GameData.DLL.Default);
             // 按照winenum值排序
             Array.Sort(wins, (a, b) => a.GetCustomAttribute<WinAttribute>().Data.@enum - b.GetCustomAttribute<WinAttribute>().Data.@enum);
             foreach (var win in wins) {

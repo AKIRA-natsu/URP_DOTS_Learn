@@ -1,0 +1,179 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8007395691727417672
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c595f27c35a967a489044a60ae73ce88, type: 3}
+  m_Name: ConsoleConfig
+  m_EditorClassIdentifier: 
+  maxHistoryCount: 50
+  wakeConfigs:
+  - window: 109
+    platforms: 0200000007000000
+    wakeInputs:
+    - <Keyboard>/tab
+    - <Keyboard>/backquote
+    shutInputs:
+    - <Keyboard>/escape
+  commands:
+  - command: help
+    description: Show Availiable Commands
+  - command: clear
+    description: Clear Console Output
+  - command: shut
+    description: Exit Game
+--- !u!114 &-4453349924037599099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fdabd3e36b708c47bba7bf628238738, type: 3}
+  m_Name: UIRuleConfig
+  m_EditorClassIdentifier: 
+  rules:
+  - controlName: Button
+    ruleNames:
+    - Btn
+  - controlName: Image
+    ruleNames:
+    - Img
+    - Bg
+    - Pic
+    - Image
+    - Icon
+  - controlName: TextMeshProUGUI
+    ruleNames:
+    - Txt
+    - Text
+    - Title
+    - Count
+    - Amount
+  - controlName: ParticleSystem
+    ruleNames:
+    - FX
+  - controlName: ScrollRect
+    ruleNames:
+    - ScrollView
+  - controlName: RectTransform
+    ruleNames:
+    - Rect
+    - View
+    - Pack
+    - Content
+  - controlName: Scrollbar
+    ruleNames:
+    - Scrollbar
+  - controlName: Animation
+    ruleNames:
+    - Animation
+  - controlName: Toggle
+    ruleNames:
+    - Toggle
+  - controlName: RawImage
+    ruleNames:
+    - Render
+  - controlName: TMP_InputField
+    ruleNames:
+    - Input
+--- !u!114 &-3596378399308982382
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a80b6e735cb8fb4d831ed0564e8adaa, type: 3}
+  m_Name: AssetBundleConfig
+  m_EditorClassIdentifier: 
+  simulation: 0
+  useWebRequestTest: 0
+  paths:
+  - Android/Android
+  - Android/mainbundle
+--- !u!114 &-745551132546285038
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11b826e5e51b2f544b08ad8f2f17b31f, type: 3}
+  m_Name: ExcelDataConfig
+  m_EditorClassIdentifier: 
+  excelPath: 
+  scriptPath: 
+  output: 
+  encrypt: 0
+  encryptKey: 
+  paths: []
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55b22aa77deabc2498982391125a7cad, type: 3}
+  m_Name: GameConfig
+  m_EditorClassIdentifier: 
+  editorConfigs:
+  - {fileID: -4453349924037599099}
+  runtimeConfigs:
+  - {fileID: 687445742868141366}
+  - {fileID: -3596378399308982382}
+  - {fileID: -8007395691727417672}
+  - {fileID: -745551132546285038}
+--- !u!114 &687445742868141366
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60a1150468e176547a5a845d3fd8e284, type: 3}
+  m_Name: LogConfig
+  m_EditorClassIdentifier: 
+  logfully: 1
+  datas:
+  - name: Editor
+    color: {r: 0.53524387, g: 0.49247953, b: 0.8773585, a: 1}
+    logable: 1
+  - name: Event
+    color: {r: 0, g: 1, b: 0.63107514, a: 1}
+    logable: 1
+  - name: Source
+    color: {r: 0.70089984, g: 1, b: 0, a: 1}
+    logable: 1
+  - name: Guide
+    color: {r: 1, g: 0.48235297, b: 0, a: 1}
+    logable: 1
+  - name: UI
+    color: {r: 0.048891068, g: 0, b: 1, a: 1}
+    logable: 1
+  - name: AI
+    color: {r: 0.8666667, g: 0.627451, b: 0.8666667, a: 1}
+    logable: 1
+  - name: Console
+    color: {r: 0, g: 1, b: 0.9686275, a: 1}
+    logable: 1
+  - name: Test
+    color: {r: 0.36845854, g: 0.52357036, b: 0.6792453, a: 1}
+    logable: 1
