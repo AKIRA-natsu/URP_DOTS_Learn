@@ -126,8 +126,7 @@ $@"        }}
             $"保存预制体{obj}失败".Colorful(Color.red).Error();
         } else {
             var newObj = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
-            newObj.SetParent(parent);
-            newObj.transform.localScale = Vector3.one;
+            newObj.SetParent(parent, true);
             $"保存预制体{newObj}成功\n路径为{objPath}".Log(GameData.Log.Success);
         }
         AssetDatabase.Refresh();
@@ -184,27 +183,34 @@ $@"    }}
             // 删去路径根节点  /_transform.name/
             node.path = node.path.Remove(0, _transform.name.Length + 2);
             var componentPropType = $"{node.name}Component".GetConfigTypeByAssembley();
-            var paramName = node.name.Replace(" ", "");
+            var paramName = node.name.Replace(" ", "_").Replace("@", "");
             if (componentPropType != null) {
-                if (rule.CheckMatchableControl(node.name)) {
-                    content.Append($"        [UIControl(\"{node.path}\", true)]\n        protected {componentPropType} {paramName};\n");
-                } else {
-                    content.Append($"        [UIControl(\"{node.path}\")]\n        protected {componentPropType} {paramName};\n");
+                AppendContent(ref content, node.name, node.path, componentPropType.ToString(), paramName);
+            } else {
+                if (rule.TryGetControlName(node.name, out string controlName)) {
+                    AppendContent(ref content, node.name, node.path, controlName, paramName);
+                    if (controlName.Equals("Button"))
+                        btns.Add(paramName);
                 }
-                continue;
-            }
-            if (rule.TryGetControlName(node.name, out string controlName)) {
-                if (rule.CheckMatchableControl(node.name)) {
-                    content.Append($"        [UIControl(\"{node.path}\", true)]\n        protected {controlName} {paramName};\n");
-                } else {
-                    content.Append($"        [UIControl(\"{node.path}\")]\n        protected {controlName} {paramName};\n");
-                }
-                if (controlName.Equals("Button"))
-                    // btns.Add(node.path.Replace('/', '_').Replace("@", ""));
-                    btns.Add(paramName);
             }
         }
         return content;
+    }
+
+    /// <summary>
+    /// 添加字段拼接
+    /// </summary>
+    /// <param name="content"></param>
+    /// <param name="nodeName"></param>
+    /// <param name="path"></param>
+    /// <param name="type"></param>
+    /// <param name="paramName"></param>
+    private static void AppendContent(ref StringBuilder content, string nodeName, string path, string type, string paramName) {
+        if (rule.CheckMatchableControl(nodeName)) {
+            content.Append($"        [UIControl(\"{path}\", true)]\n        protected {type} {paramName};\n");
+        } else {
+            content.Append($"        [UIControl(\"{path}\")]\n        protected {type} {paramName};\n");
+        }
     }
 
     /// <summary>
@@ -224,25 +230,23 @@ $@"    }}
     /// <param name="parent"></param>
     /// <param name="path"></param>
     private static void TraverseUI(Transform parent, string path) {
-        // 去掉TexturePro Sprite的影响
-        if (parent.name.Contains("[TextMeshPro/Sprite]"))
+        var nodeName = parent.name;
+        // 判断忽略名单
+        if (rule.IsIgnoreName(nodeName))
             return;
-            
-        path += $"/{parent.name}";
-        if (parent.childCount != 0) {
-            // 省略
-            if (parent.GetComponent<IUIIgnore>() != null)
-                return;
-            
+
+        path += $"/{nodeName}";
+        // 判断忽略标签和子节点
+        if (parent.childCount != 0 && parent.GetComponent<IUIIgnore>() == null) {
             // 如果是Component，添加自身但省略子节点
             // 但如果遍历的是Component也会省略，判断节点是否为0，如果是0说明遍历Component
-            if ($"{parent.name}Component".GetConfigTypeByAssembley() == null || nodes.Count == 0) {
+            if ($"{nodeName}Component".GetConfigTypeByAssembley() == null || nodes.Count == 0) {
                 for (int i = 0; i < parent.childCount; i++)
                     TraverseUI(parent.GetChild(i), path);
             }
         }
 
-        nodes.Add(new UINode(parent.name, path));
+        nodes.Add(new UINode(nodeName, path));
     }
 #endregion
 }

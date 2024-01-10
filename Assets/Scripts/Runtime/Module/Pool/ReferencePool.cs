@@ -20,7 +20,7 @@ namespace AKIRA.Manager {
         /// <param name="data">Pool 唤醒参数</param>
         /// <typeparam name="K"></typeparam>
         /// <returns></returns>
-        public K Instantiate<K>(object data = null) where K : class, IPool, new() {
+        public K Instantiate<K>(object data = null) where K : IPool, new() {
             var name = typeof(K).Name;
             if (ReferenceMap.ContainsKey(name)) {
                 return (ReferenceMap[name] as RPool<K>).Instantiate(data);
@@ -36,7 +36,7 @@ namespace AKIRA.Manager {
         /// </summary>
         /// <param name="data">Pool 回收参数</param>
         /// <typeparam name="K"></typeparam>
-        public void Destory<K>(K @class, object data = null) where K : class, IPool, new() {
+        public void Destory<K>(K @class, object data = null) where K : IPool, new() {
             var name = typeof(K).Name;
             if (ReferenceMap.ContainsKey(name)) {
                 (ReferenceMap[name] as RPool<K>).Destroy(@class);
@@ -51,7 +51,7 @@ namespace AKIRA.Manager {
         /// 释放所有 <see cref="K" />
         /// </summary>
         /// <typeparam name="K"></typeparam>
-        public void Destory<K>() where K : class, IPool, new() {
+        public void Destory<K>() where K : IPool, new() {
             var name = typeof(K).Name;
             if (ReferenceMap.ContainsKey(name)) {
                 (ReferenceMap[name] as RPool<K>).Free();
@@ -78,7 +78,7 @@ namespace AKIRA.Manager {
         /// <param name="data">Pool 唤醒参数</param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public static T Attach<T>(this Component component, object data = null) where T : class, IPool, new() {
+        public static T Attach<T>(this Component component, object data = null) where T : IPool, new() {
             var refer = ReferencePool.Instance.Instantiate<T>(data);
             if (ComponentReferenceMap.ContainsKey(component)) {
                 ComponentReferenceMap[component].Add(refer);
@@ -94,7 +94,7 @@ namespace AKIRA.Manager {
         /// <param name="component"></param>
         /// <param name="data">Pool 回收参数</param>
         /// <typeparam name="T"></typeparam>
-        public static bool Detach<T>(this Component component, object data = null) where T : class, IPool, new() {
+        public static bool Detach<T>(this Component component, object data = null) where T : IPool, new() {
             bool result = false;
             if (ComponentReferenceMap.ContainsKey(component)) {
                 var componentList = ComponentReferenceMap[component].Where(refer => refer is T);
@@ -102,7 +102,7 @@ namespace AKIRA.Manager {
                 if (result) {
                     // 回收
                     foreach (var refer in componentList) {
-                        ReferencePool.Instance.Destory(refer as T, data);
+                        ReferencePool.Instance.Destory((T)refer, data);
                     }
                     // 移除键值
                     if (ComponentReferenceMap[component].Count == 0) {
@@ -123,7 +123,7 @@ namespace AKIRA.Manager {
         /// <param name="data">Pool 回收参数</param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public static bool Detach<T>(this Component component, T refer, object data = null) where T : class, IPool, new() {
+        public static bool Detach<T>(this Component component, T refer, object data = null) where T : IPool, new() {
             if (ComponentReferenceMap.ContainsKey(component)) {
                 var componentList = ComponentReferenceMap[component];
                 if (componentList.Contains(refer)) {
@@ -148,9 +148,23 @@ namespace AKIRA.Manager {
         /// <param name="component"></param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public static T GetReference<T>(this Component component) where T : class, IPool, new() {
+        public static T GetReference<T>(this Component component) where T : IPool, new() {
             if (ComponentReferenceMap.ContainsKey(component)) {
-                return ComponentReferenceMap[component].Where(refer => refer is T).FirstOrDefault() as T;
+                return (T)ComponentReferenceMap[component].FirstOrDefault(refer => refer is T);
+            } else {
+                return default;
+            }
+        }
+
+        /// <summary>
+        /// 获得Component的所有引用
+        /// </summary>
+        /// <param name="component"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static T[] GetReferences<T>(this Component component) where T : IPool, new() {
+            if (ComponentReferenceMap.ContainsKey(component)) {
+                return ComponentReferenceMap[component].Where(refer => refer is T).Cast<T>().ToArray();
             } else {
                 return default;
             }

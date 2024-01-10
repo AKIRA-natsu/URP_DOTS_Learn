@@ -25,7 +25,8 @@ public partial class DataSystem : Singleton<DataSystem> {
         // 配合Excel表读取
         // 通过调用 var list = GetController<TableCollectionContorller>().GetTableData<T>(); 获得list列表
         await CreateController<TableCollectionContorller>(GameData.DLL.AKIRA_Runtime);
-
+        // 通过调用 var info = GetController<PrefsController>().ReadInfo<T>(); 获得本地存储类
+        await CreateController<PrefsController>(GameData.DLL.AKIRA_Runtime);
     }
 
     /// <summary>

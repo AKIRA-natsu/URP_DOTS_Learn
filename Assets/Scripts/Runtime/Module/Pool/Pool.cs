@@ -248,7 +248,7 @@ namespace AKIRA.Manager {
     /// 引用池
     /// </summary>
     /// <typeparam name="K"></typeparam>
-    public class RPool<K> : PoolBase where K : class, IPool, new() {
+    public class RPool<K> : PoolBase where K : IPool, new() {
         private Queue<K> rpool;
         private List<K> onUse;
 

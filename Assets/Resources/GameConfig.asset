@@ -85,6 +85,14 @@ MonoBehaviour:
   - controlName: TMP_InputField
     ruleNames:
     - Input
+  ignores:
+  - '[TextMeshPro/Sprite]'
+  - (
+  - )
+  drawDeleteBtn: 1
+  enableRedDot: 1
+  reddotPrefab: {fileID: 4101816800392025525, guid: 8ab2b93bd4c13064caf1765bbe4dcccf,
+    type: 3}
 --- !u!114 &-3596378399308982382
 MonoBehaviour:
   m_ObjectHideFlags: 0

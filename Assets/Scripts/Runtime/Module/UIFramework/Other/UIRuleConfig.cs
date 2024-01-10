@@ -7,11 +7,33 @@ namespace AKIRA.UIFramework {
     /// </summary>
     [CreateAssetMenu(fileName = "UIRuleConfig", menuName = "AKIRA.Framework/Module/UIRuleConfig", order = 0)]
     public class UIRuleConfig : ScriptableObject {
+        [Header("Name Rule Parts")]
         /// <summary>
         /// 规则
         /// </summary>
         [SerializeField]
         private UIControlRule[] rules;
+
+        /// <summary>
+        /// 忽略名单
+        /// </summary>
+        [SerializeField]
+        private string[] ignores;
+
+        [Space]
+        [Header("RectTransform Inspector Extend")]
+        /// <summary>
+        /// 是否绘制删除按钮
+        /// </summary>
+        public bool drawDeleteBtn;
+        /// <summary>
+        /// 是否开启红点，仅针对按钮
+        /// </summary>
+        public bool enableRedDot;
+        /// <summary>
+        /// 红点预制体
+        /// </summary>
+        public GameObject reddotPrefab;
 
         /// <summary>
         /// <para>获得组件名称（不判断大小写）</para>
@@ -29,7 +51,6 @@ namespace AKIRA.UIFramework {
                     }
                 }
             }
-            // $"rules dont contain {name1}".Error();
             name2 = null;
             return false;
         }
@@ -55,6 +76,18 @@ namespace AKIRA.UIFramework {
                 return false;
             else
                 return true;
+        }
+
+        /// <summary>
+        /// 是否是忽略名称
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public bool IsIgnoreName(string name) {
+            foreach (var ignore in ignores)
+                if (name.Contains(ignore))
+                    return true;
+            return false;
         }
 
         /// <summary>

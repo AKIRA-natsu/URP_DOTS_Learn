@@ -26,7 +26,7 @@ namespace AKIRA.Editor {
         private List<string> selectionNames;
 
         [MenuItem("Tools/AKIRA.Framework/Common/Select GameConfig")]
-        private static void SelectConfig() {
+        internal static void SelectConfig() {
             var paths = Directory.GetFiles(Path.Combine(Application.dataPath, "Resources"), "*.asset", SearchOption.AllDirectories);
             foreach (var path in paths) {
                 var target = path.GetRelativeAssetsPath().LoadAssetAtPath<UnityEngine.Object>();

@@ -157,6 +157,12 @@ namespace AKIRA {
             /// UIManager
             /// </summary>
             public const string UIManager = "Assets/Res/MainBundle/Prefabs/UI/[UIManager].prefab";
+
+            /// <summary>
+            /// 故意留一个空的
+            /// </summary>
+            public const string Null = "Null";
+
             /// <summary>
             /// 指引3D物体父类
             /// </summary>
