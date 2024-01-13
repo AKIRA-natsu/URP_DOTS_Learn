@@ -146,18 +146,18 @@ namespace AKIRA.UIFramework {
         /// <summary>
         /// 如果有IUIAnimation，OnShow函数的OnShowStart事件会走此函数
         /// </summary>
-        public virtual void OnShowStart() {}
+        protected virtual void OnShowStart() {}
         /// <summary>
         /// 如果有IUIAnimation，OnShow函数的OnShowEnd事件会走此函数
         /// </summary>
-        public virtual void OnShowEnd() {}
+        protected virtual void OnShowEnd() {}
         /// <summary>
         /// 如果有IUIAnimation，OnHide函数的OnHideStart事件会走此函数
         /// </summary>
-        public virtual void OnHideStart() {}
+        protected virtual void OnHideStart() {}
         /// <summary>
         /// 如果有IUIAnimation，OnHide函数的OnHideEnd事件会走此函数
         /// </summary>
-        public virtual void OnHideEnd() {}
+        protected virtual void OnHideEnd() {}
     }
 }

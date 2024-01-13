@@ -115,6 +115,7 @@ public class ExcelDataUtil : EditorWindow {
                     var json = Path.Combine(config.output, $"{scriptName}.json");
                     ExcelHelp.CreateExcelJsonScript(path, json);
                 }
+                config.UpdatePaths();
                 AssetDatabase.Refresh();
             }
         }

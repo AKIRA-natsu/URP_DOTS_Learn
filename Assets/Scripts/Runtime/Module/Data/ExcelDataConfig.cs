@@ -80,8 +80,10 @@ public class ExcelDataConfig : ScriptableObject {
             var file = files[i];
             var path = file.Replace("Assets/StreamingAssets/", "");
             path = path.Replace("Assets/Resoureces/", "");
-            paths[i] = path;      
+            paths[i] = path;
         }
+        UnityEditor.EditorUtility.SetDirty(this);
+        UnityEditor.AssetDatabase.SaveAssets();
     }
 #endif
 }

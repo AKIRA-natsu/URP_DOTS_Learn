@@ -184,7 +184,8 @@ public static class Utils {
         var typeName = typeof(T).Name;
         for (int i = 0; i < count; i++) {
             var child = parent.GetChild(i);
-            if (!typeName.Contains(child.name)) {
+            // 去掉复制预制体名称带(1)/(2)的影响
+            if (!typeName.Contains(child.name.Split("(")[0].Trim())) {
                 result.AddRange(com.GetComponentProps<T>(child));        
             } else {
                 var component = new T();

@@ -125,7 +125,16 @@ public static class ReflectionHelp {
                 // Enum无法转过去,convertibleValue.ToString()值为Enum.ToString()
                 return Enum.Parse(type, convertibleValue.ToString());
             } else {
-                return Convert.ChangeType(convertibleValue, type);
+                if (type.IsArray) {
+                    // 转数组，正常表格的数组长度都是确定的并且不需要修改等，数组就可以了，不考虑List
+                    var strs = convertibleValue.ToString().Split(",");
+                    var instance = (Array)Activator.CreateInstance(type, strs.Length);
+                    for (int i = 0; i < strs.Length; i++)
+                        instance.SetValue(Convert.ChangeType(strs[i], type.GetElementType()), i);
+                    return instance;
+                } else {
+                    return Convert.ChangeType(convertibleValue, type);
+                }
             }
         } else {
             Type genericTypeDefinition = type.GetGenericTypeDefinition();
