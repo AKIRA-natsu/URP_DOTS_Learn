@@ -34,7 +34,7 @@ namespace AKIRA.Manager {
         /// <param name="name">名称</param>
         /// <param name="maxCount">池子最大数量</param>
         /// <returns></returns>
-        public Pool<T> Init(Transform root, string name, int maxCount = 2000) {
+        public Pool<T> Init(Transform root, string name, int maxCount = 128) {
             pool = new Queue<T>();
             onUse = new List<T>();
             poolParent = new GameObject(name).transform;
@@ -106,8 +106,8 @@ namespace AKIRA.Manager {
             }
             // 判断超过个数
             if (pool.Count + onUse.Count >= maxCount) {
-                $"{this}超过最大个数".Log(GameData.Log.Error);
-                return false;
+                maxCount *= 2;
+                $"{this}超过最大个数，扩容到 {maxCount}".Log(GameData.Log.Warn);
             }
             return true;
         }
@@ -149,7 +149,7 @@ namespace AKIRA.Manager {
         /// <param name="parentName">池子名称</param>
         /// <param name="maxCount"></param>
         /// <returns></returns>
-        public Pool Init(Transform root, string parentName, int maxCount = 2000) {
+        public Pool Init(Transform root, string parentName, int maxCount = 128) {
             pool = new Queue<GameObject>();
             onUse = new List<GameObject>();
             poolParent = new GameObject(parentName).transform;
@@ -216,8 +216,8 @@ namespace AKIRA.Manager {
             }
             // 判断超过个数
             if (pool.Count + onUse.Count >= maxCount) {
-                $"{this}超过最大个数".Log(GameData.Log.Error);
-                return false;
+                maxCount *= 2;
+                $"{this}超过最大个数，扩容到 {maxCount}".Log(GameData.Log.Warn);
             }
             return true;
         }
@@ -257,7 +257,7 @@ namespace AKIRA.Manager {
         /// </summary>
         /// <param name="maxCount"></param>
         /// <returns></returns>
-        public RPool<K> Init(int maxCount = 2000) {
+        public RPool<K> Init(int maxCount = 128) {
             rpool = new Queue<K>();
             onUse = new List<K>();
             this.maxCount = maxCount;
@@ -291,8 +291,8 @@ namespace AKIRA.Manager {
                 return true;
             }
             if (rpool.Count + onUse.Count >= maxCount) {
-                $"对象 {typeof(K)} 已经new最大数量".Log(GameData.Log.Warn);
-                return false;
+                maxCount *= 2;
+                $"{this}超过最大个数，扩容到 {maxCount}".Log(GameData.Log.Warn);
             }
             return true;
         }

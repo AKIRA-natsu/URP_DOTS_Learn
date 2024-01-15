@@ -2,9 +2,9 @@ using System.Threading.Tasks;
 
 namespace AKIRA {
     /// <summary>
-    /// System Base
+    /// Controller Base
     /// </summary>
-    public interface ISystem {
+    public interface IController {
         /// <summary>
         /// 初始化
         /// </summary>

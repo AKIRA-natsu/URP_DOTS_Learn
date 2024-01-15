@@ -8,7 +8,7 @@ using UnityEngine;
 /// <summary>
 /// 特效管理器
 /// </summary>
-public struct FXController : IController {
+public class FXController : IController {
     public async Task Initialize() {
        await UniTask.Yield();
     }

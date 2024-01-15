@@ -102,6 +102,7 @@
   * 优化存档面板（操作按钮事件待补充）
     ![img](./Assets/Res/ReadmeLinks/Version_0.1.0.Update/5.png)
   * 分支测试时可以在场景空物体添加`TempLoader`脚本，在`OnSystemInitializeCompleted`事件结束后生成对应预制体
+  * 尝试添加`Entity`，用`World`静态类管理`System`,`Controller`,`Entity`
 
 **Version: 0.1.1**
 
