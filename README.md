@@ -99,10 +99,14 @@
     * 配置命令行列表  
       ![img](./Assets/Res/ReadmeLinks/Version_0.1.0.Update/4.png)  
       * 在 `ConsoleSystem` 中去注册事件
-  * 优化存档面板（操作按钮事件待补充）
+  * 优化存档面板（操作按钮事件待补充）  
     ![img](./Assets/Res/ReadmeLinks/Version_0.1.0.Update/5.png)
   * 分支测试时可以在场景空物体添加`TempLoader`脚本，在`OnSystemInitializeCompleted`事件结束后生成对应预制体
   * 尝试添加`Entity`，用`World`静态类管理`System`,`Controller`,`Entity`
+    * `EntityBase`:带 `IUpdateCallback` 接口，如果继承类继承 `GameUpdate` 方法，面板会多出更新需要参数  
+      ![img](./Assets/Res/ReadmeLinks/Version_0.1.0.Update/6.png)  
+      注：此面板由 `UI Tool Kit` 绘制
+    * `PoolEntityBase`:带 `IPool` 接口，更新在 `Task.Yield` 延迟后开始更新
 
 **Version: 0.1.1**
 
