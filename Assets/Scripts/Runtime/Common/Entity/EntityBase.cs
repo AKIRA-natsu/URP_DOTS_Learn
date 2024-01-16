@@ -35,7 +35,7 @@ public abstract class EntityBase : MonoBehaviour, IUpdateCallback {
     /// 是否重写GameUpdate，自动去添加/移除更新
     /// </summary>
     /// <returns></returns>
-    private bool IsOverride() {
+    internal bool IsOverride() {
         return !(GetType().GetMethod("GameUpdate").DeclaringType == typeof(EntityBase));
     }
 
