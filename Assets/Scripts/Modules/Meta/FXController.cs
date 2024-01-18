@@ -31,7 +31,7 @@ public class FXController : IController {
         if (string.IsNullOrEmpty(path) || path.Equals(GameData.Asset.Null))
             return;
             
-        var go = ObjectPool.Instance.Instantiate(path, position, rotation);
+        var go = ObjectPool.Instance.Instantiate<GameObject>(path, position, rotation);
         var time = go.GetComponent<ParticleSystem>().main.duration;
         await UniTask.Delay(Convert.ToInt32(time * 1000));
         ObjectPool.Instance.Destory(go);
@@ -57,8 +57,29 @@ public class FXController : IController {
         if (string.IsNullOrEmpty(path) || path.Equals(GameData.Asset.Null))
             return;
         
-        var go = ObjectPool.Instance.Instantiate(path, position, rotation);
+        var go = ObjectPool.Instance.Instantiate<GameObject>(path, position, rotation);
         await UniTask.WaitUntil(() => destoryCondition?.Invoke() ?? true);
+        ObjectPool.Instance.Destory(go);
+    }
+
+    /// <summary>
+    /// 贝塞尔，播放一个光源特效曲线移动动画
+    /// </summary>
+    /// <param name="startPosition"></param>
+    /// <param name="endPosition"></param>
+    /// <param name="onAnimationEnd"></param>
+    public async void PlayPointLightFlyAnimation(Vector3 startPosition, Vector3 endPosition, Action onAnimationEnd = null, float speed = 1f) {
+        var go = ObjectPool.Instance.Instantiate<GameObject>(GameData.Asset.PointLight, startPosition);
+        float t = 0;
+        Vector3.Distance(endPosition, go.transform.position).Log();
+        while (Vector3.Distance(endPosition, go.transform.position) > .1f) {
+            await UniTask.Yield();
+            if (!GameData.Group.Default.IsUpdating(true))
+                continue;
+            go.transform.position = MathTool.GetBezier(startPosition, Vector3.Cross(endPosition - startPosition, Vector3.forward), endPosition, t);
+            t += Time.deltaTime * speed;
+        }
+        onAnimationEnd?.Invoke();
         ObjectPool.Instance.Destory(go);
     }
 }

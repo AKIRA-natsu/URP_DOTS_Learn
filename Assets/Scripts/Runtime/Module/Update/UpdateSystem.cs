@@ -43,7 +43,7 @@ public class SpaceUpdateInfo {
 /// <summary>
 /// 更新组
 /// </summary>
-public class UpdateGroup : IPool {
+public class UpdateGroup {
     // 更新列表
     private Dictionary<UpdateMode, List<IUpdate>> updateMap = new Dictionary<UpdateMode, List<IUpdate>>();
     // 间隔更新列表
@@ -120,15 +120,11 @@ public class UpdateGroup : IPool {
             updateMap.Add(mode, new List<IUpdate>());
             spaceUpdateMap.Add(mode, new List<SpaceUpdateInfo>());
         }
-    }
 
-    public void Wake(object data = null) {
-        // Updating = true;
         updating = true;
     }
-
-    public void Recycle(object data = null) {
-        // Updating = false;
+    
+    ~UpdateGroup() {
         updating = false;
         foreach (var value in updateMap.Values)
             value.Clear();
@@ -244,7 +240,7 @@ public class UpdateSystem : MonoSingleton<UpdateSystem> {
         if (groupMap.ContainsKey(key)) {
             groupMap[key].Regist(update, mode);
         } else {
-            var group = this.Attach<UpdateGroup>();
+            var group = new UpdateGroup();
             group.Regist(update, mode);
             groupMap.Add(key, group);
         }
@@ -261,7 +257,7 @@ public class UpdateSystem : MonoSingleton<UpdateSystem> {
         if (groupMap.ContainsKey(key)) {
             groupMap[key].Regist(update, interval, mode);
         } else {
-            var group = this.Attach<UpdateGroup>();
+            var group = new UpdateGroup();
             group.Regist(update, interval, mode);
             groupMap.Add(key, group);
         }
@@ -277,10 +273,8 @@ public class UpdateSystem : MonoSingleton<UpdateSystem> {
         if (groupMap.ContainsKey(key)) {
             var group = groupMap[key];
             group.Remove(update, mode);
-            if (group.Empty) {
+            if (group.Empty)
                 groupMap.Remove(key);
-                this.Detach(group);
-            }
         } else {
             $"Update Log Message: Remove {key} Not Find!".Log(GameData.Log.Warn);
         }
@@ -296,10 +290,8 @@ public class UpdateSystem : MonoSingleton<UpdateSystem> {
         if (groupMap.ContainsKey(key)) {
             var group = groupMap[key];
             group.RemoveSpaceUpdate(update, mode);
-            if (group.Empty) {
+            if (group.Empty)
                 groupMap.Remove(key);
-                this.Detach(group);
-            }
         } else {
             $"Update Log Message: Remove {key} Not Find!".Log(GameData.Log.Warn);
         }
@@ -356,20 +348,34 @@ public class UpdateSystem : MonoSingleton<UpdateSystem> {
         }
     }
 
+    /// <summary>
+    /// 查找 <see cref="key" /> 是否在更新中
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="defaultValue"></param>
+    /// <returns></returns>
+    public bool IsUpdating(string key, bool defaultValue = false) {
+        if (groupMap.ContainsKey(key)) {
+            return groupMap[key].Updating;
+        } else {
+            return defaultValue;
+        }
+    }
+
     private void Update()
-        => Update(UpdateMode.Update);
+        => OnUpdate(UpdateMode.Update);
 
     private void FixedUpdate()
-        => Update(UpdateMode.FixedUpdate);
+        => OnUpdate(UpdateMode.FixedUpdate);
 
     private void LateUpdate()
-        => Update(UpdateMode.LateUpdate);
+        => OnUpdate(UpdateMode.LateUpdate);
 
     /// <summary>
     /// <paramref name="mode" />更新
     /// </summary>
     /// <param name="mode"></param>
-    private void Update(UpdateMode mode) {
+    private void OnUpdate(UpdateMode mode) {
         var groups = new List<UpdateGroup>(groupMap.Values);
         for (int i = 0; i < groups.Count; i++) {
             var group = groups[i];
@@ -379,7 +385,7 @@ public class UpdateSystem : MonoSingleton<UpdateSystem> {
             // 遍历更新
             var updateList = group.UpdateMap[mode];
             for (int j = 0; j < updateList.Count; j++)
-                updateList[j].GameUpdate();
+                updateList[j].OnUpdate();
             // 遍历更新间隔
             var spaceUpdateList = group.SpaceUpdateMap[mode];
             for (int j = 0; j < spaceUpdateList.Count; j++) {
@@ -387,7 +393,7 @@ public class UpdateSystem : MonoSingleton<UpdateSystem> {
                 if (Time.time - info.lastUpdateTime <= info.interval)
                     continue;
                 // 更新并更新时间
-                info.iupdate.GameUpdate();
+                info.iupdate.OnUpdate();
                 info.lastUpdateTime = Time.time;
             }
         }
@@ -452,7 +458,7 @@ public static class UpdateExtend {
     }
 
     /// <summary>
-    /// 更新中
+    /// 是否更新中
     /// </summary>
     /// <param name="update"></param>
     /// <param name="key"></param>
@@ -460,5 +466,15 @@ public static class UpdateExtend {
     /// <returns></returns>
     public static bool IsUpdating(this IUpdate update, string key = GameData.Group.Default, UpdateMode mode = UpdateMode.Update) {
         return UpdateSystem.Instance.IsUpdating(update, key, mode);
+    }
+
+    /// <summary>
+    /// 是否更新中
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="defaultValue"></param>
+    /// <returns></returns>
+    public static bool IsUpdating(this string key, bool defaultValue = false) {
+        return UpdateSystem.Instance.IsUpdating(key, defaultValue);
     }
 }

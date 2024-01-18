@@ -99,10 +99,13 @@ namespace AKIRA.Manager {
         }
 
         public T LoadObject<T>(string path) where T : Object {
+            if (string.IsNullOrEmpty(path) || path.Equals(GameData.Asset.Null))
+                return default;
+
             if (records.ContainsKey(path))
                 return records[path] as T;
 
-            path.Log();
+            path.Log(GameData.Log.Editor);
 #if UNITY_EDITOR
             if (!config.simulation) {
                 var res = path.LoadAssetAtPath<T>();

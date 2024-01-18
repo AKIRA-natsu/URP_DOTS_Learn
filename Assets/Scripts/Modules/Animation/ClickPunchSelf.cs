@@ -16,7 +16,7 @@ public class ClickPunchSelf : PunchSelf, IPointerDownHandler, IPointerUpHandler 
         punchOffset = originScale * (punchValue - 1f);
     }
 
-    public override void GameUpdate() {
+    public override void OnUpdate() {
         if (ward == PunchWard.Forward) {
             if (time >= punchTime)
                 return;

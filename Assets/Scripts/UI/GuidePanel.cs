@@ -101,7 +101,7 @@ namespace AKIRA.UIFramework {
             GuideSystem.Instance.NextGuide(0.3f);
         }
 
-        public void GameUpdate() {
+        public void OnUpdate() {
             if (GuideSystem.Instance.CurrentIGuide == null) {
 #if UNITY_EDITOR
                 if (Mouse.current.leftButton.wasPressedThisFrame)

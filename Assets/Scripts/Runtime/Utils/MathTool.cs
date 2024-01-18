@@ -31,6 +31,18 @@ public static class MathTool {
     }
 
     /// <summary>
+    /// 二次贝塞尔曲线
+    /// </summary>
+    /// <param name="p0"></param>
+    /// <param name="p2"></param>
+    /// <param name="p3"></param>
+    /// <param name="t">[0, 1]</param>
+    /// <returns></returns>
+    public static Vector3 GetBezier(Vector3 p0, Vector3 p2, Vector3 p3, float t) {
+        return (1 - t) * (1 - t) * p0 + 2 * t * (1 - t) * p2 + t * t * p3;
+    }
+
+    /// <summary>
     /// 2进制
     /// </summary>
     /// <param name="value"></param>

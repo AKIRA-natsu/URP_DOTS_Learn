@@ -11,6 +11,10 @@ namespace AKIRA {
             /// </summary>
             public const string Default = "Assembly-CSharp";
             /// <summary>
+            /// 默认程序集 Editor
+            /// </summary>
+            public const string Default_Editor = "Assembly-CSharp-Editor";
+            /// <summary>
             /// AKIRA Runtime
             /// </summary>
             public const string AKIRA_Runtime = "AKIRA.Core.Runtime";
@@ -163,18 +167,13 @@ namespace AKIRA {
             /// </summary>
             public const string Null = "Null";
 
-            /// <summary>
-            /// 指引3D物体父类
-            /// </summary>
-            public const string Guide3DRoot = "Assets/Res/MainBundle/Prefabs/Guidence/[Guidence].prefab";
-            /// <summary>
-            /// 指引3D箭头
-            /// </summary>
-            public const string GuideArrow = "Assets/Res/MainBundle/Prefabs/Guidence/Arrow.prefab";
-            /// <summary>
-            /// 指引2D箭头
-            /// </summary>
-            public const string GuideArrow2D = "Assets/Res/MainBundle/Prefabs/Guidence/Arrow2D.prefab";
+            // Guide
+            public const string Guide3DRoot = "Assets/Res/MainBundle/Prefabs/Guidence/[Guidence].prefab";       // 指引3D物体父类
+            public const string GuideArrow = "Assets/Res/MainBundle/Prefabs/Guidence/Arrow.prefab";             // 指引3D箭头
+            public const string GuideArrow2D = "Assets/Res/MainBundle/Prefabs/Guidence/Arrow2D.prefab";         // 指引2D箭头
+
+            // FX
+            public const string PointLight = "";
         }
         #endregion
 

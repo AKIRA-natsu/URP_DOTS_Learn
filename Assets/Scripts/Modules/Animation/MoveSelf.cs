@@ -53,7 +53,7 @@ public class MoveSelf : SelfAnim {
         }
     }
 
-    public override void GameUpdate() {
+    public override void OnUpdate() {
         this.transform.localPosition = localPosition + direction * moveRadius * Mathf.Sin(moveSpeed * Time.time);
     }
 }

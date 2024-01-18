@@ -308,7 +308,7 @@ namespace AKIRA.Manager {
             this.Regist();
         }
 
-        public void GameUpdate() {
+        public void OnUpdate() {
             var iGuide = GuideSystem.Instance.CurrentIGuide;
             if (iGuide == null) {
                 arrow3D.transform.position = target.position + Vector3.up * heightOffset;

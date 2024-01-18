@@ -101,7 +101,7 @@ public class GuideMask : MonoBehaviour, IUpdate {
         this.Regist();
     }
 
-    public void GameUpdate() {
+    public void OnUpdate() {
         var value = Mathf.SmoothDamp(startRadius, endRadius, ref shrinkVelocity, shrinkTime);
         if (Mathf.Abs(value - endRadius) > 0.001f) {
             startRadius = value;

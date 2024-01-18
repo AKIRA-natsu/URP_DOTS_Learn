@@ -48,7 +48,7 @@ public static class Utils {
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
     public static T Instantiate<T>(this T com) where T : Component {
-        return GameObject.Instantiate(com.gameObject).GetComponent<T>();
+        return GameObject.Instantiate<T>(com);
     }
 
     /// <summary>
@@ -60,7 +60,19 @@ public static class Utils {
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
     public static T Instantiate<T>(this T com, Vector3 position, Quaternion rotation) where T : Component {
-        return GameObject.Instantiate(com.gameObject, position, rotation).GetComponent<T>();
+        return GameObject.Instantiate<T>(com, position, rotation);
+    }
+    
+    /// <summary>
+    /// 实例化
+    /// </summary>
+    /// <param name="com"></param>
+    /// <param name="position"></param>
+    /// <param name="rotation"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public static T Instantiate<T>(this T com, Vector3 position, Quaternion rotation, Transform parent) where T : Component {
+        return GameObject.Instantiate<T>(com, position, rotation, parent);
     }
 
     /// <summary>
@@ -83,6 +95,19 @@ public static class Utils {
     /// <returns></returns>
     public static GameObject Instantiate(this GameObject obj, Vector3 position, Quaternion rotation) {
         var go = GameObject.Instantiate(obj, position, rotation);
+        go.name = obj.name;
+        return go;
+    }
+
+    /// <summary>
+    /// 实例化
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <param name="position"></param>
+    /// <param name="rotation"></param>
+    /// <returns></returns>
+    public static GameObject Instantiate(this GameObject obj, Vector3 position, Quaternion rotation, Transform parent) {
+        var go = GameObject.Instantiate(obj, position, rotation, parent);
         go.name = obj.name;
         return go;
     }

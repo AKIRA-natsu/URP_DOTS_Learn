@@ -54,7 +54,7 @@ public class RotateSelf : SelfAnim {
     /// <summary>
     /// 旋转
     /// </summary>
-    public override void GameUpdate() {
+    public override void OnUpdate() {
         this.transform.Rotate(rotate * rotateSpeed, Space.Self);
     }
 }

@@ -1,107 +1,45 @@
-#define UseAB
+#define USE_ASSETBUNDLE     // 是否使用AB包，不使用的话读取Resource
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace AKIRA.Manager {
     #region Base
-    public abstract class PoolBase {
-        // 对象池根节点下父节点
-        protected Transform poolParent;
+    internal interface IPoolBase { }
+
+    internal abstract class PoolBase<T> : IPoolBase {
         // 池子最大包含数量
         protected int maxCount = 0;
 
+        protected Queue<T> pool;
+        protected List<T> onUse;
+
+        public PoolBase(int maxCount = 128) {
+            this.maxCount = maxCount;
+            pool = new();
+            onUse = new();
+        }
+
+        /// <summary>
+        /// 销毁
+        /// </summary>
+        /// <param name="value"></param>
+        public abstract void Destroy(T value, object data = null);
         /// <summary>
         /// 释放池子（销毁）
         /// </summary>
         public abstract void Free();
-    }
-    #endregion
-    
-    /// <summary>
-    /// 池
-    /// </summary>
-    /// <typeparam name="T">可挂载脚本对象</typeparam>
-    public class Pool<T> : PoolBase where T : Component, IPool {
-        // 先进先出
-        private Queue<T> pool;
-        // 使用中
-        private List<T> onUse;
 
         /// <summary>
-        /// 池子初始化
+        /// 尝试获得空闲对象
         /// </summary>
-        /// <param name="root">对象池根节点</param>
-        /// <param name="name">名称</param>
-        /// <param name="maxCount">池子最大数量</param>
+        /// <param name="value"></param>
         /// <returns></returns>
-        public Pool<T> Init(Transform root, string name, int maxCount = 128) {
-            pool = new Queue<T>();
-            onUse = new List<T>();
-            poolParent = new GameObject(name).transform;
-            poolParent.SetParent(root);
-            this.maxCount = maxCount;
-            return this;
-        }
-
-        /// <summary>
-        /// 对象池取出对象
-        /// </summary>
-        /// <param name="path"></param>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        public T Instantiate(string path, object data = null) {
-            // 池子超出限制
-            if (!TryGetFree(data, out T com)) return null;
-            // 空闲对象存在
-            if (com != null) return com;
-            // 池子中没有空闲对象，加载实例化
-#if UseAB
-            com = AssetSystem.Instance.LoadObject<T>(path);
-#else
-            com = path.Load<T>();
-#endif
-            if (com == null) {
-                $"{path} 下 {typeof(T).Name} 错误！".Log(GameData.Log.Warn);
-                return default;
-            }
-            com = com.Instantiate();
-            com.name = poolParent.name;
-            com.Wake(data);
-            onUse.Add(com);
-            return com;
-        }
-
-        /// <summary>
-        /// 对象池取出对象
-        /// </summary>
-        /// <param name="target"></param>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        public T Instantiate(T target, object data = null) {
-            // 池子超出限制
-            if (!TryGetFree(data, out T com)) return null;
-            // 空闲对象存在
-            if (com != null) return com;
-            // 池子中没有空闲对象，加载实例化
-            com = target.Instantiate();
-            com.name = poolParent.name;
-            com.Wake(data);
-            onUse.Add(com);
-            return com;
-        }
-
-        /// <summary>
-        /// 获得空闲对象
-        /// </summary>
-        /// <returns></returns>
-        private bool TryGetFree(object data, out T com) {
-            com = null;
+        protected bool TryGetFree(out T value) {
+            value = default;
             // 循环池子拿出空闲对象
             if (pool.Count != 0) {
-                com = pool.Dequeue();
-                com.gameObject.SetActive(true);
-                com.Wake(data);
-                onUse.Add(com);
+                value = pool.Dequeue();
+                onUse.Add(value);
                 return true;
             }
             // 判断超过个数
@@ -109,213 +47,124 @@ namespace AKIRA.Manager {
                 maxCount *= 2;
                 $"{this}超过最大个数，扩容到 {maxCount}".Log(GameData.Log.Warn);
             }
-            return true;
+            return false;
+        }
+    }
+    #endregion
+    
+    #region Object Pool [OPool]
+    /// <summary>
+    /// 池
+    /// </summary>
+    /// <typeparam name="T">可挂载脚本对象</typeparam>
+    internal class OPool<T> : PoolBase<T> where T : Object {
+        private Transform parent;
+
+        public OPool(Transform root, string parentName) : base() {
+            parent = new GameObject(parentName).transform;
+            parent.SetParent(root);
+        }
+
+        /// <summary>
+        /// 对象池取出对象，本地坐标
+        /// </summary>
+        /// <returns></returns>
+        public T Instantiate(string path, Vector3 position, Quaternion rotation, Transform parent) {
+            parent = parent != null ? parent : this.parent;
+            if (TryGetFree(out T value)) {
+                SetTransformData(value, position, rotation, parent);
+            } else {
+                // 池子中没有空闲对象，加载实例化
+#if USE_ASSETBUNDLE
+                value = AssetSystem.Instance.LoadObject<T>(path);
+#else
+                value = path.Load<T>();
+#endif
+                // 如果空，说明路径错误
+                if (value == null) {
+                    $"{path} 下 {typeof(T).Name} 错误！".Log(GameData.Log.Warn);
+                    return default;
+                }
+                
+                value = CreateNewInstance(value, position, rotation, parent);
+            }
+            return value;
+        }
+
+        /// <summary>
+        /// 对象池取出对象，本地坐标
+        /// </summary>
+        /// <returns></returns>
+        public T Instantiate(T origin, Vector3 position, Quaternion rotation, Transform parent) {
+            parent = parent != null ? parent : this.parent;
+            if (TryGetFree(out T value)) {
+                SetTransformData(value, position, rotation, parent);
+            } else {
+                value = CreateNewInstance(origin, position, rotation, parent);
+            }
+            return value;
+        }
+
+        /// <summary>
+        /// 创建一个新的实例
+        /// </summary>
+        /// <param name="origin"></param>
+        /// <param name="position"></param>
+        /// <param name="rotation"></param>
+        /// <param name="parent"></param>
+        private T CreateNewInstance(T origin, Vector3 position, Quaternion rotation, Transform parent) {
+            var value = Object.Instantiate(origin, position, rotation, parent);
+            value.name = this.parent.name;
+            onUse.Add(value);
+            return value;
+        }
+
+        /// <summary>
+        /// 设置 <see cref="value" /> 的 Transform 数据
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="position"></param>
+        /// <param name="rotation"></param>
+        /// <param name="parent"></param>
+        protected void SetTransformData(T value, Vector3 position, Quaternion rotation, Transform parent) {
+            Transform trans;
+            if (value is Component com)
+                trans = com.transform;
+            else if (value is GameObject go)
+                trans = go.transform;
+            else
+                return;
+            trans.SetParent(parent);
+            trans.SetLocalPositionAndRotation(position, rotation);
+            trans.gameObject.SetActive(true);
         }
 
         /// <summary>
         /// 销毁对象
         /// </summary>
         /// <param name="com"></param>
-        public void Destory(T com, object data = null) {
-            com.Recycle(data);
-            com.SetParent(poolParent);
-            com.gameObject.SetActive(false);
-            pool.Enqueue(com);
-            onUse.Remove(com);
+        public override void Destroy(T value, object data = null) {
+            if (value is Component com) {
+                com.gameObject.SetActive(false);
+                com.SetParent(parent);
+            } else if (value is GameObject go) {
+                go.SetActive(false);
+                go.transform.SetParent(parent);
+            }
+            onUse.Remove(value);
+            pool.Enqueue(value);
         }
 
         public override void Free() {
-            while (pool.Count != 0)
-                pool.Dequeue().gameObject.Destory();
+            // 把使用中回收
             for (int i = 0; i < onUse.Count; i++)
-                onUse[i].gameObject.Destory();
-            poolParent.gameObject.Destory();
+                pool.Enqueue(onUse[i]);
             onUse.Clear();
+            // 把一整个删掉
+            parent.gameObject.Destory();
             maxCount = 0;
         }
     }
-
-    /// <summary>
-    /// GameObject池
-    /// </summary>
-    public class Pool : PoolBase {
-        private Queue<GameObject> pool;
-        private List<GameObject> onUse;
-
-        /// <summary>
-        /// 池子初始化
-        /// </summary>
-        /// <param name="root"></param>
-        /// <param name="parentName">池子名称</param>
-        /// <param name="maxCount"></param>
-        /// <returns></returns>
-        public Pool Init(Transform root, string parentName, int maxCount = 128) {
-            pool = new Queue<GameObject>();
-            onUse = new List<GameObject>();
-            poolParent = new GameObject(parentName).transform;
-            poolParent.SetParent(root);
-            this.maxCount = maxCount;
-            return this;
-        }
-
-        /// <summary>
-        /// 对象池取出对象
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        public GameObject Instantiate(string path) {
-            // 池子超出限制
-            if (!TryGetFree(out GameObject go)) return null;
-            // 空闲对象存在
-            if (go != null) return go;
-            // 池子中没有空闲对象，加载实例化
-#if UseAB
-            go = AssetSystem.Instance.LoadObject<GameObject>(path);
-#else
-            go = path.Load<GameObject>();
-#endif
-            if (go == null) {
-                $"{path} 下 {poolParent.name} 错误！".Log(GameData.Log.Warn);
-                return default;
-            }
-            go = go.Instantiate();
-            go.name = poolParent.name;
-            onUse.Add(go);
-            return go;
-        }
-
-        /// <summary>
-        /// 对象池取出对象
-        /// </summary>
-        /// <param name="target"></param>
-        /// <returns></returns>
-        public GameObject Instantiate(GameObject target) {
-            // 池子超出限制
-            if (!TryGetFree(out GameObject go)) return null;
-            // 空闲对象存在
-            if (go != null) return go;
-            // 池子中没有空闲对象，加载实例化
-            go = target.Instantiate();
-            go.name = poolParent.name;
-            onUse.Add(go);
-            return go;
-        }
-
-        /// <summary>
-        /// 获得空闲对象
-        /// </summary>
-        /// <returns></returns>
-        private bool TryGetFree(out GameObject go) {
-            go = null;
-            // 循环池子拿出空闲对象
-            if (pool.Count != 0) {
-                go = pool.Dequeue();
-                go.gameObject.SetActive(true);
-                onUse.Add(go);
-                return true;
-            }
-            // 判断超过个数
-            if (pool.Count + onUse.Count >= maxCount) {
-                maxCount *= 2;
-                $"{this}超过最大个数，扩容到 {maxCount}".Log(GameData.Log.Warn);
-            }
-            return true;
-        }
-
-        /// <summary>
-        /// 销毁对象
-        /// </summary>
-        /// <param name="go"></param>
-        public void Destory(GameObject go) {
-            go.transform.SetParent(poolParent);
-            go.gameObject.SetActive(false);
-            pool.Enqueue(go);
-            onUse.Remove(go);
-        }
-
-        public override void Free() {
-            while (pool.Count != 0)
-                pool.Dequeue().Destory();
-            for (int i = 0; i < onUse.Count; i++)
-                onUse[i].Destory();
-            poolParent.gameObject.Destory();
-            onUse.Clear();
-            maxCount = 0;
-        }
-    }
-
-    /// <summary>
-    /// 引用池
-    /// </summary>
-    /// <typeparam name="K"></typeparam>
-    public class RPool<K> : PoolBase where K : IPool, new() {
-        private Queue<K> rpool;
-        private List<K> onUse;
-
-        /// <summary>
-        /// 初始化
-        /// </summary>
-        /// <param name="maxCount"></param>
-        /// <returns></returns>
-        public RPool<K> Init(int maxCount = 128) {
-            rpool = new Queue<K>();
-            onUse = new List<K>();
-            this.maxCount = maxCount;
-            return this;
-        }
-
-        /// <summary>
-        /// 获得对象
-        /// </summary>
-        /// <returns></returns>
-        public K Instantiate(object data = null) {
-            if (!TryGetFree(data, out K @class)) return default;
-            // 获得空闲对象
-            if (@class != null) return @class;
-            // new
-            @class = new K();
-            @class.Wake(data);
-            onUse.Add(@class);
-            return @class;
-        }
-
-        /// <summary>
-        /// 尝试获得空闲对象
-        /// </summary>
-        private bool TryGetFree(object data, out K @class) {
-            @class = default;
-            if (rpool.Count != 0) {
-                @class = rpool.Dequeue();
-                @class.Wake(data);
-                onUse.Add(@class);
-                return true;
-            }
-            if (rpool.Count + onUse.Count >= maxCount) {
-                maxCount *= 2;
-                $"{this}超过最大个数，扩容到 {maxCount}".Log(GameData.Log.Warn);
-            }
-            return true;
-        }
-
-        /// <summary>
-        /// 对象回收
-        /// </summary>
-        public void Destroy(K @class, object data = null) {
-            @class.Recycle(data);
-            rpool.Enqueue(@class);
-            onUse.Remove(@class);
-        }
-
-        public override void Free() {
-            while (rpool.Count != 0) {
-                var c = rpool.Dequeue();
-                c = default;
-            }
-            for (int i = 0; i < onUse.Count; i++)
-                onUse[i] = default;
-            onUse.Clear();
-            maxCount = 0;
-        }
-    }
+    #endregion
 
 }

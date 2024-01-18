@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace AKIRA {
     /// <summary>
-    /// systems & controllers & entities in game world
+    /// systems & controllers & entities & component in game world
     /// </summary>
     public static class World {
         #region init
@@ -78,18 +78,14 @@ namespace AKIRA {
         #region entities
         private static Dictionary<Type, List<EntityBase>> entities = new();
         
-        public static T CreateEntity<T>(string path, object data = null) where T : EntityBase
-            => CreateEntity<T>(path, Vector3.zero, Quaternion.identity, data);
+        public static T CreateEntity<T>(string path) where T : EntityBase
+            => CreateEntity<T>(path, Vector3.zero, Quaternion.identity);
         
-        public static T CreateEntity<T>(string path, Vector3 position, object data = null) where T : EntityBase
-            => CreateEntity<T>(path, position, Quaternion.identity, data);
+        public static T CreateEntity<T>(string path, Vector3 position) where T : EntityBase
+            => CreateEntity<T>(path, position, Quaternion.identity);
 
-        public static T CreateEntity<T>(string path, Vector3 position, Quaternion rotation, object data = null) where T : EntityBase {
-            EntityBase entity;
-            if (typeof(T).IsSubclassOf(typeof(PoolEntityBase)))
-                entity = ObjectPool.Instance.Instantiate<PoolEntityBase>(path, position, rotation, data);
-            else
-                entity = AssetSystem.Instance.LoadObject<T>(path).Instantiate(position, rotation);
+        public static T CreateEntity<T>(string path, Vector3 position, Quaternion rotation) where T : EntityBase {
+            var entity = ObjectPool.Instance.Instantiate<T>(path, position, rotation);
             var key = typeof(T);
             if (entities.ContainsKey(key))
                 entities[key].Add(entity);
@@ -98,24 +94,25 @@ namespace AKIRA {
             return entity as T;
         }
 
-        public static void DestoryEntity<T>(T com, object data = null) where T: EntityBase {
+        public static void DestoryEntity<T>(T entity) where T: EntityBase {
             var type = typeof(T);
             if (!entities.ContainsKey(type))
                 return;
-            entities[type].Remove(com);
+            entities[type].Remove(entity);
 
-            if (type.IsSubclassOf(typeof(PoolEntityBase)))
-                ObjectPool.Instance.Destory(com as PoolEntityBase, data);
-            else
-                GameObject.Destroy(com.gameObject);
+            if (componentDatas.ContainsKey(entity))
+                componentDatas.Remove(entity);
+
+            ObjectPool.Instance.Destory(entity);
         }
 
-        public static void DestoryEntity<T>(object data = null) where T : EntityBase {
+        public static void DestoryEntity<T>() where T : EntityBase {
             var type = typeof(T);
             if (!entities.ContainsKey(type))
                 return;
-            foreach (var entity in entities[type])
-                DestoryEntity(entity, data);
+            var count = entities[type].Count;
+            for (int i = 0; i < count; i++)            
+                DestoryEntity(entities[type][0] as T);
             entities.Remove(type);
         }
 
@@ -125,12 +122,72 @@ namespace AKIRA {
                 return entities[key].Cast<T>();
             return default;
         }
-
-        public static T GetEntity<T>() where T : EntityBase
-            => GetEntities<T>()?.First();
         #endregion
 
         #region entities ienumerable
+        public static IEnumerable<T> Query<U, T>(this IEnumerable<U> ienumerable) where T : U {
+            return ienumerable?.Where(element => element is T)?.Cast<T>() ?? default;
+        }
+
+        public static void Foreach<T>(this IEnumerable<T> ienumerable, Action<T> callback) {
+            if (ienumerable == default)
+                return;
+
+            foreach (var value in ienumerable) {
+                callback?.Invoke(value);
+            }
+        }
+        #endregion
+    
+        #region components
+        private static Dictionary<EntityBase, List<IComponent>> componentDatas = new();
+
+        public static void AddComponent(this EntityBase entity, IComponent component) {
+            if (componentDatas.ContainsKey(entity))
+                componentDatas[entity].Add(component);
+            else
+                componentDatas[entity] = new() { component };
+        }
+
+        public static void AddComponent(this EntityBase entity, params IComponent[] components) {
+            if (componentDatas.ContainsKey(entity))
+                componentDatas[entity].AddRange(components);
+            else
+                componentDatas[entity] = new(components);
+        }
+
+        public static T GetComponent<T>(this EntityBase entity) where T : IComponent {
+            var type = typeof(T);
+            if (componentDatas.ContainsKey(entity))
+                return (T)componentDatas[entity].SingleOrDefault(data => data.GetType().Equals(type));
+            else
+                return default;
+        }
+
+        public static void RemoveComponent<T>(this EntityBase entity) where T : IComponent {
+            var component = entity.GetComponent<T>();
+            if (component == null)
+                return;
+            componentDatas[entity].Remove(component);
+        }
+
+        public static IEnumerable<T> Query<T>() where T : IComponent {
+            var type = typeof(T);
+            return componentDatas.Values.Where(component => component.GetType().Equals(type)).Cast<T>();
+        }
+
+        public static IEnumerable<KeyValuePair<EntityBase, T>> QueryWithEntity<T>() where T : IComponent {
+            var type = typeof(T);
+            List<KeyValuePair<EntityBase, T>> res = new();
+            for (int i = 0; i < componentDatas.Count; i++) {
+                var kvp = componentDatas.ElementAt(i);
+                var component = kvp.Value.SingleOrDefault(data => data.GetType().Equals(type));
+                if (component == null)
+                    continue;
+                res.Add(new KeyValuePair<EntityBase, T>(kvp.Key, (T)component));
+            }
+            return res;
+        }
         #endregion
     }
 }

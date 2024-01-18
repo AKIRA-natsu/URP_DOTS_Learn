@@ -37,7 +37,7 @@ public class PunchSelf : SelfAnim {
         punchOffset = originScale * (punchValue - 1f);
     }
 
-    public override void GameUpdate() {
+    public override void OnUpdate() {
         if (ward == PunchWard.Forward) {
             time += Time.deltaTime;
             if (time > punchTime)

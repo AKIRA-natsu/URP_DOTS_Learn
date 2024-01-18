@@ -29,5 +29,5 @@ public abstract class SelfAnim : MonoBehaviour, IUpdate {
             this.Remove(GameData.Group.Animation);
     }
 
-    public abstract void GameUpdate();
+    public abstract void OnUpdate();
 }

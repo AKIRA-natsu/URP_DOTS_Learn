@@ -33,7 +33,7 @@ public class UnClickPunchSelf : PunchSelf, IPointerDownHandler, IPointerUpHandle
         useInstanceCount--;
     }
 
-    public override void GameUpdate() {
+    public override void OnUpdate() {
         // 维持静态的time增量与Time.deltaTime一致
         var deltaTime = Time.deltaTime / useInstanceCount;
 

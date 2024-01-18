@@ -36,7 +36,7 @@ namespace AKIRA.UIFramework {
             this.Remove(GameData.Group.UI);
         }
 
-        public void GameUpdate() {
+        public void OnUpdate() {
             if (curCount == continuousCount) {
                 if (Time.time - lastIntervalTime <= interval)
                     return;

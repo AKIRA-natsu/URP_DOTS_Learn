@@ -6,7 +6,7 @@ public interface IUpdate {
     /// <summary>
     /// 更新
     /// </summary>
-    void GameUpdate();
+    void OnUpdate();
 }
 
 /// <summary>
@@ -18,7 +18,7 @@ public interface IUpdate<T> {
     /// 更新
     /// </summary>
     /// <param name="value">参数</param>
-    void GameUpdate(T value);
+    void OnUpdate(T value);
 }
 
 /// <summary>
@@ -32,7 +32,7 @@ public interface IUpdate<T1, T2> {
     /// </summary>
     /// <param name="value1">参数1</param>
     /// <param name="value2">参数2</param>
-    void GameUpdate(T1 value1, T2 value2);
+    void OnUpdate(T1 value1, T2 value2);
 }
 
 /// <summary>
@@ -48,7 +48,7 @@ public interface IUpdate<T1, T2, T3> {
     /// <param name="value1"></param>
     /// <param name="value2"></param>
     /// <param name="value3"></param>
-    void GameUpdate(T1 value1, T2 value2, T3 value3);
+    void OnUpdate(T1 value1, T2 value2, T3 value3);
 }
 
 /// <summary>
@@ -66,7 +66,7 @@ public interface IUpdate<T1, T2, T3, T4> {
     /// <param name="value2"></param>
     /// <param name="value3"></param>
     /// <param name="value4"></param>
-    void GameUpdate(T1 value1, T2 value2, T3 value3, T4 value4);
+    void OnUpdate(T1 value1, T2 value2, T3 value3, T4 value4);
 }
 
 /// <summary>
@@ -86,7 +86,7 @@ public interface IUpdate<T1, T2, T3, T4, T5> {
     /// <param name="value3"></param>
     /// <param name="value4"></param>
     /// <param name="value5"></param>
-    void GameUpdate(T1 value1, T2 value2, T3 value3, T4 value4, T5 value5);
+    void OnUpdate(T1 value1, T2 value2, T3 value3, T4 value4, T5 value5);
 }
 #endregion
 

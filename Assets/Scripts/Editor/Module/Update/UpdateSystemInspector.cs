@@ -1,23 +1,20 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
-using AKIRA.Manager;
 
 [CustomEditor(typeof(UpdateSystem))]
 public class UpdateSystemInspector : Editor {
     // 折叠数据
-    private class FoldData : IPool {
+    private class FoldData {
         // 折叠
-        public Dictionary<UpdateMode, bool> folds = new Dictionary<UpdateMode, bool>();
+        public Dictionary<UpdateMode, bool> folds = new();
 
         public FoldData() {
             foreach (UpdateMode mode in System.Enum.GetValues(typeof(UpdateMode)))
                 folds.Add(mode, false);
         }
 
-        public void Wake(object data = null) {}
-
-        public void Recycle(object data = null) {
+        ~FoldData() {
             foreach (var key in folds.Keys)
                 folds[key] = false;
         }
@@ -64,7 +61,7 @@ public class UpdateSystemInspector : Editor {
                 continue;
             } else {
                 // 新增组
-                foldDatas.Add(key, ReferencePool.Instance.Instantiate<FoldData>());
+                foldDatas.Add(key, new FoldData());
             }
         }
     }

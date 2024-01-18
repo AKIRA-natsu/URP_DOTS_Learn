@@ -36,7 +36,7 @@ namespace AKIRA.Manager {
             }
         }
 
-        public void GameUpdate() {
+        public void OnUpdate() {
             if (panel.Active && config.Shut())
                 panel.Hide();
             
