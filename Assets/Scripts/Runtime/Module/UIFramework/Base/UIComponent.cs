@@ -24,8 +24,6 @@ namespace AKIRA.UIFramework {
         public bool Active { 
             get => active;
             set {
-                if (active == value)
-                    return;
                 if (value) {
                     Show();
                 } else {
@@ -107,6 +105,7 @@ namespace AKIRA.UIFramework {
         /// <para>如果有IUIAnimation，group失效，显示交给IUIAnimatino控制</para>
         /// </summary>
         public virtual void Show(params object[] args) {
+            if (active) return;
             if (animation == null) {
                 ActiveCanvasGroup(true);
             } else {
@@ -121,6 +120,7 @@ namespace AKIRA.UIFramework {
         /// <para>如果有IUIAnimation，group失效，隐藏交给IUIAnimatino控制</para>
         /// </summary>
         public virtual void Hide() {
+            if (!active) return;
             if (animation == null) {
                 ActiveCanvasGroup(false);
             } else {

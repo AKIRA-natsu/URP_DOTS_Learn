@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace AKIRA.UIFramework {
+namespace AKIRA.Editor {
     /// <summary>
     /// UI命名配置
     /// </summary>

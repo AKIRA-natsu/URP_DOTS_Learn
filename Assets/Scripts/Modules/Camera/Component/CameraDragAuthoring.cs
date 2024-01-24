@@ -9,7 +9,7 @@ namespace AKIRA.Behaviour.Camera {
         
     }
 
-    public struct CameraDragComponent : IComponentData {
+    public struct CameraDragComponent : Unity.Entities.IComponentData {
         
     }
 }

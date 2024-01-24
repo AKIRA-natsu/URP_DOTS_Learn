@@ -23,9 +23,10 @@ namespace AKIRA.Editor {
 
         // 获得ScriptObject类
         private List<Type> selections;
-        private List<string> selectionNames;
+        // private List<string> selectionNames;
+        private Dictionary<SerializedProperty, List<string>> selectionNames;
 
-        [MenuItem("Tools/AKIRA.Framework/Common/Select GameConfig")]
+        [MenuItem("Tools/AKIRA.Framework/Common/Select GameConfig", priority = 0)]
         internal static void SelectConfig() {
             var paths = Directory.GetFiles(Path.Combine(Application.dataPath, "Resources"), "*.asset", SearchOption.AllDirectories);
             foreach (var path in paths) {
@@ -47,19 +48,22 @@ namespace AKIRA.Editor {
             var editorType1 = typeof(EditorWindow);
             var editorType2 = typeof(UnityEditor.Editor);
             var dllFields = typeof(GameData.DLL).GetFields();
+            selectionNames = new() { { editorProperty, new() { "--" } }, { runtimeProperty, new() { "--" } } };
             foreach (var field in dllFields) {
                 var value = field.GetRawConstantValue().ToString();
                 // 剔除用宏括起来的 EditorWindow 和 Editor 类型
                 var types = Assembly.Load(value).GetTypes()
                     .Where(type => type.IsSubclassOf(targetType) && !type.IsSubclassOf(editorType1) && !type.IsSubclassOf(editorType2));
                 selections.AddRange(types);
+
+                var key = value.ToLower().Contains("editor") ? editorProperty : runtimeProperty;
+                foreach (var type in types)
+                    selectionNames[key].Add(type.Name);
             }
             // 剔除自身
-            selections.Remove(target.GetType());
-
-            selectionNames = new() { "--" };
-            foreach (var selection in selections)
-                selectionNames.Add(selection.Name);
+            var selfType = target.GetType();
+            selections.Remove(selfType);
+            selectionNames[runtimeProperty].Remove(selfType.Name);
         }
 
         private void OnDisable() {
@@ -94,7 +98,7 @@ namespace AKIRA.Editor {
             extends[index] = EditorGUILayout.Foldout(extends[index], $"{name}({property.arraySize})");
 
             if (!Application.isPlaying) {
-                selectionIndexs[index] = EditorGUILayout.Popup(selectionIndexs[index], selectionNames.ToArray(), GUILayout.Width(100f));
+                selectionIndexs[index] = EditorGUILayout.Popup(selectionIndexs[index], selectionNames[index == 0 ? editorProperty : runtimeProperty].ToArray(), GUILayout.Width(100f));
                 if (GUILayout.Button("+", GUILayout.Width(30f)) && selectionIndexs[index] != 0)
                     EditorApplication.delayCall += () => CreateConfig(property, selections[selectionIndexs[index] - 1]);
             }
@@ -118,12 +122,12 @@ namespace AKIRA.Editor {
                     if (GUILayout.Button("~", GUILayout.Width(30f)))
                         editor = CreateEditor(child.objectReferenceValue);
                     GUI.color = Color.white;
-                    // 移动
-                    if (GUILayout.Button("->", GUILayout.Width(30f))) {
-                        onMoveToOtherProperty.Invoke(child.objectReferenceValue);
-                        property.DeleteArrayElementAtIndex(i--);
-                        serializedObject.ApplyModifiedProperties();
-                    }
+                    // // 移动
+                    // if (GUILayout.Button("->", GUILayout.Width(30f))) {
+                    //     onMoveToOtherProperty.Invoke(child.objectReferenceValue);
+                    //     property.DeleteArrayElementAtIndex(i--);
+                    //     serializedObject.ApplyModifiedProperties();
+                    // }
                     EditorGUILayout.EndHorizontal();
                 }
             }

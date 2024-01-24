@@ -79,13 +79,19 @@ namespace AKIRA {
         private static Dictionary<Type, List<EntityBase>> entities = new();
         
         public static T CreateEntity<T>(string path) where T : EntityBase
-            => CreateEntity<T>(path, Vector3.zero, Quaternion.identity);
+            => CreateEntity<T>(path, Vector3.zero, Quaternion.identity, null);
+
+        public static T CreateEntity<T>(string path, Transform parent) where T : EntityBase
+            => CreateEntity<T>(path, Vector3.zero, Quaternion.identity, parent);
         
         public static T CreateEntity<T>(string path, Vector3 position) where T : EntityBase
-            => CreateEntity<T>(path, position, Quaternion.identity);
+            => CreateEntity<T>(path, position, Quaternion.identity, null);
 
-        public static T CreateEntity<T>(string path, Vector3 position, Quaternion rotation) where T : EntityBase {
-            var entity = ObjectPool.Instance.Instantiate<T>(path, position, rotation);
+        public static T CreateEntity<T>(string path, Vector3 position, Quaternion rotation) where T : EntityBase
+            => CreateEntity<T>(path, position, rotation, null);
+
+        public static T CreateEntity<T>(string path, Vector3 position, Quaternion rotation, Transform parent) where T : EntityBase {
+            var entity = ObjectPool.Instance.Instantiate<T>(path, position, rotation, parent);
             var key = typeof(T);
             if (entities.ContainsKey(key))
                 entities[key].Add(entity);
@@ -122,6 +128,11 @@ namespace AKIRA {
                 return entities[key].Cast<T>();
             return default;
         }
+
+        public static U GetSingleEntity<T, U>() where T : EntityBase where U : T {
+            var type = typeof(U);
+            return (U)(GetEntities<T>()?.SingleOrDefault(entity => entity.GetType().Equals(type)));
+        }
         #endregion
 
         #region entities ienumerable
@@ -140,23 +151,23 @@ namespace AKIRA {
         #endregion
     
         #region components
-        private static Dictionary<EntityBase, List<IComponent>> componentDatas = new();
+        private static Dictionary<EntityBase, List<IComponentData>> componentDatas = new();
 
-        public static void AddComponent(this EntityBase entity, IComponent component) {
+        public static void AddComponentData(this EntityBase entity, IComponentData component) {
             if (componentDatas.ContainsKey(entity))
                 componentDatas[entity].Add(component);
             else
                 componentDatas[entity] = new() { component };
         }
 
-        public static void AddComponent(this EntityBase entity, params IComponent[] components) {
+        public static void AddComponentData(this EntityBase entity, params IComponentData[] components) {
             if (componentDatas.ContainsKey(entity))
                 componentDatas[entity].AddRange(components);
             else
                 componentDatas[entity] = new(components);
         }
 
-        public static T GetComponent<T>(this EntityBase entity) where T : IComponent {
+        public static T GetComponentData<T>(this EntityBase entity) where T : IComponentData {
             var type = typeof(T);
             if (componentDatas.ContainsKey(entity))
                 return (T)componentDatas[entity].SingleOrDefault(data => data.GetType().Equals(type));
@@ -164,19 +175,35 @@ namespace AKIRA {
                 return default;
         }
 
-        public static void RemoveComponent<T>(this EntityBase entity) where T : IComponent {
-            var component = entity.GetComponent<T>();
-            if (component == null)
+        public static void RemoveComponentData<T>(this EntityBase entity, T component) where T : IComponentData {
+            if (!componentDatas.ContainsKey(entity))
                 return;
             componentDatas[entity].Remove(component);
+            component.Dispose();
         }
 
-        public static IEnumerable<T> Query<T>() where T : IComponent {
+        public static void RemoveComponentData<T>(this EntityBase entity) where T : IComponentData {
+            if (!componentDatas.ContainsKey(entity))
+                return;
             var type = typeof(T);
-            return componentDatas.Values.Where(component => component.GetType().Equals(type)).Cast<T>();
+            var components = componentDatas[entity];
+            for (int i = 0; i < components.Count; i++) {
+                var component = components[i];
+                if (!component.GetType().Equals(type))
+                    continue;
+                components.RemoveAt(i--);
+                component.Dispose();
+            }
         }
 
-        public static IEnumerable<KeyValuePair<EntityBase, T>> QueryWithEntity<T>() where T : IComponent {
+        public static IEnumerable<T> Query<T>() where T : IComponentData {
+            var type = typeof(T);
+            List<IComponentData> res = new();
+            componentDatas.Values.Foreach(components => res.AddRange(components.Where(component => component.GetType().Equals(type))));
+            return res.Cast<T>();
+        }
+
+        public static IEnumerable<KeyValuePair<EntityBase, T>> QueryWithEntity<T>() where T : IComponentData {
             var type = typeof(T);
             List<KeyValuePair<EntityBase, T>> res = new();
             for (int i = 0; i < componentDatas.Count; i++) {

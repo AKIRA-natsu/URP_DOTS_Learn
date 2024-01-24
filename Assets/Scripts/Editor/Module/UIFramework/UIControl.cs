@@ -1,10 +1,10 @@
 using System;
 
 /// <summary>
-/// UI节点
+/// UI路径节点
 /// </summary>
 [Serializable]
-public struct UINode {
+public struct UIPath {
     /// <summary>
     /// 节点名称
     /// </summary>
@@ -14,7 +14,7 @@ public struct UINode {
     /// </summary>
     public string path;
 
-    public UINode(string name, string path) {
+    public UIPath(string name, string path) {
         this.name = name;
         this.path = path;
     }

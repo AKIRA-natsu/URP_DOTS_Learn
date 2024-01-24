@@ -45,7 +45,7 @@ namespace AKIRA.Behaviour.Camera {
 
     }
 
-    public struct CameraFollowComponent : IComponentData {
+    public struct CameraFollowComponent : Unity.Entities.IComponentData {
         // 跟随速度
         public float lerpSpeed;
         // 差值
