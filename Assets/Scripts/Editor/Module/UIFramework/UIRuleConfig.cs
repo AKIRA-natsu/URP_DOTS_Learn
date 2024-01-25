@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using AKIRA.Attribute;
 using UnityEngine;
 
 namespace AKIRA.Editor {
@@ -7,6 +8,16 @@ namespace AKIRA.Editor {
     /// </summary>
     [CreateAssetMenu(fileName = "UIRuleConfig", menuName = "AKIRA.Framework/Module/UIRuleConfig", order = 0)]
     public class UIRuleConfig : ScriptableObject {
+        [Header("Generator Paths")]
+        // 预制体路径
+        [SerializeField]
+        [SelectionPath]
+        internal string prefabPath;
+        // 脚本路径
+        [SerializeField]
+        [SelectionPath]
+        internal string scriptPath;
+
         [Header("Name Rule Parts")]
         /// <summary>
         /// 规则
@@ -25,15 +36,18 @@ namespace AKIRA.Editor {
         /// <summary>
         /// 是否绘制删除按钮
         /// </summary>
-        public bool drawDeleteBtn;
+        [SerializeField]
+        internal bool drawDeleteBtn;
         /// <summary>
         /// 是否开启红点，仅针对按钮
         /// </summary>
-        public bool enableRedDot;
+        [SerializeField]
+        internal bool enableRedDot;
         /// <summary>
         /// 红点预制体
         /// </summary>
-        public GameObject reddotPrefab;
+        [SerializeField]
+        internal GameObject reddotPrefab;
 
         /// <summary>
         /// <para>获得组件名称（不判断大小写）</para>

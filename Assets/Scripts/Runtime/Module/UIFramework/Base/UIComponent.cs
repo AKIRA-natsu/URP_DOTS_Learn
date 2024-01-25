@@ -37,7 +37,7 @@ namespace AKIRA.UIFramework {
             // 初始化创建
             this.gameObject = AssetSystem.Instance.LoadObject<GameObject>(UIDataManager.Instance.GetUIData(this).path)
                                                 .Instantiate()
-                                                .SetParent(GetParent(type), true);
+                                                .SetParent(UI.GetParent(type), true);
             this.transform = gameObject.transform;
             BindFields();
 
@@ -47,24 +47,6 @@ namespace AKIRA.UIFramework {
             
             ActiveCanvasGroup(false);
             active = false;
-        }
-
-        /// <summary>
-        /// 获得UI Game Object父节点
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        private GameObject GetParent(WinType type) {
-            switch (type) {
-                case WinType.Normal:
-                    return UI.View;
-                case WinType.Interlude:
-                    return UI.Top;
-                case WinType.Notify:
-                    return UI.Background;
-                default:
-                    return UI.View;
-            }
         }
 
         /// <summary>

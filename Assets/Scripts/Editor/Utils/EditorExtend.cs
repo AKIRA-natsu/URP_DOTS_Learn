@@ -8,6 +8,22 @@ using Object = UnityEngine.Object;
 
 public static class EditorExtend {
     /// <summary>
+    /// 获得文件路径
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="extension">后缀，不需要带 . </param>
+    public static string GetFileLocation(this string name, string extension) {
+        var guids = AssetDatabase.FindAssets(name);
+        foreach (var guid in guids) {
+            var path = AssetDatabase.GUIDToAssetPath(guid);
+            if (path.Split('/').Last().Equals($"{name}.{extension}")) {
+                return path;
+            }
+        }
+        return default;
+    }
+
+    /// <summary>
     /// 获得脚本系统位置
     /// </summary>
     /// <param name="script">脚本名称</param>

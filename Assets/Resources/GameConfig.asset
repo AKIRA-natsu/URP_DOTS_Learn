@@ -40,6 +40,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fdabd3e36b708c47bba7bf628238738, type: 3}
   m_Name: UIRuleConfig
   m_EditorClassIdentifier: 
+  prefabPath: Assets/Res/MainBundle/Prefabs/UI
+  scriptPath: Assets/Scripts/UI
   rules:
   - controlName: Button
     ruleNames:

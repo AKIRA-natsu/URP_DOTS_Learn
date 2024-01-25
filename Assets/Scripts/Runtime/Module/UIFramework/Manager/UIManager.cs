@@ -12,10 +12,10 @@ namespace AKIRA.UIFramework {
     /// </summary>
     public class UIManager : Singleton<UIManager> {
         // 字典表
-        private Dictionary<string, UIComponent> UIMap = new Dictionary<string, UIComponent>();
+        private Dictionary<string, UIComponent> UIMap = new();
 
         private UIManager() {
-            // 默认 [UI] 为UI根节点
+            // 默认 [UIManager] 为UI根节点
             var root = AssetSystem.Instance.LoadObject<GameObject>(GameData.Asset.UIManager);
             if (root == null)
                 throw new ArgumentNullException($"{GameData.Asset.UIManager} 不存在");
@@ -30,7 +30,7 @@ namespace AKIRA.UIFramework {
         public async override Task Initialize() {
             var wins = ReflectionHelp.Handle<WinAttribute>(GameData.DLL.Default);
             // 按照winenum值排序
-            Array.Sort(wins, (a, b) => a.GetCustomAttribute<WinAttribute>().Data.@enum - b.GetCustomAttribute<WinAttribute>().Data.@enum);
+            Array.Sort(wins, (a, b) => a.GetCustomAttribute<WinAttribute>().Data.self - b.GetCustomAttribute<WinAttribute>().Data.self);
             foreach (var win in wins) {
                 await Task.Yield();
                 // attribute运行了两次！
@@ -38,26 +38,15 @@ namespace AKIRA.UIFramework {
                 // var com = (UIComponent)AttributeHelp<WinAttribute>.Type2Obj(win);
                 var info = win.GetCustomAttributes(false)[0] as WinAttribute;
                 // 注册在 UIDataManager
-                if (info.Data.@enum != WinEnum.None)
+                if (info.Data.self != WinEnum.None)
                     UIDataManager.Instance.Register(com, info.Data);
                 // Awake UI
                 com.Awake(info.Data.@type);
                 // 注册在 UIManager
-                AddUI(com);
+                UIMap[$"{com.gameObject.name}Panel"] = com;
             }
-        }
 
-        /// <summary>
-        /// 添加 UI
-        /// </summary>
-        /// <param name="com"></param>
-        private void AddUI(UIComponent com) {
-            var name = $"{com.gameObject.name}Panel";
-            if (UIMap.ContainsKey(name)) {
-                $"UI has contained {name}".Log(GameData.Log.Error);
-                return;
-            }
-            UIMap[name] = com;
+            UITree.Build(UIMap.Values);
         }
 
         /// <summary>
@@ -65,15 +54,8 @@ namespace AKIRA.UIFramework {
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public T Get<T>() where T : UIComponent {
-            // var name = typeof(T).Name;
-            // if (!UIMap.ContainsKey(name)) {
-            //     $"UI dont contains {name}".Colorful(Color.red).Log();
-            //     return null;
-            // }
-            // return UIMap[name] as T;
-            return Get(typeof(T)) as T;
-        }
+        public T Get<T>() where T : UIComponent
+            => Get(typeof(T)) as T;
 
         /// <summary>
         /// 获得UIComponent
@@ -97,7 +79,7 @@ namespace AKIRA.UIFramework {
         /// <param name="type"></param>
         /// <returns></returns>
         public UIComponent Get(WinEnum type) {
-            return UIMap.SingleOrDefault(kvp => UIDataManager.Instance.GetUIData(kvp.Value).@enum.Equals(type)).Value;
+            return UIMap.SingleOrDefault(kvp => UIDataManager.Instance.GetUIData(kvp.Value).self.Equals(type)).Value;
         }
 
         /// <summary>
@@ -138,7 +120,7 @@ namespace AKIRA.UIFramework {
         /// </summary>
         /// <returns></returns>
         public List<RectTransform> MatchableColleation() {
-            List<RectTransform> list = new List<RectTransform>();
+            List<RectTransform> list = new();
             foreach (var ui in UIMap.Values) {
                 foreach (var rect in ui.MatchableList)
                     list.Add(rect);

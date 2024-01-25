@@ -8,7 +8,10 @@ namespace AKIRA.UIFramework {
     public class WinAttribute : System.Attribute {
         public WinData Data { get; private set; }
 
-        public WinAttribute(WinEnum @enum, string path, WinType @type) => 
-            this.Data = new WinData(@enum, path, @type);
+        public WinAttribute(WinEnum self, WinEnum parent, string path, WinType @type) => 
+            this.Data = new(self, parent, path, @type);
+        
+        public WinAttribute(WinEnum self, string path, WinType @type) =>
+            this.Data = new(self, WinEnum.None, path, @type);
     }
 }

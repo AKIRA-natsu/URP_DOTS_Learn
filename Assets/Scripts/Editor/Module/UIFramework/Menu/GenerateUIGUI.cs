@@ -11,7 +11,7 @@ namespace AKIRA.Editor {
     /// 自动生成 UI 脚本 (EditorGUI)
     /// </summary>
     public class GenerateUIGUI : EditorWindow {
-    #region MenuItem Tools
+#region MenuItem Tools
         // 控制按钮什么时候显示
         [MenuItem("Tools/AKIRA.Framework/Module/UI/[Select Gameobject] CreateUI", true, priority = 1)]
         internal static bool CreateUIActive() {
@@ -39,27 +39,29 @@ namespace AKIRA.Editor {
         internal static void UpdateUI() {
             UpdateUI(Selection.activeGameObject);
         }
-    #endregion
+#endregion
 
-    #region params
-        internal static UIRuleConfig rule = null;
+#region params
+        internal static UIRuleConfig Rule => GameConfig.Instance.GetConfig<UIRuleConfig>();
         private static List<UIPath> nodes = new List<UIPath>();
         private static List<string> btns = new List<string>();
-    #endregion
+#endregion
 
         /// <summary>
         /// 生成UI脚本并保存ui prefab
         /// </summary>
         internal static void CreateUI(GameObject obj) {
-            if (!Directory.Exists("Assets/Scripts/UI"))
-                Directory.CreateDirectory("Assets/Scripts/UI");
-            if (!Directory.Exists(Application.dataPath + $"/Res/MainBundle/Prefabs/UI"))
-                Directory.CreateDirectory(Application.dataPath + $"/Res/MainBundle/Prefabs/UI");
+            var prefabPath = Rule.prefabPath;
+            var scriptPath = Rule.scriptPath;
+            if (!Directory.Exists(prefabPath))
+                Directory.CreateDirectory(prefabPath);
+            if (!Directory.Exists(scriptPath))
+                Directory.CreateDirectory(scriptPath);
 
             var name = obj.name;
-            var panelPath = $"Assets/Scripts/UI/{name}Panel.cs";
-            var propPath = $"Assets/Scripts/UI/{name}PanelProp.cs";
-            var objPath = Application.dataPath + $"/Res/MainBundle/Prefabs/UI/{name}.prefab";
+            var panelPath = $"{scriptPath}/{name}Panel.cs";
+            var propPath = $"{scriptPath}/{name}PanelProp.cs";
+            var objPath = $"{prefabPath}/{name}.prefab";
             var parent = obj.transform.parent.gameObject;
 
             // =============================================================================================================================
@@ -71,16 +73,16 @@ namespace AKIRA.Editor {
             string propContent =
             #region code
 
-    $@"using UnityEngine;
-    using UnityEngine.UI;
-    using TMPro;
+$@"using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
-    namespace AKIRA.UIFramework {{
-        public class {name}PanelProp : UIComponent {{";
-            propContent += $"\n{LinkControlContent(obj.transform)}";
-            propContent +=
-    $@"    }}
-    }}";
+namespace AKIRA.UIFramework {{
+    public class {name}PanelProp : UIComponent {{";
+        propContent += $"\n{LinkControlContent(obj.transform)}";
+        propContent +=
+$@"    }}
+}}";
             #endregion
 
             File.WriteAllText(propPath, propContent);
@@ -104,18 +106,18 @@ namespace AKIRA.Editor {
             string panelContent =
             #region code
 
-    $@"using UnityEngine;
+$@"using UnityEngine;
 
-    namespace AKIRA.UIFramework {{
-        [Win(WinEnum.{obj.name}, ""{objPath.GetRelativeAssetsPath()}"", {@type})]
-        public class {name}Panel : {name}PanelProp {{
-            public override void Awake(object obj) {{
-                base.Awake(obj);";
-            panelContent += $"\n{LinkBtnListen()}";
-            panelContent +=
-    $@"        }}
-        }}
-    }}";
+namespace AKIRA.UIFramework {{
+    [Win(WinEnum.{obj.name}, ""{objPath.GetRelativeAssetsPath()}"", {@type})]
+    public class {name}Panel : {name}PanelProp {{
+        public override void Awake(object obj) {{
+            base.Awake(obj);";
+        panelContent += $"\n{LinkBtnListen()}";
+        panelContent +=
+$@"        }}
+    }}
+}}";
             #endregion
 
             File.WriteAllText(panelPath, panelContent);
@@ -147,26 +149,22 @@ namespace AKIRA.Editor {
         /// <param name="obj"></param>
         internal static void UpdateUI(GameObject obj) {
             var name = obj.name;
-            var propPath = $"Assets/Scripts/UI/{name}PanelProp.cs";
-            if (!File.Exists(propPath)) {
-                $"{propPath}下不存在{name}PanelProp.cs".Log(GameData.Log.Error);
-                return;
-            }
-
+            var propPath = $"{name}PanelProp".GetScriptLocation();
             File.Delete(propPath);
+            
             string propContent =
             #region code
 
-    $@"using UnityEngine;
-    using UnityEngine.UI;
-    using TMPro;
+$@"using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
-    namespace AKIRA.UIFramework {{
-        public class {name}PanelProp : UIComponent {{";
-            propContent += $"\n{LinkControlContent(obj.transform)}";
-            propContent +=
-    $@"    }}
-    }}";
+namespace AKIRA.UIFramework {{
+    public class {name}PanelProp : UIComponent {{";
+        propContent += $"\n{LinkControlContent(obj.transform)}";
+        propContent +=
+$@"    }}
+}}";
             #endregion
 
             File.WriteAllText(propPath, propContent);
@@ -174,7 +172,7 @@ namespace AKIRA.Editor {
             AssetDatabase.Refresh();
         }
 
-    #region 辅助事件
+#region 辅助事件
         /// <summary>
         /// 获得UI个节点组件
         /// </summary>
@@ -183,7 +181,6 @@ namespace AKIRA.Editor {
         internal static StringBuilder LinkControlContent(Transform _transform) {
             if (nodes.Count != 0) nodes.Clear();
             if (btns.Count != 0) btns.Clear();
-            if (rule == null) rule = GameConfig.Instance.GetConfig<UIRuleConfig>();
             TraverseUI(_transform.transform, "");
             StringBuilder content = new StringBuilder();
             // 最后一个是transform根节点
@@ -196,7 +193,7 @@ namespace AKIRA.Editor {
                 if (componentPropType != null) {
                     AppendContent(ref content, node.name, node.path, componentPropType.ToString(), paramName);
                 } else {
-                    if (rule.TryGetControlName(node.name, out string controlName)) {
+                    if (Rule.TryGetControlName(node.name, out string controlName)) {
                         AppendContent(ref content, node.name, node.path, controlName, paramName);
                         if (controlName.Equals("Button"))
                             btns.Add(paramName);
@@ -215,7 +212,7 @@ namespace AKIRA.Editor {
         /// <param name="type"></param>
         /// <param name="paramName"></param>
         private static void AppendContent(ref StringBuilder content, string nodeName, string path, string type, string paramName) {
-            if (rule.CheckMatchableControl(nodeName)) {
+            if (Rule.CheckMatchableControl(nodeName)) {
                 content.Append($"        [UIControl(\"{path}\", true)]\n        protected {type} {paramName};\n");
             } else {
                 content.Append($"        [UIControl(\"{path}\")]\n        protected {type} {paramName};\n");
@@ -241,7 +238,7 @@ namespace AKIRA.Editor {
         private static void TraverseUI(Transform parent, string path) {
             var nodeName = parent.name;
             // 判断忽略名单
-            if (rule.IsIgnoreName(nodeName))
+            if (Rule.IsIgnoreName(nodeName))
                 return;
 
             path += $"/{nodeName}";
@@ -257,6 +254,6 @@ namespace AKIRA.Editor {
 
             nodes.Add(new UIPath(nodeName, path));
         }
-    #endregion
+#endregion
     }
 }

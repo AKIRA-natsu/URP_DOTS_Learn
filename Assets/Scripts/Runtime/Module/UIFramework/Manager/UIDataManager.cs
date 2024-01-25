@@ -1,12 +1,12 @@
 using System.Collections.Generic;
-using AKIRA.UIFramework;
+using AKIRA.Manager;
 
-namespace AKIRA.Manager {
+namespace AKIRA.UIFramework {
     /// <summary>
     /// UI 数据管理
     /// </summary>
     internal class UIDataManager : Singleton<UIDataManager> {
-        private Dictionary<UIComponent, WinData> ComDataMap = new Dictionary<UIComponent, WinData>();
+        private Dictionary<UIComponent, WinData> ComDataMap = new();
 
         private UIDataManager() {}
 

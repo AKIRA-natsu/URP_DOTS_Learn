@@ -7,7 +7,7 @@ namespace AKIRA.Editor {
     /// 自动生成 UI 组件脚本 (EditorGUI)
     /// </summary>
     public class GenerateUIPropGUI : EditorWindow {
-    #region MenuItem Tools
+#region MenuItem Tools
         // 控制按钮什么时候显示
         [MenuItem("Tools/AKIRA.Framework/Module/UI/[Select Gameobect] CreateUIComponent", true, priority = 3)]
         internal static bool CreateUIComponentActive() {
@@ -37,22 +37,24 @@ namespace AKIRA.Editor {
         internal static void UpdateUIComponent() {
             UpdateUIProp(Selection.activeObject as GameObject);
         }
-    #endregion
+#endregion
 
         /// <summary>
         /// 生成UI组件脚本并保存Prefab
         /// </summary>
         /// <param name="obj"></param>
         internal static void CreateUIProp(GameObject obj) {
-            if (!Directory.Exists("Assets/Scripts/UI/Component"))
-                Directory.CreateDirectory("Assets/Scripts/UI/Component");
-            if (!Directory.Exists(Application.dataPath + $"/Res/MainBundle/Prefabs/UI/Component"))
-                Directory.CreateDirectory(Application.dataPath + $"/Res/MainBundle/Prefabs/UI/Component");
+            var prefabPath = $"{GenerateUIGUI.Rule.prefabPath}/Component";
+            var scriptPath = $"{GenerateUIGUI.Rule.scriptPath}/Component";
+            if (!Directory.Exists(prefabPath))
+                Directory.CreateDirectory(prefabPath);
+            if (!Directory.Exists(scriptPath))
+                Directory.CreateDirectory(scriptPath);
             
             var name = obj.name;
-            var panelComponentPath = $"Assets/Scripts/UI/Component/{name}Component.cs";
-            var componentPropPath = $"Assets/Scripts/UI/Component/{name}ComponentProp.cs";
-            var objPath = Application.dataPath + $"/Res/MainBundle/Prefabs/UI/Component/{name}.prefab";
+            var panelComponentPath = $"{scriptPath}/{name}Component.cs";
+            var componentPropPath = $"{scriptPath}/{name}ComponentProp.cs";
+            var objPath = $"{prefabPath}/{name}.prefab";
 
             // =============================================================================================================================
 
@@ -63,16 +65,16 @@ namespace AKIRA.Editor {
             string propContent =
             #region code
 
-    $@"using UnityEngine;
-    using UnityEngine.UI;
-    using TMPro;
+$@"using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
-    namespace AKIRA.UIFramework {{
-        public class {name}ComponentProp : UIComponentProp {{";
-            propContent += $"\n{GenerateUIGUI.LinkControlContent(obj.transform)}";
-            propContent +=
-    $@"    }}
-    }}";
+namespace AKIRA.UIFramework {{
+    public class {name}ComponentProp : UIComponentProp {{";
+        propContent += $"\n{GenerateUIGUI.LinkControlContent(obj.transform)}";
+        propContent +=
+$@"    }}
+}}";
             #endregion
 
             File.WriteAllText(componentPropPath, propContent);
@@ -87,17 +89,17 @@ namespace AKIRA.Editor {
             string panelContent =
             #region code
 
-    $@"using UnityEngine;
+$@"using UnityEngine;
 
-    namespace AKIRA.UIFramework {{
-        public class {name}Component : {name}ComponentProp {{
-            public override void Awake(object obj) {{
-                base.Awake(obj);";
-            panelContent += $"\n{GenerateUIGUI.LinkBtnListen()}";
-            panelContent +=
-    $@"        }}
-        }}
-    }}";
+namespace AKIRA.UIFramework {{
+    public class {name}Component : {name}ComponentProp {{
+        public override void Awake(object obj) {{
+            base.Awake(obj);";
+        panelContent += $"\n{GenerateUIGUI.LinkBtnListen()}";
+        panelContent +=
+$@"        }}
+    }}
+}}";
             #endregion
 
             File.WriteAllText(panelComponentPath, panelContent);
@@ -132,26 +134,22 @@ namespace AKIRA.Editor {
         /// <param name="obj"></param>
         internal static void UpdateUIProp(GameObject obj) {
             var name = obj.name;
-            var componentPropPath = $"Assets/Scripts/UI/Component/{name}ComponentProp.cs";
-            if (!File.Exists(componentPropPath)) {
-                $"{componentPropPath}下不存在{name}ComponentProp.cs".Log(GameData.Log.Error);
-                return;
-            }
-
+            var componentPropPath = $"{name}ComponentProp".GetScriptLocation();
             File.Delete(componentPropPath);
+            
             string propContent =
             #region code
 
-    $@"using UnityEngine;
-    using UnityEngine.UI;
-    using TMPro;
+$@"using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
-    namespace AKIRA.UIFramework {{
-        public class {name}ComponentProp : UIComponentProp {{";
-            propContent += $"\n{GenerateUIGUI.LinkControlContent(obj.transform)}";
-            propContent +=
-    $@"    }}
-    }}";
+namespace AKIRA.UIFramework {{
+    public class {name}ComponentProp : UIComponentProp {{";
+        propContent += $"\n{GenerateUIGUI.LinkControlContent(obj.transform)}";
+        propContent +=
+$@"    }}
+}}";
             #endregion
 
             File.WriteAllText(componentPropPath, propContent);
