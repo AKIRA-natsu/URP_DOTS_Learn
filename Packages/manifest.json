@@ -2,6 +2,7 @@
   "dependencies": {
     "com.unity.assetbundlebrowser": "git@github.com:Unity-Technologies/AssetBundles-Browser.git",
     "com.unity.collab-proxy": "2.2.0",
+    "com.unity.editorcoroutines": "1.0.0",
     "com.unity.entities": "1.0.11",
     "com.unity.entities.graphics": "1.0.11",
     "com.unity.ide.rider": "3.0.27",

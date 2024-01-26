@@ -2,7 +2,8 @@
     "name": "AKIRA.Core.Editor",
     "rootNamespace": "",
     "references": [
-        "GUID:b6027b4701dab38488bbce31c3835156"
+        "GUID:b6027b4701dab38488bbce31c3835156",
+        "GUID:478a2357cc57436488a56e564b08d223"
     ],
     "includePlatforms": [
         "Editor"

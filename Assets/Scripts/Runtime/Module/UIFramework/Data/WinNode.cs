@@ -7,7 +7,8 @@ namespace AKIRA.UIFramework {
     /// <summary>
     /// window 节点
     /// </summary>
-    public class WinNode {
+    public sealed class WinNode {
+        #region params
         // 父节点
         public WinNode parent;
         // 子节点列表
@@ -17,6 +18,13 @@ namespace AKIRA.UIFramework {
         public UIComponent self;
         // 自身，适用非UI脚本，，比如UI最上面的View，Top，Background三大节点和根节点
         public Transform self_Trans;
+        #endregion
+
+        #region property
+        // 节点名称
+        // 类型 和 预制体 名称是不一样的。。
+        public string Name => self != null ? self.GetType().Name : self_Trans.name;
+        #endregion
 
         #region constructor
         public WinNode(Transform self, WinNode parent = null) {
@@ -64,45 +72,54 @@ namespace AKIRA.UIFramework {
         /// 是否是UI组件节点
         /// </summary>
         /// <returns></returns>
-        public bool IsPropNode() => self.GetType().IsSubclassOf(typeof(UIComponentProp));
+        public bool IsPropNode() => self != null && self.GetType().IsSubclassOf(typeof(UIComponentProp));
         #endregion
 
+        #region hierarchy
         /// <summary>
-        /// 寻找目标节点
+        /// 是否是统一层级节点
         /// </summary>
         /// <param name="target"></param>
-        /// <returns></returns>
-        public WinNode FindNode(WinEnum target) {
-            WinData? data;
-            #if UNITY_EDITOR
-            if (!Application.isPlaying)
-                data = (self.GetType().GetCustomAttribute(typeof(WinAttribute)) as WinAttribute).Data;
-            else
-            #endif
-                data = UIDataManager.Instance.GetUIData(self);
-
-            // 判断是否是空
-            if (data == null)
-                return default;
-
-            // 获得指定类型
-            if (data?.self == target)
-                return this;
-            
-            // 遍历子节点获得类型
-            foreach (var child in children) {
-                if (child.IsPropNode())
-                    continue;
-                var res = child.FindNode(target);
-                if (res != default)
-                    return res;
-            }
-
-            return default;
+        public bool IsSameHierarchy(WinNode target) {
+            if (target.parent == null || parent == null)
+                return false;
+            return target.parent == parent;
         }
 
+        /// <summary>
+        /// 是否当前节点的子节点
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns></returns>
+        public bool IsChildren(WinNode node) {
+            return children.Contains(node);
+        }
+
+        /// <summary>
+        /// 获得同级节点的排序
+        /// </summary>
+        /// <returns></returns>
+        public int GetSorting() {
+            if (parent == null)
+                return 0;
+
+            return parent.children.IndexOf(this);
+        }
+
+        /// <summary>
+        /// 获得节点深度
+        /// </summary>
+        /// <returns></returns>
+        public int GetDepth() => GetDepth(this, 0);
+        private int GetDepth(WinNode cur, int depth) {
+            if (cur.parent == default)
+                return depth;
+            return GetDepth(cur.parent, ++depth);
+        }
+        #endregion
+
         public override string ToString() {
-            return $"UI Node {(self == null ? self_Trans : self)}";
+            return $"UI Node {Name}";
         }
 
     }

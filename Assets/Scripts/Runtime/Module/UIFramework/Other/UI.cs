@@ -125,7 +125,7 @@ namespace AKIRA.UIFramework {
                         break;
                     }
                 } else {
-                    new WinNode(ui, Root.FindNode(data.parent));
+                    new WinNode(ui, FindNode(data.parent));
                 }
             }
 
@@ -134,6 +134,64 @@ namespace AKIRA.UIFramework {
             #endif
 
         }
-    }
 
+        /// <summary>
+        /// 寻找目标节点
+        /// </summary>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        public static WinNode FindNode(WinEnum target) => FindNode(Root, target);
+        private static WinNode FindNode(WinNode cur, in WinEnum target) {
+            if (cur.self != null) {
+                WinData data;
+                #if UNITY_EDITOR
+                if (!Application.isPlaying)
+                    data = (cur.self.GetType().GetCustomAttribute(typeof(WinAttribute)) as WinAttribute).Data;
+                else
+                #endif
+                    data = UIDataManager.Instance.GetUIData(cur.self);
+                
+                if (data.self == target)
+                    return cur;
+            }
+            
+            foreach (var child in cur.children) {
+                var res = FindNode(child, target);
+                if (res != null)
+                    return res;
+            }
+
+            return default;
+        }
+    
+        /// <summary>
+        /// 获得在树中整体的序列
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns></returns>
+        public static int GetSortingInTree(in WinNode node) {
+            int res = 0;
+            GetSortingInTree(Root, in node, ref res);
+            return res;
+        }
+        private static bool GetSortingInTree(WinNode cur, in WinNode target, ref int res) {
+            if (cur.Equals(target))
+                return false;
+
+            foreach (var child in cur.children) {
+                if (child.Equals(target))
+                    return false;
+                
+                if (child.IsLastNode()) {
+                    res++;
+                } else {
+                    if (!GetSortingInTree(child, in target, ref res))
+                        return false;
+                }
+            }
+            
+            return true;
+        }
+
+    }
 }
