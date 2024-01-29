@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Reflection;
 using AKIRA.UIFramework;
 using UnityEditor.Experimental.GraphView;
 using UnityEditor.UIElements;
@@ -20,10 +21,8 @@ namespace AKIRA.Editor {
         public Port Input { get; private set; }
         // output
         public Port Output { get; private set; }
-        // output prop
-        public Port OutputProp { get; private set; }
 
-        public UINodeView(WinNode node, Action<UINodeView> onNodeSelected = null) : base() {
+        public UINodeView(WinNode node, UITreeSetting.UINodeViewStyle viewStyle, Action<UINodeView> onNodeSelected = null) : base() {
             this.title = node.Name;
             this.Node = node;
             this.onNodeSelected = onNodeSelected;
@@ -43,19 +42,22 @@ namespace AKIRA.Editor {
                 outputContainer.Add(Output);
             }
 
-            if (!node.IsTopNode()) {
-                OutputProp = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi, typeof(bool));
-                OutputProp.portName = "props";
-                OutputProp.portColor = Color.DeepSkyBlue.ToUnityColor();
-            }
-
             // elements
-            if (!node.IsTopNode()) {
-                PopupField<UITreeView.UINodeViewStyle> popupField = new(
-                                new List<UITreeView.UINodeViewStyle>() { UITreeView.UINodeViewStyle.UI_Only, UITreeView.UINodeViewStyle.UI_With_Prop },
-                                UITreeView.UINodeViewStyle.UI_Only,
+            if (!node.IsTopNode() && !node.IsLastNode()) {
+                PopupField<UITreeSetting.UINodeViewStyle> popupField = new(
+                                new List<UITreeSetting.UINodeViewStyle>() { UITreeSetting.UINodeViewStyle.UI_Only, UITreeSetting.UINodeViewStyle.UI_With_Prop },
+                                viewStyle,
                                 OnSelectedValueChanged);
                 mainContainer.Add(popupField);
+            }
+
+            // get prefab value in editor
+            if (node.self_Trans == null && node.IsWindowNode()) {
+                var attribute = Node.self.GetType().GetCustomAttribute(typeof(WinAttribute)) as WinAttribute;
+                var path = attribute.Data.path;
+                node.self_Trans = path.LoadAssetAtPath<UnityEngine.GameObject>().transform;
+
+                typeof(WinNode).GetMethod("GetReddots", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(node, null);
             }
         }
 
@@ -75,18 +77,16 @@ namespace AKIRA.Editor {
             return Port.Create<FlowingEdge>(orientation, direction, capacity, type);
         }
 
-        private string OnSelectedValueChanged(UITreeView.UINodeViewStyle style) {
+        private string OnSelectedValueChanged(UITreeSetting.UINodeViewStyle style) {
             OnViewStyleChanged(style);
-            return Enum.GetName(typeof(UITreeView.UINodeViewStyle), style).Replace("_", " ");
+            return Enum.GetName(typeof(UITreeSetting.UINodeViewStyle), style).Replace("_", " ");
         }
 
-        public void OnViewStyleChanged(UITreeView.UINodeViewStyle style) {
-            if (style == UITreeView.UINodeViewStyle.UI_Only) {
-                if (outputContainer.Contains(OutputProp))
-                    outputContainer.Remove(OutputProp);
+        public void OnViewStyleChanged(UITreeSetting.UINodeViewStyle style) {
+            if (style == UITreeSetting.UINodeViewStyle.UI_Only) {
+                
             } else {
-                if (!outputContainer.Contains(OutputProp))
-                    outputContainer.Add(OutputProp);
+
             }
         }
     }

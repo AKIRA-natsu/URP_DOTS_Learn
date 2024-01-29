@@ -1,13 +1,11 @@
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using UnityEngine;
 
 namespace AKIRA.UIFramework {
     /// <summary>
     /// window 节点
     /// </summary>
-    public sealed class WinNode {
+    public sealed partial class WinNode {
         #region params
         // 父节点
         public WinNode parent;
@@ -28,22 +26,23 @@ namespace AKIRA.UIFramework {
 
         #region constructor
         public WinNode(Transform self, WinNode parent = null) {
+            Init(self, parent);
+        }
+
+        public WinNode(UIComponent self, WinNode parent = null) {
+            this.self = self;
+            Init(self.transform, parent);
+        }
+
+        private void Init(Transform self, WinNode parent) {
             children = new();
             this.parent = parent;
             this.self_Trans = self;
 
             if (parent != null)
                 parent.children.Add(this);
-        }
 
-        public WinNode(UIComponent self, WinNode parent = null) {
-            children = new();
-            this.parent = parent;
-            this.self = self;
-            this.self_Trans = self.transform;
-
-            if (parent != null)
-                parent.children.Add(this);
+            GetReddots();
         }
         #endregion
 
@@ -62,7 +61,7 @@ namespace AKIRA.UIFramework {
         /// 是否是最后一个节点
         /// </summary>
         /// <returns></returns>
-        public bool IsLastNode() => children.Count(child => child.IsWindowNode()) == 0;
+        public bool IsLastNode() => children.Count == 0;
         /// <summary>
         /// 是否是UI节点
         /// </summary>

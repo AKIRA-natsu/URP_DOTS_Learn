@@ -1,6 +1,4 @@
 using System;
-using System.Reflection;
-using AKIRA.UIFramework;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -17,17 +15,45 @@ namespace AKIRA.Editor {
         private IMGUIContainer rectGUI;         // recttransform gui container
         private UnityEditor.Editor rectEditor;  // recttrasnform editor inspector
 
+        // main view setting
+        private UITreeSetting setting;
+
         public UITreeSubView() : base() {
             style.width = 220f;
             // style.flexGrow = .3f;
             style.flexShrink = 1f;
 
+            // read setting
+            setting = UITreeSetting.ReadSetting();
+
+            // setting element
+            var settingContainer = new VisualElement();
+            Add(settingContainer);
+            settingContainer.Add(new Label("<b><size=15 />View Setting</b>".Colorful(System.Drawing.Color.LightSkyBlue)));
+            var popField = new PopupField<UITreeSetting.UINodeViewStyle>("Node Style",
+                                new() { UITreeSetting.UINodeViewStyle.UI_Only, UITreeSetting.UINodeViewStyle.UI_With_Prop },
+                                setting.viewStyle,
+                                OnSettingViewStyleChanged);
+            popField.labelElement.style.minWidth = 70f;
+            settingContainer.Add(popField);
+            settingContainer.Add(new Button(setting.SaveSetting) { text = "Build" });
+
+            // space
+            Add(new VisualElement() { style = { height = 20f } });
+
+            // other element
             Add(titleLable = new Label());
             Add(objectField = new ObjectField() { objectType = typeof(Transform) });
             Add(rectGUI = new IMGUIContainer() { style = { flexShrink = 1f } } );
 
             SetTitle();
             rectGUI.onGUIHandler = OnRectTransformHandler;
+        }
+
+        private string OnSettingViewStyleChanged(UITreeSetting.UINodeViewStyle style)
+        {
+            setting.viewStyle = style;
+            return Enum.GetName(typeof(UITreeSetting.UINodeViewStyle), style);
         }
 
         // clear element values
@@ -41,7 +67,8 @@ namespace AKIRA.Editor {
         /// 设置标题
         /// </summary>
         private void SetTitle() {
-            titleLable.text = Application.isPlaying ? "Inspector For Hierarchy" : "Inspector For Prefab Origin";
+            var text = Application.isPlaying ? "Inspector For Hierarchy" : "Inspector For Prefab Origin";
+            titleLable.text = $"<b><size=15 />{text}</b>".Colorful(System.Drawing.Color.Orange);
         }
 
         // recttransform inspector
@@ -66,17 +93,10 @@ namespace AKIRA.Editor {
             SetTitle();
 
             // object
-            var objectValue = view.Node.self_Trans;
-            if (objectValue == null) {
-                // 改成查找的方式
-                var attribute = view.Node.self.GetType().GetCustomAttribute(typeof(WinAttribute)) as WinAttribute;
-                var path = attribute.Data.path;
-                objectValue = path.LoadAssetAtPath<GameObject>().transform;
-            }
-            objectField.value = objectValue;
+            objectField.value = view.Node.self_Trans;
 
             // create editor
-            rectEditor = UnityEditor.Editor.CreateEditor(objectValue);
+            rectEditor = UnityEditor.Editor.CreateEditor(objectField.value);
         }
     }
 }

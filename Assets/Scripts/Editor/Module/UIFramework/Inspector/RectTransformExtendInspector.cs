@@ -238,7 +238,7 @@ namespace AKIRA.Editor {
             }
 
             // 检查红点脚本
-            if (config.reddotPrefab.GetComponent<IReddot>() == null) {
+            if (config.reddotPrefab.GetComponent<ReddotComponent>() == null) {
                 EditorGUILayout.HelpBox("Enabled reddot, but prefab dont contains IReddot interface\nPlease check reddot prefab", MessageType.Info);
                 if (GUILayout.Button("Select Reddot"))
                     Selection.activeObject = config.reddotPrefab;
@@ -255,14 +255,22 @@ namespace AKIRA.Editor {
                     if (reddot.GetSiblingIndex() != button.childCount - 1)
                         reddot.SetAsLastSibling();
                     // 直接删掉
-                    if (GUILayout.Button("Disable RedDot"))
+                    if (GUILayout.Button("Disable RedDot")) {
                         GameObject.DestroyImmediate(reddot.gameObject);
-                    EditorGUILayout.LabelField($"Reddot Tag => {reddot.GetComponent<IReddot>().Tag}");
+                    } else {
+                        var component = reddot.GetComponent<ReddotComponent>();
+                        var style = new GUIStyle() { richText = true };
+                        EditorGUILayout.BeginVertical("framebox");
+                        EditorGUILayout.LabelField($@"<b>Reddot Linker => {component.Linker}</b>".Colorful(Color.white), style);
+                        EditorGUILayout.LabelField($@"<b>Reddot Tag    => {component.ReddotTag}</b>".Colorful(Color.white), style);
+                        EditorGUILayout.EndVertical();
+                    }
                 }
             } else {
                 if (GUILayout.Button("Enable RedDot")) {
                     reddot = (config.reddotPrefab.CreatePrefab() as GameObject).transform;
                     reddot.SetParent(button, false);
+                    reddot.GetComponent<ReddotComponent>().SetLinker();
                 }
             }
         }

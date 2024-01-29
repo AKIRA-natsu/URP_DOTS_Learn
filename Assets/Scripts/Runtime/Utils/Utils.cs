@@ -7,7 +7,7 @@ using UnityEngine.EventSystems;
 using UnityEditor;
 using AKIRA.UIFramework;
 
-public static class Utils {
+public static class Extend {
     #region GameObject
     /// <summary>
     /// GameObject Dont Destory
@@ -162,6 +162,25 @@ public static class Utils {
         child.transform.SetParent(parent.transform, !isUI);
         return child;
     }
+
+    /// <summary>
+    /// 获得 或 添加 组件
+    /// </summary>
+    /// <param name="go"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public static T GetOrAddComponent<T>(this GameObject go) where T : Component {
+        return go.GetComponent<T>() ?? go.AddComponent<T>();
+    }
+
+    /// <summary>
+    /// 获得 或 添加组件
+    /// </summary>
+    /// <param name="component"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public static T GetOrAddComponent<T>(this Component component) where T : Component
+        => GetOrAddComponent<T>(component.gameObject);
 
     /// <summary>
     /// 获得子物体组件

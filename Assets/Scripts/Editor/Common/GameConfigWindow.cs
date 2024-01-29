@@ -98,9 +98,11 @@ namespace AKIRA.Editor {
             extends[index] = EditorGUILayout.Foldout(extends[index], $"{name}({property.arraySize})");
 
             if (!Application.isPlaying) {
-                selectionIndexs[index] = EditorGUILayout.Popup(selectionIndexs[index], selectionNames[index == 0 ? editorProperty : runtimeProperty].ToArray(), GUILayout.Width(100f));
+                var newSelections = selectionNames[index == 0 ? editorProperty : runtimeProperty].ToArray();
+                selectionIndexs[index] = EditorGUILayout.Popup(selectionIndexs[index], newSelections, GUILayout.Width(100f));
                 if (GUILayout.Button("+", GUILayout.Width(30f)) && selectionIndexs[index] != 0)
-                    EditorApplication.delayCall += () => CreateConfig(property, selections[selectionIndexs[index] - 1]);
+                    EditorApplication.delayCall +=
+                        () => CreateConfig(property, selections.Single(selection => selection.Name.Equals(newSelections[selectionIndexs[index]])));
             }
 
             EditorGUILayout.EndHorizontal();

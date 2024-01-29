@@ -28,14 +28,14 @@ namespace AKIRA.Editor {
             // root
             VisualElement root = rootVisualElement;
 
-            // menu
-            var toolBar = new Toolbar();
-            toolBar.style.height = 20f;
-            toolBar.style.backgroundColor = new Color(0.1568628f, 0.1568628f, 0.1568628f);
-            root.Add(toolBar);
+            // // menu
+            // var toolBar = new Toolbar();
+            // toolBar.style.height = 20f;
+            // toolBar.style.backgroundColor = new Color(0.1568628f, 0.1568628f, 0.1568628f);
+            // root.Add(toolBar);
 
-            // bar items
-            toolBar.Add(new ToolbarButton(Build) { name = "build", text = "Build", tooltip = "build a ui tree view" });
+            // // bar items
+            // toolBar.Add(new ToolbarButton(Build) { name = "build", text = "Build", tooltip = "build a ui tree view" });
 
             // container
             var container = new VisualElement() { name = "container" };

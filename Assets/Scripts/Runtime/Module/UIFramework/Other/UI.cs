@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
@@ -112,27 +113,50 @@ namespace AKIRA.UIFramework {
                 #endif
                     data = UIDataManager.Instance.GetUIData(ui);
 
+                WinNode node;
                 if (data.parent == WinEnum.None) {
-                    switch (data.type) {
-                        case WinType.Normal:
-                            new WinNode(ui, viewNode);
-                        break;
-                        case WinType.Interlude:
-                            new WinNode(ui, topNode);
-                        break;
-                        case WinType.Notify:
-                            new WinNode(ui, backNode);
-                        break;
-                    }
+                    node = data.type switch {
+                        WinType.Normal => new WinNode(ui, viewNode),
+                        WinType.Interlude => new WinNode(ui, topNode),
+                        WinType.Notify => new WinNode(ui, backNode),
+                        _ => new WinNode(ui, viewNode),
+                    };
                 } else {
-                    new WinNode(ui, FindNode(data.parent));
+                    node = new WinNode(ui, FindNode(data.parent));
                 }
+
+                var fields = ui.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance).Where(field => field.FieldType.IsSubclassOf(typeof(UIComponentProp)));
+                
+                foreach (var field in fields)
+                    #if UNITY_EDITOR
+                    if (!Application.isPlaying)
+                        BuildPropNode(field.FieldType.CreateInstance() as UIComponentProp, node);
+                    else
+                    #endif
+                        BuildPropNode(field.GetValue(ui) as UIComponentProp, node);
             }
 
             #if UNITY_EDITOR
             IsFinishBuild = true;
             #endif
 
+        }
+
+        /// <summary>
+        /// UI往下建立 Prop 节点
+        /// </summary>
+        /// <param name="prop"></param>
+        /// <param name="node"></param>
+        private static void BuildPropNode(UIComponentProp prop, WinNode node) {
+            var newNode = new WinNode(prop, node);
+            var fields = prop.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance).Where(field => field.FieldType.IsSubclassOf(typeof(UIComponentProp)));
+            foreach (var field in fields)
+                #if UNITY_EDITOR
+                if (!Application.isPlaying)
+                    BuildPropNode(field.FieldType.CreateInstance() as UIComponentProp, newNode);
+                else
+                #endif
+                    BuildPropNode(field.GetValue(prop) as UIComponentProp, newNode);
         }
 
         /// <summary>
@@ -167,28 +191,38 @@ namespace AKIRA.UIFramework {
         /// <summary>
         /// 获得在树中整体的序列
         /// </summary>
-        /// <param name="node"></param>
+        /// <param name="node">目标</param>
+        /// <param name="ignoreProp">是否忽略Prop节点</param>
         /// <returns></returns>
-        public static int GetSortingInTree(in WinNode node) {
+        public static int GetSortingInTree(in WinNode node, bool ignoreProp) {
             int res = 0;
-            GetSortingInTree(Root, in node, ref res);
+            GetSortingInTree(Root, in node, ignoreProp, ref res);
             return res;
         }
-        private static bool GetSortingInTree(WinNode cur, in WinNode target, ref int res) {
+        private static bool GetSortingInTree(WinNode cur, in WinNode target, in bool ignoreProp, ref int res) {
             if (cur.Equals(target))
                 return false;
 
+            // 是否子节点全是Prop节点，如果是，总数 + 1
+            bool isAllIgnore = true;
             foreach (var child in cur.children) {
                 if (child.Equals(target))
                     return false;
                 
+                if (ignoreProp && child.IsPropNode())
+                    continue;
+
+                isAllIgnore = false;
                 if (child.IsLastNode()) {
                     res++;
                 } else {
-                    if (!GetSortingInTree(child, in target, ref res))
+                    if (!GetSortingInTree(child, in target, in ignoreProp, ref res))
                         return false;
                 }
             }
+
+            if (isAllIgnore)
+                res++;
             
             return true;
         }
