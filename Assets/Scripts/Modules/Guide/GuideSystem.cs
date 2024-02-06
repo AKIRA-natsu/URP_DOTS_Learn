@@ -79,7 +79,7 @@ namespace AKIRA.Manager {
                     var nodes= x.SelectSingleNode("Data").ChildNodes;
                     foreach (XmlElement node in nodes) {
                         // 提前处理一下路径问题
-                        var completeType = (GuideCompleteType)node.GetAttribute(GuideInfoName.GuideCompleteType).TryParseInt();
+                        var completeType = (GuideCompleteType)node.GetAttribute(GuideInfoName.GuideCompleteType).ToInt32();
                         var path = node.GetAttribute(GuideInfoName.ArrowTargetPath);
                         GameObject target = default;
                         if (completeType == GuideCompleteType.UIWorld) {
@@ -93,15 +93,15 @@ namespace AKIRA.Manager {
                         }
 
                         infos.Add(new GuideInfo() {
-                            ID = node.GetAttribute(GuideInfoName.ID).TryParseInt(),
+                            ID = node.GetAttribute(GuideInfoName.ID).ToInt32(),
                             completeType = completeType,
-                            isShowBg = node.GetAttribute(GuideInfoName.IsShowBg).TryParseInt() == 1,
+                            isShowBg = node.GetAttribute(GuideInfoName.IsShowBg).ToInt32() == 1,
                             dialog = node.GetAttribute(GuideInfoName.Dialog),
-                            dialogDirection = (GuideDialogDirection)node.GetAttribute(GuideInfoName.DialogDirection).TryParseInt(),
-                            useArrow = node.GetAttribute(GuideInfoName.UseArrow).TryParseInt() == 1,
+                            dialogDirection = (GuideDialogDirection)node.GetAttribute(GuideInfoName.DialogDirection).ToInt32(),
+                            useArrow = node.GetAttribute(GuideInfoName.UseArrow).ToInt32() == 1,
                             arrowTarget = target,
-                            reachDistance = node.GetAttribute(GuideInfoName.ReachDistance).TryParseFloat(),
-                            controlByIGuide = node.GetAttribute(GuideInfoName.ControlByIGuide).TryParseInt() == 1,
+                            reachDistance = node.GetAttribute(GuideInfoName.ReachDistance).ToSingle(),
+                            controlByIGuide = node.GetAttribute(GuideInfoName.ControlByIGuide).ToInt32() == 1,
                         });
                     }
                 });
