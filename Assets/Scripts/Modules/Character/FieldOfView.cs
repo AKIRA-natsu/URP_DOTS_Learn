@@ -83,8 +83,8 @@ namespace AKIRA.Behaviour.AI {
                         if (Physics.Raycast(eye.position, eye.forward, out hit, distance, mask)) {
                             endPosition = hit.point;
                             // Gizmos.DrawLine(eye.position, hit.point);
-                            // if (!scans.Contains(hit.transform))
-                            //     scans.Add(hit.transform);
+                            if (!scans.Contains(hit.transform))
+                                scans.Add(hit.transform);
                             
                             // vertices[j * count + i] = hit.point;
                         } else {

@@ -139,3 +139,9 @@
       ![img](./Assets/Res/ReadmeLinks/Version_0.1.3/1.png)
     * 面板窗口⬇  
       ![img](./Assets/Res/ReadmeLinks/Version_0.1.3/2.png)
+
+**Version: 0.1.4**
+
+* 视野 `Field Of View`  
+  ![img](./Assets/Res/ReadmeLinks/Version_0.1.4/1.png)
+
