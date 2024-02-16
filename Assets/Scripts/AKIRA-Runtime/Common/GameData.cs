@@ -145,12 +145,6 @@ namespace AKIRA {
         }
         #endregion
 
-        #region 标签
-        public class Tag {
-            public const string Player = "Player";
-        }
-        #endregion
-
         #region 资源
         public class Asset {
             /// <summary>
@@ -167,6 +161,12 @@ namespace AKIRA {
             public const string Guide3DRoot = "Assets/Res/MainBundle/Prefabs/Guidence/[Guidence].prefab";       // 指引3D物体父类
             public const string GuideArrow = "Assets/Res/MainBundle/Prefabs/Guidence/Arrow.prefab";             // 指引3D箭头
             public const string GuideArrow2D = "Assets/Res/MainBundle/Prefabs/Guidence/Arrow2D.prefab";         // 指引2D箭头
+
+            // Character
+            public const string Kiara = "Assets/Res/MainBundle/Prefabs/Character/Kiara.prefab";                 // 角色模型 blender
+
+            // Scene
+            public const string SampleScene = "Assets/Res/MainBundle/Prefabs/Scene/SampleScene.prefab";         // 示例测试场景
         }
         #endregion
 
