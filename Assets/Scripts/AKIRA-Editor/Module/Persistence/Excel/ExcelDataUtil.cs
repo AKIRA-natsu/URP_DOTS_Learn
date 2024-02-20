@@ -15,7 +15,7 @@ public class ExcelDataUtil : EditorWindow {
     // excels 路径
     private string[] files;
 
-    [MenuItem("Tools/AKIRA.Framework/Common/ExcelDataUtil")]
+    [MenuItem("Tools/AKIRA.Framework/Common/ExcelDataUtil", priority = 151)]
     private static void ShowWindow() {
         var window = GetWindow<ExcelDataUtil>();
         window.titleContent = new GUIContent("ExcelDataUtil");

@@ -567,6 +567,14 @@ public static partial class Utils {
         foreach (var value in values)
             callback.Invoke(value);
     }
+
+    public static void Foreach<T>(this IEnumerable<T> values, Action<int, T> callback) {
+        if (values == default)
+            return;
+        
+        for (int i = 0; i < values.Count(); i++)
+            callback?.Invoke(i, values.ElementAt(i));
+    }
     #endregion
 
     #region 随机值
@@ -596,7 +604,7 @@ public static partial class Utils {
         var map = new (T key, float value)[values.Count()];
         for (int i = 0; i < map.Length; i++) {
             var value = values.ElementAt(i);
-            map[i] = (value, weight.Invoke(value) + i == 0 ? 0 : map[i - 1].value);
+            map[i] = (value, weight.Invoke(value) + (i == 0 ? 0 : map[i - 1].value));
         }
         var randomWeight = UnityEngine.Random.Range(0, map.Last().value);
         return map.First(m => m.value > randomWeight).key;

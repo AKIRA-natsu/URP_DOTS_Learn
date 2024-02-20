@@ -103,17 +103,17 @@ namespace AKIRA.UIFramework {
 
         public void OnUpdate() {
             if (GuideSystem.Instance.CurrentIGuide == null) {
-#if UNITY_EDITOR
-                if (Mouse.current.leftButton.wasPressedThisFrame)
-#else
+#if UNITY_ANDROID || UNITY_IOS
                 if (Touch.activeTouches.Count > 0)
+#else
+                if (Mouse.current.leftButton.wasPressedThisFrame)
 #endif
                 {
                     // 判断是否按在目标上
-#if UNITY_EDITOR
-                    var hit = Physics2D.Raycast(UI.UICamera.transform.position, Mouse.current.position.ReadValue().ScreenToUGUI());
-#else
+#if UNITY_ANDROID || UNITY_IOS
                     var hit = Physics2D.Raycast(UI.UICamera.transform.position, Touch.activeTouches[0].screenPosition.ScreenToUGUI());
+#else
+                    var hit = Physics2D.Raycast(UI.UICamera.transform.position, Mouse.current.position.ReadValue().ScreenToUGUI());
 #endif
                     if (hit.collider != null && hit.collider.Equals(Rigid))
                         EndGuide();

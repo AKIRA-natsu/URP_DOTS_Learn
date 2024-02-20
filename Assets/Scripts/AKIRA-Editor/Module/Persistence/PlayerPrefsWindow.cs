@@ -17,26 +17,22 @@ public class PlayerPrefsWindow : EditorWindow {
     private FileDataView fileView;
     private PrefDataView prefView;
 
-    [MenuItem("Tools/AKIRA.Framework/Common/PlayerPrefsWindow")]
+    [MenuItem("Tools/AKIRA.Framework/Common/PlayerPrefsWindow", priority = 150)]
     private static void ShowWindow() {
-        var window = GetWindow<PlayerPrefsWindow>();
-        window.titleContent = new GUIContent("PlayerPrefsWindow");
-        window.minSize = new Vector2(720, 360);
+        var minSize = new Vector2(780, 400);
+        var window = GetWindowWithRect<PlayerPrefsWindow>(new Rect(Vector2.zero, minSize), false, "PlayerPrefsWindow");
+        window.minSize = minSize;
     }
 
     public void CreateGUI() {
-        // Each editor window contains a root VisualElement object
         VisualElement root = rootVisualElement;
 
-        // A stylesheet can be added to a VisualElement.
-        // The style will be applied to the VisualElement and all of its children.
-        // var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(location.Replace($".cs", $".uss"));
-        // root.styleSheets.Add(styleSheet);
-
         // 菜单容器
-        var menuContainer = new Box() { name = "Menu" } ;
-        menuContainer.style.flexDirection = FlexDirection.Row;
-        menuContainer.style.borderBottomColor = Color.grey;
+        var menuContainer = new Box() { name = "Menu", style = {
+            height = 20f,
+            flexDirection = FlexDirection.Row,
+            borderBottomColor = Color.grey,
+        }};
         menuContainer.Add(new ToolbarButton(ClearPrefs) { text = "Delete All Prefs" } );
         menuContainer.Add(new ToolbarButton(ClearFiles) { text = "Clear All Files" } );
         
@@ -91,11 +87,15 @@ internal class FileDataView : IMGUIContainer {
     private string path;
 
     // 预览事件
-    private Action<Dictionary<string, (object, Type)>> onPreviewRegisters;
+    private Action<string> onPreviewRegisters;
 
-    public FileDataView(Action<Dictionary<string, (object, Type)>> onPreviewRegisters) : base() {
+    public FileDataView(Action<string> onPreviewRegisters) : base() {
         this.onPreviewRegisters = onPreviewRegisters;
-        
+
+        // style
+        // limit max height
+        style.maxHeight = EditorWindow.GetWindow<PlayerPrefsWindow>().position.size.y / 2;
+
         // check path
         path = Path.Combine(Application.dataPath, "StreamingAssets", "~PlayerPrefs Save Files");
         if (!Directory.Exists(path))
@@ -165,7 +165,7 @@ internal class FileDataView : IMGUIContainer {
             ReadFile(data);
 
         if (GUILayout.Button("View Prefs"))
-            onPreviewRegisters(GetProjectRegistry());
+            onPreviewRegisters(Path.Combine(path, $"{data.name}.txt"));
         EditorGUILayout.EndHorizontal();
         
         EditorGUILayout.EndVertical();
@@ -248,7 +248,6 @@ internal class FileDataView : IMGUIContainer {
             } else {
                 PlayerPrefs.SetString(key, value);
             }
-            // 用注册表修改存在读取不了的问题
         }
         Debug.Log("存档修改成功");
     }
@@ -306,27 +305,42 @@ internal class PrefDataView : VisualElement {
     private VisualElement header;
     // 滑窗视图
     private ScrollView view;
+    // 元素宽度集合
+    private float[] widths;
+    // 当前读取的路径
+    private string path;
 
     public PrefDataView() : base() {
         this.style.flexDirection = FlexDirection.ColumnReverse;
         this.style.alignItems = Align.Center;
+        this.style.flexGrow = 1f;
+        this.style.flexShrink = 1f;
 
-        header = DrawRegisterElement("Key", "Type", "Value", ("Close", _ => ClearView()));
+        var width = EditorWindow.GetWindow<PlayerPrefsWindow>().position.size.x;
+        widths = new float[4] { width / 16f * 3f, width / 8f, width / 2, width / 16f * 3f };
+
+        header = DrawRegisterElement("Key", "Type", "Value",
+                                    ("Edit", _ => System.Diagnostics.Process.Start(path)),
+                                    ("Close", _ => ClearView()));
         this.Add(view = new ScrollView());
     }
 
     /// <summary>
     /// 显示存档View
     /// </summary>
-    /// <param name="onPreviewRegisters"></param>
-    public void OnShowDataView(Dictionary<string, (object, Type)> onPreviewRegisters) {
+    public void OnShowDataView(string path) {
+        this.path = path;
         ClearView();
 
         this.Add(header);
-        foreach (var kvp in onPreviewRegisters)
-            view.Add(DrawRegisterElement(kvp.Key, kvp.Value.Item2.ToString(), kvp.Value.Item1.ToString(),
+
+        var lines = File.ReadAllLines(path);
+        for (int i = 1; i < lines.Length; i++) {
+            var line = lines[i].Split("||");
+            view.Add(DrawRegisterElement(line[0], line[2], line[1],
                                         ("Change", OnChangeRegisterValue),
                                         ("Delete", OnDeleteRegisterValue)));
+        }
     }
 
     /// <summary>
@@ -337,22 +351,26 @@ internal class PrefDataView : VisualElement {
     /// <param name="value"></param>
     /// <returns></returns>
     private VisualElement DrawRegisterElement(string key, string type, string value, params (string name, Action<VisualElement> callback)[] btns) {
-        VisualElement element = new() { name = "origin" };
-        element.style.flexDirection = FlexDirection.Row;
-        element.style.flexShrink = 1f;
+        VisualElement element = new() {
+            name = "origin",
+            style = {
+                flexDirection = FlexDirection.Row,
+                flexShrink = 1f,
+                flexGrow = 1f,
+            },
+        };
 
         Label keyLabel, typeLabel, valueLabel;
         VisualElement btnRoot;
-        element.Add(keyLabel = new Label(key) { name = "key" });
-        element.Add(typeLabel = new Label(type) { name = "type" });
-        element.Add(valueLabel = new Label(value) { name = "value" });
-        element.Add(btnRoot = new VisualElement() { name = "btns" });
-
-        keyLabel.style.minWidth = 650f / 4;
-        typeLabel.style.minWidth = 650f / 4;
-        valueLabel.style.minWidth = 650f / 4;
-        btnRoot.style.minWidth = 650f / 4;
-        btnRoot.style.flexDirection = FlexDirection.Row;
+        element.Add(keyLabel = new Label(key) { name = "key", style = { width = widths[0], overflow = Overflow.Hidden } });
+        element.Add(typeLabel = new Label(type) { name = "type", style = { width = widths[1], overflow = Overflow.Hidden } });
+        element.Add(valueLabel = new Label(value) { name = "value", style = { width = widths[2], overflow = Overflow.Hidden } });
+        element.Add(btnRoot = new VisualElement() { name = "btns", style = {
+            width = widths[3],
+            alignItems = Align.Center, 
+            justifyContent = Justify.Center,
+            flexDirection = FlexDirection.Row,
+        }});
 
         foreach (var btn in btns)
             btnRoot.Add(new Button(() => btn.callback(element)) { text = btn.name });
@@ -360,47 +378,81 @@ internal class PrefDataView : VisualElement {
         return element;
     }
 
+    // 显示/隐藏元素
+    private void ActiveElement(VisualElement target, bool active) {
+        target.visible = active;
+        target.style.display = active ? DisplayStyle.Flex : DisplayStyle.None;
+    }
+
     private void OnChangeRegisterValue(VisualElement element) {
+        var btns = element.Q<VisualElement>("btns");
         if (element.name == "origin") {
             element.name = "changing";
-            var value = element.Q<Label>("value").text;
-            element.RemoveAt(2);
-            var text = new TextField() { name = "value", value = value };
-            text.style.minWidth = 650f / 4 - 6f;
-            element.Insert(2, text);
+            var label = element.Q<Label>("value");
+            ActiveElement(label, false);
+            element.Insert(3, new TextField() { name = "value", value = label.text, style = {
+                width = widths[2],
+                overflow = Overflow.Hidden,
+            }});
 
-            var btns = element.Q<VisualElement>("btns");
             // 隐藏原先的按钮
-            foreach (var btn in btns.Children()) {
-                btn.visible = false;
-                btn.style.display = DisplayStyle.None;
-            }
-            
+            foreach (var btn in btns.Children())
+                ActiveElement(btn, false);
             // 添加确定和取消
-            btns.Add(new Button(() => OnChangeRegisterValue(element)) { text = "ok" });
-            btns.Add(new Button(() => OnChangeRegisterValue(element)) { text = "cancel" });
+            btns.Add(new Button(() => ApplyChanged(element, true)) { text = "ok" });
+            btns.Add(new Button(() => ApplyChanged(element, false)) { text = "cancel" });
         } else {
             element.name = "origin";
-            var value = element.Q<TextField>("value").value;
-            element.RemoveAt(2);
-            var label = new Label(value) { name = "value" };
-            label.style.minWidth = 650f / 4;
-            element.Insert(2, label);
+            // var label = element.ElementAt(2) as Label;
+            // label.text = element.Q<TextField>("value").value;
+            // element.RemoveAt(3);
+            // ActiveElement(label, true);
 
-            var btns = element.Q<VisualElement>("btns");
             // 去掉最后两个并还原按钮
             btns.RemoveAt(btns.childCount - 1);
             btns.RemoveAt(btns.childCount - 1);
-            foreach (var btn in btns.Children()) {
-                btn.visible = true;
-                btn.style.display = DisplayStyle.Flex;
-            }
+            foreach (var btn in btns.Children())
+                ActiveElement(btn, true);
         }
-        Debug.Log("待添加，不知道是修改文件还是本地注册表");
+    }
+
+    /// <summary>
+    /// 是否接受更改
+    /// </summary>
+    /// <param name="element"></param>
+    /// <param name="apply"></param>
+    private void ApplyChanged(VisualElement element, bool apply) {
+        var label = element.ElementAt(2) as Label;
+        if (apply) {
+            var originValue = label.text;
+            var changeValue = element.Q<TextField>("value").value;
+
+            // change file value
+            var key = $"{element.Q<Label>("key").text}||";
+
+            var lines = File.ReadAllLines(path).ToList();
+            var targetLine = lines.Single(line => line.StartsWith(key));
+            var newLine = targetLine.Replace(originValue, changeValue);
+            lines[lines.IndexOf(targetLine)] = newLine;
+            File.WriteAllLines(path, lines);
+
+            label.text = changeValue;
+        }
+        element.RemoveAt(3);
+        ActiveElement(label, true);
+
+        OnChangeRegisterValue(element);
     }
 
     private void OnDeleteRegisterValue(VisualElement element) {
-        Debug.Log("待添加，不知道是删除文件还是本地注册表");
+        var key = $"{element.Q<Label>("key").text}||";
+
+        var lines = File.ReadAllLines(path).ToList();
+        var targetLine = lines.Single(line => line.StartsWith(key));
+        lines.Remove(targetLine);
+        File.WriteAllLines(path, lines);
+        
+        view.Remove(element);
     }
 
     /// <summary>
