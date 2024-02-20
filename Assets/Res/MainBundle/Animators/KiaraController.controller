@@ -12,8 +12,7 @@ AnimatorState:
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -190298264574234630}
-  m_StateMachineBehaviours:
-  - {fileID: 9027778254923660706}
+  m_StateMachineBehaviours: []
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 1
   m_WriteDefaultValues: 1
@@ -220,7 +219,7 @@ BlendTree:
     m_DirectBlendParameter: Blend
     m_Mirror: 0
   - serializedVersion: 2
-    m_Motion: {fileID: 6564411413370888346, guid: 16114d403eabb53438de032c6f0d1deb,
+    m_Motion: {fileID: -203655887218126122, guid: 79a53e6658ee80b469ad0d440aca1b44,
       type: 3}
     m_Threshold: 1
     m_Position: {x: 0, y: 0}

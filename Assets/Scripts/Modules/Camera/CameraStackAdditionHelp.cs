@@ -5,7 +5,7 @@ using UnityEngine.Rendering.Universal;
 /// <summary>
 /// URP 塞入主摄像头Camera Stack脚本
 /// </summary>
-[RequireComponent(typeof(UnityEngine.Camera))]
+[RequireComponent(typeof(Camera))]
 public class CameraStackAdditionHelp : MonoBehaviour {
 
     private void Start() {

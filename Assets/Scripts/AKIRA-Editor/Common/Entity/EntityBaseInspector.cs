@@ -13,25 +13,26 @@ public class EntityBaseInspector : Editor {
     {
         var container = new VisualElement();
 
+        // make inspector element upper
+        InspectorElement.FillDefaultInspector(container, serializedObject, this);
+
         var entity = target as EntityBase;
         var method = typeof(EntityBase).GetMethod("IsOverride", BindingFlags.NonPublic | BindingFlags.Instance);
         var res = (bool)method.Invoke(entity, null);
 
         // 如果没有重写GameUpdate就不绘制更新需要的两个参数
         if (res) {
-            var updateElement = new VisualElement();
+            var updateElement = new VisualElement() { name = "UpdateElement" } ;
             container.Add(updateElement);
 
-            updateElement.Add(new Label() { text = "<b><size=12>Update Inspector</size></b>" });
+            // space
+            updateElement.Add(new VisualElement() { style = { height = 10f } });
+
+            updateElement.Add(new Label() { text = "<b><size=12>Update Inspector</size></b>".Colorful(System.Drawing.Color.LightSkyBlue) });
             updateElement.Add(new PropertyField(serializedObject.FindProperty("updateGroup")));
             updateElement.Add(new PropertyField(serializedObject.FindProperty("updateMode")));
-
-            var space = new VisualElement();
-            space.style.height = 10f;
-            updateElement.Add(space);
         }
 
-        InspectorElement.FillDefaultInspector(container, serializedObject, this);
 
         return container;
     }
