@@ -21,7 +21,6 @@ public class LogEditor {
                 while (matches.Success) {
                     pathline = matches.Groups[1].Value;
 
-                    Debug.Log(pathline);
                     // 过滤进入LogSystem的行
                     if (!pathline.Contains("LogSystem.cs")) {
                         int splitIndex = pathline.LastIndexOf(":");
