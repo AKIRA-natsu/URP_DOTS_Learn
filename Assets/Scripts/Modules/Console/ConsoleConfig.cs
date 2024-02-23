@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using AKIRA.Attribute;
 using AKIRA.UIFramework;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -25,25 +23,6 @@ namespace AKIRA.Manager {
         public string[] shutInputs;
     }
 
-    /// <summary>
-    /// 指令行
-    /// </summary>
-    [Serializable]
-    public struct Command {
-        [SelectionPop(typeof(CommandVar))]
-        public string command;
-        public string description;
-    }
-
-    /// <summary>
-    /// 指令行
-    /// </summary>
-    public class CommandVar {
-        public const string help = "help";
-        public const string clear = "clear";
-        public const string shut = "shut";
-    }
-
     [CreateAssetMenu(fileName = "ConsoleConfig", menuName = "AKIRA.Framework/Module/ConsoleConfig", order = 0)]
     public class ConsoleConfig : ScriptableObject {
         [Min(0)]
@@ -54,11 +33,6 @@ namespace AKIRA.Manager {
         // 当前模板配置
         private PlatformWakeConfig usedConfig;
 
-        [SerializeField]
-        private Command[] commands;
-        // 指令行，对所有平台有效
-        public IReadOnlyCollection<Command> Commands => commands;
-
         /// <summary>
         /// Init by console system
         /// </summary>
@@ -68,7 +42,7 @@ namespace AKIRA.Manager {
                 if (config.platforms.Contains(platform)) {
                     usedConfig = config;
 
-                    StringBuilder builder = new StringBuilder($"[{platform}] -> ");
+                    StringBuilder builder = new($"[{platform}] -> ");
                     builder.Append("Wake By Key:");
                     foreach (var awake in usedConfig.wakeInputs)
                         builder.Append($"{awake} ");

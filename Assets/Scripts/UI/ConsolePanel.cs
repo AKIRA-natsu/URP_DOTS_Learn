@@ -1,4 +1,5 @@
 using System;
+using AKIRA.Behaviour.GM;
 using AKIRA.Manager;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -15,19 +16,6 @@ namespace AKIRA.UIFramework {
             base.Show();
             ConsoleInput.ActivateInputField();
         }
-
-        public override void Invoke(string name, params object[] args) {
-            switch (name) {
-                case "Init":
-                    Init((Command[])args[0]);
-                break;
-                case "Repaint":
-                    Repaint(args);
-                break;
-            }
-        }
-
-        public void Init(Command[] commands) { }
 
         public async void Repaint(params object[] values) {
             ContentFitter.enabled = false;

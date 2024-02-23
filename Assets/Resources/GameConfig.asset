@@ -21,13 +21,6 @@ MonoBehaviour:
     - <Keyboard>/backquote
     shutInputs:
     - <Keyboard>/escape
-  commands:
-  - command: help
-    description: Show Availiable Commands
-  - command: clear
-    description: Clear Console Output
-  - command: shut
-    description: Exit Game
 --- !u!114 &-4453349924037599099
 MonoBehaviour:
   m_ObjectHideFlags: 0

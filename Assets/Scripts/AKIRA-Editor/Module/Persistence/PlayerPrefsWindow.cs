@@ -1,4 +1,4 @@
-#if UNITY_2022
+#if UNITY_2022_1_OR_NEWER
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.UIElements;
