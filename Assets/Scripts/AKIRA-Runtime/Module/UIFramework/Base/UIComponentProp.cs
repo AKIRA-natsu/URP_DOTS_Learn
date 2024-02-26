@@ -11,7 +11,13 @@ namespace AKIRA.UIFramework {
             this.transform = (Transform)obj;
             this.gameObject = this.transform.gameObject;
             BindFields();
+
             group = this.gameObject.GetOrAddComponent<CanvasGroup>();
+            InitAnimation();
+
+            // 默认显示
+            active = false;
+            Active = true;
         }
     }
 }

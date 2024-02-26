@@ -231,6 +231,15 @@ public static partial class Utils {
         var typeName = typeof(T).Name;
         for (int i = 0; i < count; i++) {
             var child = parent.GetChild(i);
+            // 判断是否重命名
+            if (child.TryGetComponent(out UIPropRenameComponent rename)) {
+                if (rename.propName.Equals(typeName)) {
+                    var component = new T();
+                    component.Awake(child);
+                    result.Add(component);
+                    continue;                    
+                }
+            }
             // 去掉复制预制体名称带(1)/(2)的影响
             if (!typeName.Contains(child.name.Split("(")[0].Trim())) {
                 result.AddRange(com.GetComponentProps<T>(child));        

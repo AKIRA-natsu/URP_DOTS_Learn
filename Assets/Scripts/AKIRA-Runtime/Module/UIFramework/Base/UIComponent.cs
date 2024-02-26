@@ -17,7 +17,7 @@ namespace AKIRA.UIFramework {
         // 可适配组件列表
         public List<RectTransform> MatchableList { get; private set; } = new List<RectTransform>();
         
-        private bool active = true;
+        internal bool active = true;
         /// <summary>
         /// 是否激活，set调用Show/Hide方法
         /// </summary>
@@ -42,9 +42,9 @@ namespace AKIRA.UIFramework {
             BindFields();
 
             group = this.gameObject.GetOrAddComponent<CanvasGroup>();
-            animation = this.transform.GetComponent<IUIAnimation>();
-            animation?.OnInit(group);
-            
+            InitAnimation();
+
+            // 默认隐藏
             ActiveCanvasGroup(false);
             active = false;
         }
@@ -129,6 +129,14 @@ namespace AKIRA.UIFramework {
 
     public partial class UIComponent {
         private IUIAnimation animation;
+
+        /// <summary>
+        /// 初始化UI动画
+        /// </summary>
+        protected void InitAnimation() {
+            animation = this.transform.GetComponent<IUIAnimation>();
+            animation?.OnInit(group);
+        }
 
         /// <summary>
         /// 如果有IUIAnimation，OnShow函数的OnShowStart事件会走此函数
