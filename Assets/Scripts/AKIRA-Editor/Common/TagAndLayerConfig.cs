@@ -22,10 +22,10 @@ public class TagAndLayerConfig
     [MenuItem("Tools/AKIRA.Framework/Common/Update Tags && Layers", priority = 100)]
     private static void UpdateTagAndLayer()
     {
-        var path = "TagAndLayer".GetScriptLocation();
+        var path = "TagAndLayers".GetScriptLocation();
         // 检查文件是否还存在
         if (string.IsNullOrEmpty(path)) {
-            "TagAndLayer.cs文件不存在，请在项目内创建一个TagAndLayers.cs的脚本！".Error();
+            "TagAndLayers.cs文件不存在，请在项目内创建一个TagAndLayers.cs的脚本！".Error();
             return;
         }
         $"Layer Update: Path => {path}".Log(GameData.Log.Editor);

@@ -145,23 +145,12 @@ namespace AKIRA {
         }
         #endregion
 
-        #region 标签
-        public class Tag {
-            public const string Player = "Player";
-        }
-        #endregion
-
         #region 资源
         public class Asset {
             /// <summary>
             /// UIManager
             /// </summary>
             public const string UIManager = "Assets/Res/MainBundle/Prefabs/UI/[UIManager].prefab";
-
-            /// <summary>
-            /// 故意留一个空的
-            /// </summary>
-            public const string Null = "Null";
 
             // Guide
             public const string Guide3DRoot = "Assets/Res/MainBundle/Prefabs/Guidence/[Guidence].prefab";       // 指引3D物体父类

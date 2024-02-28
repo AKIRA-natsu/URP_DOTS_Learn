@@ -261,9 +261,9 @@ namespace AKIRA.Manager {
 
         protected Guide3DSystem() {
             // 寻找玩家Tag
-            player = GameObject.FindWithTag(GameData.Tag.Player)?.transform;
+            player = GameObject.FindWithTag(Tags.Player)?.transform;
             if (player is null)
-                $"不存在GameObject Tag: {GameData.Tag.Player}".Error();
+                $"不存在GameObject Tag: {Tags.Player}".Error();
             
             // 为场景添加Arrow箭头
             arrow3D = AssetSystem.Instance.LoadObject<GameObject>(GameData.Asset.GuideArrow).Instantiate();

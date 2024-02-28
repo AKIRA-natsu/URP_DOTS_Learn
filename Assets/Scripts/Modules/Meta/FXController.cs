@@ -28,7 +28,7 @@ public class FXController : IController {
     /// <param name="position"></param>
     /// <param name="rotation"></param>
     public async void PlayFX(string path, Vector3 position, Quaternion rotation) {
-        if (string.IsNullOrEmpty(path) || path.Equals(GameData.Asset.Null))
+        if (string.IsNullOrEmpty(path))
             return;
             
         var go = ObjectPool.Instance.Instantiate<GameObject>(path, position, rotation);
@@ -54,7 +54,7 @@ public class FXController : IController {
     /// <param name="position"></param>
     /// <returns></returns>
     public async void PlayFX(string path, Vector3 position, Quaternion rotation, Func<bool> destoryCondition) {
-        if (string.IsNullOrEmpty(path) || path.Equals(GameData.Asset.Null))
+        if (string.IsNullOrEmpty(path))
             return;
         
         var go = ObjectPool.Instance.Instantiate<GameObject>(path, position, rotation);

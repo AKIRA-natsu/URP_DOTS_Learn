@@ -99,7 +99,7 @@ namespace AKIRA.Manager {
         }
 
         public T LoadObject<T>(string path) where T : Object {
-            if (string.IsNullOrEmpty(path) || path.Equals(GameData.Asset.Null))
+            if (string.IsNullOrEmpty(path))
                 return default;
 
             if (records.ContainsKey(path))
