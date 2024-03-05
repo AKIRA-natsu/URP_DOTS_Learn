@@ -108,7 +108,7 @@ namespace AKIRA.UIFramework {
                 WinData data;
                 #if UNITY_EDITOR
                 if (!Application.isPlaying)
-                    data = (ui.GetType().GetCustomAttribute(typeof(WinAttribute)) as WinAttribute).Data;
+                    data = ui.GetType().GetCustomAttribute<WinAttribute>().Data;
                 else
                 #endif
                     data = UIDataManager.Instance.GetUIData(ui);
@@ -125,7 +125,8 @@ namespace AKIRA.UIFramework {
                     node = new WinNode(ui, FindNode(data.parent));
                 }
 
-                var fields = ui.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance).Where(field => field.FieldType.IsSubclassOf(typeof(UIComponentProp)));
+                var fields = ui.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
+                    .Where(field => field.FieldType.IsSubclassOf(typeof(UIComponentProp)) && field.GetCustomAttribute<UIControlAttribute>() != null);
                 
                 foreach (var field in fields)
                     #if UNITY_EDITOR

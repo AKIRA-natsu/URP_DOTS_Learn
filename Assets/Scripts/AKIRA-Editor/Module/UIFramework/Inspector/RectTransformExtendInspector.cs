@@ -43,7 +43,7 @@ namespace AKIRA.Editor {
                 if (componentType != null && componentType.IsSubclassOf(typeof(UIBase))) {
                     EditorGUILayout.Space();
                     DrawUpdatePropsBtn(rect.gameObject, true);
-                    DrawEditBtn($"{target.name}Component");
+                    DrawEditBtn(propRenameComponent == null ? $"{target.name}Component" : propRenameComponent.propName);
                     if (Application.isPlaying) {
                         var componentProp = GetComponentPropObject(FindComponentParentPanel(rect), componentType);
                         DrawActiveBtn(componentProp);

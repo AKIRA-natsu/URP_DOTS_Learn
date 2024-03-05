@@ -39,6 +39,17 @@ public static partial class Utils {
     public static T LoadAssetAtPath<T>(this string path) where T : UnityEngine.Object {
         return AssetDatabase.LoadAssetAtPath<T>(path);
     }
+
+    /// <summary>
+    /// <para>编辑器模式下，加载T[]</para>
+    /// <para> AssetDatabase.LoadAllAssetsAtPath </para>
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    public static IEnumerable<T> LoadAllAssetsAtPath<T>(this string path) where T : UnityEngine.Object {
+        return AssetDatabase.LoadAllAssetsAtPath(path).OfType<T>();
+    }
 #endif
 
     /// <summary>

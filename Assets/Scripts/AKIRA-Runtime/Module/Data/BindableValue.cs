@@ -66,7 +66,7 @@ public partial class BindableValue<T> where T : IComparable<T> {
 
 #region Property Drawer
 #if UNITY_EDITOR
-[CustomPropertyDrawer(typeof(BindableValue<>))]
+[CustomPropertyDrawer(typeof(BindableValue<>), true)]
 public class BindableValueDrawer: PropertyDrawer {
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
         EditorGUI.BeginChangeCheck();

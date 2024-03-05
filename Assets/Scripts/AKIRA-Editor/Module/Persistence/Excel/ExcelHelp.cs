@@ -79,7 +79,6 @@ public static class ExcelHelp {
 @$"/// <summary>
 /// ------------------------------------------------------
 /// <para>Auto Generate By {typeof(ExcelHelp)}</para>
-/// <para>At {DateTime.Now}</para>
 /// ------------------------------------------------------
 /// </summary>
 [System.Serializable]
@@ -89,41 +88,45 @@ public partial class {scriptType} {{";
         List<string> @types = new();
         List<string> @params = new();
         List<string> @summaries = new();
+
+        // rows
+        int typeRow = -1;
+        int paramRow = -1;
+        int summaryRow = -1;
+
         for (int i = 0; i < sheet.Rows.Count; i++) {
+            // check collect head completed
+            if (typeRow != -1 && paramRow != -1 && summaryRow != -1)
+                break;
+
             // check first column
             var header = sheet.Rows[i][0].ToString();
             if (string.IsNullOrEmpty(header))
                 continue;
             if (!header.Contains("##"))
                 continue;
-            if (header.ToLower().Equals(ParamName)) {
-                for (int j = 1; j < sheet.Columns.Count; j++) {
-                    var @param = sheet.Rows[i][j].ToString();
-                    if (string.IsNullOrEmpty(@param))
-                        break;
-                    // replace xx-oo to xx_oo
-                    @params.Add(@param.Replace("-", "_"));
-                }
-            }
 
-            if (header.ToLower().Equals(TypeName)) {
-                for (int j = 1; j < sheet.Columns.Count; j++) {
-                    var @type = sheet.Rows[i][j].ToString();
-                    if (string.IsNullOrEmpty(@type))
-                        break;
-                    @types.Add(@type);
-                }
-            }
-
-            if (header.ToLower().Equals(SummaryName)) {
-                for (int j = 1; j < sheet.Columns.Count; j++)
-                    @summaries.Add(sheet.Rows[i][j].ToString());
-            }
+            if (header.ToLower().Equals(ParamName))
+                paramRow = i;
+            if (header.ToLower().Equals(TypeName))
+                typeRow = i;
+            if (header.ToLower().Equals(SummaryName))
+                summaryRow = i;
         }
-        
-        if (@types.Count != @params.Count) {
-            $"字段与类型数量不一致".Error();
+
+        if (typeRow == -1 || paramRow == -1 || summaryRow == -1) {
+            $"{ParamName} 或 {TypeName} 或 {SummaryName} 首列不存在".Error();
             return;
+        }
+
+        for (int j = 1; j < sheet.Columns.Count; j++) {
+            var typeValue = sheet.Rows[typeRow][j].ToString();
+            var paramValue = sheet.Rows[paramRow][j].ToString();
+            if (string.IsNullOrEmpty(typeValue) || string.IsNullOrEmpty(paramValue))
+                continue;
+            @params.Add(paramValue.Replace("-", "_"));
+            @types.Add(typeValue);
+            @summaries.Add(sheet.Rows[summaryRow][j].ToString());
         }
 
         for (int i = 0; i < @types.Count; i++) {
@@ -205,6 +208,11 @@ public partial class {scriptType} {{";
         }
 
         var scriptType = Path.GetFileNameWithoutExtension(json).GetConfigTypeByAssembley();
+        if (scriptType == null) {
+            $"{scriptType}不存在，跳过文件 {excel}".Log();
+            return default;
+        }
+
         var fields = scriptType.GetFields();
 #region Json
         List<object> instances = new();
@@ -212,7 +220,6 @@ public partial class {scriptType} {{";
         for (int i = 0; i < sheet.Rows.Count; i++) {
             // check first column
             var header = sheet.Rows[i][0].ToString();
-            // find param row in rows
             if (header.Equals(ParamName))
                 row = sheet.Rows[i];
             if (!string.IsNullOrEmpty(header))
@@ -267,6 +274,41 @@ public partial class {scriptType} {{";
     //             // Be aware that __makeref is an undocumented keyword. It could as well not work on future versions of C#.
     //             TypedReference reference = __makeref(data);
     //             field.SetValueDirect(reference, sheet.Rows[i][j].ConvertTo(field.FieldType));
+    //         }
+    //         result.Add(data);
+    //     }
+    //     return result;
+    // }
+
+    // /// <summary>
+    // /// XML转Class
+    // /// </summary>
+    // /// <typeparam name="T"></typeparam>
+    // private static List<T> ConvertToClass<T>(this DataTableCollection table, string dllName, int sheetIndex = 0) where T : class {
+    //     DataTable sheet;
+    //     try {
+    //         sheet = table[sheetIndex];
+    //     } catch {
+    //         return null;
+    //     }
+
+    //     // 没有数据
+    //     if (sheet.Rows.Count <= 1)
+    //         return null;
+
+    //     // 返回数组
+    //     List<T> result = new List<T>();
+    //     // 获得字段
+    //     List<string> fieldNames = new List<string>();
+    //     for (int i = 0; i < sheet.Columns.Count; i++) {
+    //         fieldNames.Add(sheet.Rows[0][i].ToString());
+    //     }
+        
+    //     for (int i = 1; i < sheet.Rows.Count; i++) {
+    //         var data = typeof(T).CreateInstance<T>(dllName);
+    //         for (int j = 0; j < sheet.Columns.Count; j++) {
+    //             var field = data.GetType().GetField(fieldNames[j]);
+    //             field.SetValue(data, sheet.Rows[i][j].ConvertTo(field.FieldType));
     //         }
     //         result.Add(data);
     //     }
