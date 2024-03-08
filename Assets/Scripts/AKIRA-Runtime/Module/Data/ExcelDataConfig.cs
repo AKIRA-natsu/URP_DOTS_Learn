@@ -75,11 +75,15 @@ public class ExcelDataConfig : ScriptableObject {
         string extense = encrypt ? "*.bytes" : "*.json";
         var files = Directory.GetFiles(output, extense);
         paths = new string[files.Length];
+        
+        // 查看存放的目录
+        string checkStr = output.Contains("Resources") ? "Resources" : "StreamingAssets";
+
         for (int i = 0; i < files.Length; i++) {
             var file = files[i];
-            var path = file.Replace("Assets/StreamingAssets/", "");
-            path = path.Replace("Assets/Resoureces/", "");
-            paths[i] = path;
+            // 检查StreamingAssets的
+            var index = file.IndexOf(checkStr);
+            paths[i] = file.Remove(0, index + checkStr.Length + 1);
         }
         UnityEditor.EditorUtility.SetDirty(this);
         UnityEditor.AssetDatabase.SaveAssets();

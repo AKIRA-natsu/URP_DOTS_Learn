@@ -18,14 +18,14 @@ namespace AKIRA.Manager {
         public async Task Initialize() {
             var config = GameConfig.Instance.GetConfig<ExcelDataConfig>();
             await Task.Yield();
-            if (config.output.Contains("Resoureces")) {
-                await LoadByResoureces(config);
+            if (config.output.Contains("Resources")) {
+                await LoadByResources(config);
             } else {
                 await LoadByStreamingAssets(config);
             }
         }
 
-        private async Task LoadByResoureces(ExcelDataConfig config) {
+        private async Task LoadByResources(ExcelDataConfig config) {
             var extense = config.encrypt ? ".bytes" : ".json";
             foreach (var file in config.paths) {
                 var asset = file.Replace(extense, "").Load<TextAsset>();

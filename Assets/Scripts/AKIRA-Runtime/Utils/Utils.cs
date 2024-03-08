@@ -44,8 +44,8 @@ public static partial class Utils {
     /// <para>编辑器模式下，加载T[]</para>
     /// <para> AssetDatabase.LoadAllAssetsAtPath </para>
     /// </summary>
-    /// <typeparam name="T"></typeparam>
     /// <param name="path"></param>
+    /// <typeparam name="T"></typeparam>
     /// <returns></returns>
     public static IEnumerable<T> LoadAllAssetsAtPath<T>(this string path) where T : UnityEngine.Object {
         return AssetDatabase.LoadAllAssetsAtPath(path).OfType<T>();
@@ -398,6 +398,15 @@ public static partial class Utils {
     /// <returns></returns>
     public static Color ToUnityColor(this System.Drawing.Color color) {
         return new Color(color.R / 255f, color.G / 255f, color.B / 255f);
+    }
+
+    /// <summary>
+    /// Color的简单转换（System.Drawing.Color => UnityEngine.Color）
+    /// </summary>
+    /// <param name="color"></param>
+    /// <returns></returns>
+    public static Color ToUnityColor(this System.Drawing.Color color, float alpha) {
+        return new Color(color.R / 255f, color.G / 255f, color.B / 255f, Mathf.Clamp(alpha, 0, 1));
     }
 
     /// <summary>

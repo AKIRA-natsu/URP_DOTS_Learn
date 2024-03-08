@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEditor;
 using System.IO;
 using AKIRA;
+using System.Linq;
 
 /// <summary>
 /// excel 2 json/byte & class
@@ -79,7 +80,7 @@ public class ExcelDataUtil : EditorWindow {
     private void GetFiles() {
         if (string.IsNullOrEmpty(config.excelPath))
             return;
-        files = Directory.GetFiles(config.excelPath, "*.xls*");
+        files = Directory.GetFiles(config.excelPath, "*.xls*").Where(file => !file.Contains(".meta")).ToArray();
         config.UpdatePaths();
         $"ExcelDataUtil: 获得{files.Length}文件, 已转化文件数量 {config.paths.Length}".Log(GameData.Log.Editor);
     }
