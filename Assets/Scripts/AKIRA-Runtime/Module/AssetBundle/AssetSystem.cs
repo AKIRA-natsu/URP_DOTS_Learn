@@ -96,6 +96,23 @@ namespace AKIRA.Manager {
             // webgl用的web request获得ab包
 #endif
 
+#if UNITY_EDITOR
+        // Editor 下粉色材质球，获得所有材质球进行替换
+        "AB Editor Log Only: try replace shader".Log();
+        foreach (var bundle in bundles) {
+            var materials = bundle.LoadAllAssets<Material>();
+            foreach(Material m in materials) {
+                var shaderName = m.shader.name;
+                var newShader = Shader.Find(shaderName);
+                if(newShader != null) {
+                    m.shader = newShader;
+                } else {
+                    ("unable to refresh shader: " + shaderName + " in material " + m.name).Log(GameData.Log.Warn);
+                }
+            }
+        }
+#endif
+
         }
 
         public T LoadObject<T>(string path) where T : Object {
