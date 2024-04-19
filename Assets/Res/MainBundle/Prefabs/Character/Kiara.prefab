@@ -433,6 +433,7 @@ MonoBehaviour:
   <StateMachine>k__BackingField:
     rid: -2
   lookPoint: {fileID: 5097827848784563799}
+  value: 0
   references:
     version: 2
     RefIds:

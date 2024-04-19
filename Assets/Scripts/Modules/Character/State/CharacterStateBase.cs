@@ -33,6 +33,19 @@ namespace AKIRA.Behaviour.AI {
             Owner.AnimatorComponent.OnRootMotion = onRootMotion;
         }
 
+        /// <summary>
+        /// 判断当前动画状态，并获得当前动画进度
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="time">0 - 1</param>
+        /// <param name="layer"></param>
+        /// <returns></returns>
+        protected bool IsAnimationName(string name, out float time, int layer = 0) {
+            var info = Owner.AnimatorComponent.GetAnimationInfo(layer);
+            time = info.normalizedTime;
+            return info.IsName(name);
+        }
+
         // switch state machine
         protected void SwitchState<T>() where T : IState {
             Machine.Switch<T>();
@@ -44,6 +57,11 @@ namespace AKIRA.Behaviour.AI {
         public enum MoveChildState {
             Stop,
             Move,
+        }
+
+        public enum JumpChildState {
+            Loop,
+            End,
         }
     }
     

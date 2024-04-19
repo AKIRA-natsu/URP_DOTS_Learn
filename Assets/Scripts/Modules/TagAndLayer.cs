@@ -28,6 +28,11 @@ public static class Layer {
     /// </summary>
     public const int UI = 5;
                 
+    /// <summary>
+    /// Environment
+    /// </summary>
+    public const int Environment = 6;
+                
 }
 
             

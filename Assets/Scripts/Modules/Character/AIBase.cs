@@ -38,6 +38,8 @@ namespace AKIRA.Behaviour.AI {
         private Animator animator;
         // 根运动事件
         public Action<Vector3, Quaternion> OnRootMotion;
+        // ik运动事件
+        public Action<int, Animator> OnIKMotion;
 
         private void Awake() {
             animator = this.GetComponent<Animator>();
@@ -45,6 +47,10 @@ namespace AKIRA.Behaviour.AI {
 
         private void OnAnimatorMove() {
             OnRootMotion?.Invoke(animator.deltaPosition, animator.deltaRotation);
+        }
+
+        private void OnAnimatorIK(int layerIndex) {
+            OnIKMotion?.Invoke(layerIndex, animator);
         }
 
         /// <summary>

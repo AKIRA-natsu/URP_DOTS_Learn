@@ -18,6 +18,12 @@ namespace AKIRA.Behaviour.AI {
 
             // 检测攻击
 
+            // 检测下落
+            if (!Owner.Controller.isGrounded) {
+                SwitchState<PlayerAirDownState>();
+                return;
+            }
+
             // 检测移动
             Owner.Controller.Move(new(0, Player.Gravity * Time.deltaTime, 0));
             if (GetInputAction(InputActions.Move).IsPressed()) {
@@ -49,6 +55,12 @@ namespace AKIRA.Behaviour.AI {
                 return;
             }
 
+            // 检测下落
+            if (!Owner.Controller.isGrounded) {
+                SwitchState<PlayerAirDownState>();
+                return;
+            }
+
             switch (moveState) {
                 case MoveChildState.Move:
                     MoveOnUpdate();
@@ -62,7 +74,10 @@ namespace AKIRA.Behaviour.AI {
         private void MoveOnUpdate() {
             var action = GetInputAction(InputActions.Move);
             if (action.WasReleasedThisFrame()) {
-                SwitchState<PlayerIdleState>();
+                if (walk2RunTransition > .4f)
+                    SwitchMoveState(MoveChildState.Stop);
+                else
+                    SwitchState<PlayerIdleState>();
                 return;
             }
 
@@ -82,7 +97,14 @@ namespace AKIRA.Behaviour.AI {
         }
 
         private void StopOnUpdate() {
-
+            // 检测当前播放进度
+            if (IsAnimationName(Animation.MoveToStop, out float time)) {
+                if (time >= 1)
+                    SwitchState<PlayerMoveState>();
+                
+                if (GetInputAction(InputActions.Move).WasPerformedThisFrame())
+                    SwitchMoveState(MoveChildState.Move);
+            }
         }
 
         /// <summary>
@@ -97,6 +119,7 @@ namespace AKIRA.Behaviour.AI {
                     SetRootMotion(RootMotionMove);
                 break;
                 case MoveChildState.Stop:
+                    SwitchAnimation(Animation.MoveToStop);
                     SetRootMotion(null);
                 break;
             }
@@ -112,7 +135,7 @@ namespace AKIRA.Behaviour.AI {
     public class PlayerJumpState : PlayerStateBase {
         public override void OnEnter() {
             base.OnEnter();
-            SwitchAnimation(Animation.Jump);
+            SwitchAnimation(Animation.JumpStart);
             SetRootMotion(RootMotionMove);
         }
 
@@ -122,31 +145,9 @@ namespace AKIRA.Behaviour.AI {
         }
 
         public override void OnUpdate() {
-            var info = Owner.AnimatorComponent.GetAnimationInfo();
-            if (info.IsName(Animation.Jump)) {
-
-                var action = GetInputAction(InputActions.Move);
-                if (action.IsPressed()) {
-                    var input = action.ReadValue<Vector2>();
-                    var self = Owner.transform;
-                    var deltaTime = Time.deltaTime;
-                    var camera = Camera.main.transform;
-                    var direction = new Vector3(input.x, 0, input.y);
-                    var dir = camera.TransformDirection(direction);
-
-                    // 处理移动
-                    Owner.Controller.Move(Player.MoveSpeedForJump * deltaTime * dir);
-
-                    // 处理旋转
-                    // 四元数 x 向量：向量按照四元数旋转得到新的向量
-                    var moveDir = Quaternion.Euler(0, camera.eulerAngles.y, 0) * direction;
-                    self.rotation = Quaternion.Slerp(self.rotation, Quaternion.LookRotation(moveDir), deltaTime * Player.RotateSpeed);
-                }
-
-                // 攻击检测
-
-                if (info.normalizedTime >= .95f) {
-                    SwitchState<PlayerIdleState>();
+            if (IsAnimationName(Animation.JumpStart, out float time)) {
+                if (time >= .95f) {
+                    SwitchState<PlayerAirDownState>();
                 }
             }
         }
@@ -156,4 +157,92 @@ namespace AKIRA.Behaviour.AI {
             Owner.Controller.Move(vector);
         }
     }
+
+    // 玩家空中掉落状态
+    public class PlayerAirDownState : PlayerStateBase {
+        private LayerMask envMask = 1 << Layer.Environment;     // 检测对象层级
+        private JumpChildState state;                           // 跳跃子状态
+        private bool needEndAnimation;                          // 是否需要播放跳跃结束动画
+
+        public override void OnEnter() {
+            base.OnEnter();
+            SwitchJumpState(JumpChildState.Loop);
+            // 判断当前角色高度是否有可能切换到End
+            var trans = Player.transform;
+            needEndAnimation = !Physics.Raycast(trans.position + Vector3.up * .5f, -trans.up, Player.JumpNeedHeight, envMask);
+        }
+
+        public override void OnUpdate() {
+            switch (state) {
+                case JumpChildState.Loop:
+                    var trans = Player.transform;
+                    if (needEndAnimation) {
+                        if (Physics.Raycast(trans.position + Vector3.up * .5f, -trans.up, Player.JumpEndHeight, envMask)) {
+                            SwitchJumpState(JumpChildState.End);
+                        }
+                    } else {
+                        if (Owner.Controller.isGrounded) {
+                            SwitchState<PlayerIdleState>();
+                            return;
+                        }
+                    }
+                    OnAirControl();
+                break;
+                case JumpChildState.End:
+                    if (IsAnimationName(Animation.JumpEnd, out float time)) {
+                        if (time >= .8f) {
+                            if (Owner.Controller.isGrounded == false) {
+                                // 踩空，继续往下掉落
+                                SwitchJumpState(JumpChildState.Loop);
+                            } else {
+                                SwitchState<PlayerIdleState>();
+                            }
+                        } else if (time < .6f) {
+                            OnAirControl();
+                        }
+                    }
+                break;
+            }
+        }
+
+        private void SwitchJumpState(JumpChildState state) {
+            this.state = state;
+            switch (state) {
+                case JumpChildState.Loop:
+                SwitchAnimation(Animation.JumpLoop);
+                break;
+                case JumpChildState.End:
+                SwitchAnimation(Animation.JumpEnd);
+                break;
+            }
+        }
+
+        /// <summary>
+        /// 空中控制
+        /// </summary>
+        private void OnAirControl() {
+            var action = GetInputAction(InputActions.Move);
+
+            var deltaTime = Time.deltaTime;
+            Vector3 motion = new (0, Player.Gravity * deltaTime, 0);
+            if (action.IsPressed()) {
+                var input = action.ReadValue<Vector2>();
+                var self = Owner.transform;
+                var camera = Camera.main.transform;
+                var direction = new Vector3(input.x, 0, input.y);
+                var dir = camera.TransformDirection(direction);
+                motion.x = Player.MoveSpeedForJump * deltaTime * dir.x;
+                motion.z = Player.MoveSpeedForJump * deltaTime * dir.z;
+
+                // 处理旋转
+                // 四元数 x 向量：向量按照四元数旋转得到新的向量
+                var moveDir = Quaternion.Euler(0, camera.eulerAngles.y, 0) * direction;
+                self.rotation = Quaternion.Slerp(self.rotation, Quaternion.LookRotation(moveDir), deltaTime * Player.RotateSpeed);
+            }
+
+            // 处理移动
+            Owner.Controller.Move(motion);
+        }
+    }
+
 }

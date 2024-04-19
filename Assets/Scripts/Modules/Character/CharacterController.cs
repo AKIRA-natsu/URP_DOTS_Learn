@@ -12,8 +12,10 @@ namespace AKIRA.Behaviour.AI {
         public readonly float RotateSpeed = 5f;
         public readonly float TransitionSpeed = 3f;
         public readonly float JumpPower = 1.2f;
-        public readonly float MoveSpeedForJump = 2f;
-
+        public readonly float MoveSpeedForJump = 3f;
+        public readonly float JumpNeedHeight = 2.1f;          // 空中检测到地面距离，如果有这个距离播放翻滚
+        public readonly float JumpEndHeight = 2f;             // jump end 动画播放的高度距离
+        
         // free look target
         [SerializeField]
         private Transform lookPoint;
@@ -39,6 +41,7 @@ namespace AKIRA.Behaviour.AI {
             subMoveMachine.RegistState<PlayerIdleState>();
             subMoveMachine.RegistState<PlayerMoveState>();
             subMoveMachine.RegistState<PlayerJumpState>();
+            subMoveMachine.RegistState<PlayerAirDownState>();
 
             ResetMachine();
         }

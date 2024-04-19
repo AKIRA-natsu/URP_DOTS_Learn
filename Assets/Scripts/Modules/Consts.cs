@@ -13,7 +13,10 @@ public class StateKey {
 public class Animation {
     public const string Idle = "Idle";
     public const string Move = "Move";
-    public const string Jump = "Jump";
+    public const string MoveToStop = "MoveToStop";
+    public const string JumpStart = "JumpStart";
+    public const string JumpLoop = "JumpLoop";
+    public const string JumpEnd = "JumpEnd";
 }
 
 // 事件
