@@ -3,9 +3,10 @@ using UnityEngine;
 
 namespace AKIRA.Behaviour.AI {
     /// <summary>
-    /// 基类
+    /// 人物基类
     /// </summary>
     [SelectionBase]
+    [RequireComponent(typeof(UnityEngine.CharacterController))]
     public abstract partial class AIBase : EntityBase, IMachineOwner {
         // 动画托管
         public CharacterAnimatorDelgateComponent AnimatorComponent { get; private set; }
@@ -36,17 +37,11 @@ namespace AKIRA.Behaviour.AI {
     public partial class CharacterAnimatorDelgateComponent : MonoBehaviour {
         // 动画
         private Animator animator;
-        // 根运动事件
-        public Action<Vector3, Quaternion> OnRootMotion;
         // ik运动事件
         public Action<int, Animator> OnIKMotion;
 
         private void Awake() {
             animator = this.GetComponent<Animator>();
-        }
-
-        private void OnAnimatorMove() {
-            OnRootMotion?.Invoke(animator.deltaPosition, animator.deltaRotation);
         }
 
         private void OnAnimatorIK(int layerIndex) {
@@ -58,8 +53,17 @@ namespace AKIRA.Behaviour.AI {
         /// </summary>
         /// <param name="name"></param>
         /// <param name="time"></param>
-        public void SwitchAnimation(string name, float time = .25f) {
-            animator.CrossFadeInFixedTime(name, time);
+        public void SwitchAnimation(string name, float time = .25f, int layer = 0) {
+            animator.CrossFadeInFixedTime(name, time, layer);
+        }
+
+        /// <summary>
+        /// 更新Animator Layer Weight
+        /// </summary>
+        /// <param name="layer"></param>
+        /// <param name="weight"></param>
+        public void SetLayerWeight(int layer, float weight) {
+            animator.SetLayerWeight(layer, weight);
         }
 
         /// <summary>
@@ -71,13 +75,7 @@ namespace AKIRA.Behaviour.AI {
             return animator.GetCurrentAnimatorStateInfo(layer);
         }
 
-        /// <summary>
-        /// 设置动画参数值
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="value"></param>
-        public void SetValue(string name, float value) {
-            animator.SetFloat(name, value);
-        }
+        public void SetValue(string name, float value) => animator.SetFloat(name, value);
+        public void SetValue(string name, bool value) => animator.SetBool(name, value);
     }
 }

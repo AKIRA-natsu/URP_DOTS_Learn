@@ -166,7 +166,7 @@ namespace AKIRA {
             public const string Kiara = "Assets/Res/MainBundle/Prefabs/Character/Kiara.prefab";                 // 角色模型 blender
 
             // Scene
-            public const string SampleScene = "Assets/Res/MainBundle/Prefabs/Scene/SampleScene.prefab";         // 示例测试场景
+            public const string Environment = "Assets/Res/MainBundle/Prefabs/Scene/[Environment].prefab";       // 示例测试场景
         }
         #endregion
 

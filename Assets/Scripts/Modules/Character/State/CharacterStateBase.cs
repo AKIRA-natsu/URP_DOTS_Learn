@@ -1,6 +1,5 @@
 using System;
 using AKIRA.Manager;
-using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace AKIRA.Behaviour.AI {
@@ -19,18 +18,18 @@ namespace AKIRA.Behaviour.AI {
         public abstract void OnUpdate();
 
         // switch animator state
-        protected void SwitchAnimation(string name, float time = .25f) {
-            Owner.AnimatorComponent.SwitchAnimation(name, time);
+        protected void SwitchAnimation(string name, float time = .25f, int layer = 0) {
+            Owner.AnimatorComponent.SwitchAnimation(name, time, layer);
+        }
+        
+        // set animator layer weight
+        protected void SetAnimatorLayer(int layer, float weight) {
+            Owner.AnimatorComponent.SetLayerWeight(layer, weight);
         }
 
         // set animator param float value
         protected void SetAnimationValue(string name, float value) {
             Owner.AnimatorComponent.SetValue(name, value);
-        }
-
-        // set animator root motion
-        protected void SetRootMotion(Action<Vector3, Quaternion> onRootMotion) {
-            Owner.AnimatorComponent.OnRootMotion = onRootMotion;
         }
 
         /// <summary>

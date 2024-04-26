@@ -2,6 +2,8 @@ using System;
 using UnityEngine;
 
 namespace AKIRA.Behaviour.AI {
+    using Camera = UnityEngine.Camera;
+
     // 玩家待机状态
     public class PlayerIdleState : PlayerStateBase {
         public override void OnEnter() {
@@ -81,19 +83,23 @@ namespace AKIRA.Behaviour.AI {
                 return;
             }
 
-            var deltaTime = Time.deltaTime;
             var self = Owner.transform;
 
             // 处理跑步
             bool isRun = GetInputAction(InputActions.Run).IsPressed();
-            walk2RunTransition = Mathf.Clamp(walk2RunTransition + (isRun ? deltaTime : -deltaTime) * Player.TransitionSpeed, 0, 1);
+            walk2RunTransition = Mathf.Clamp(walk2RunTransition + (isRun ? 1 : -1) * Time.deltaTime * Player.TransitionSpeed, 0, 1);
             SetAnimationValue(Animation.Move, walk2RunTransition);
 
             // 处理旋转
             var input = action.ReadValue<Vector2>();
             // 四元数 x 向量：向量按照四元数旋转得到新的向量
             var moveDir = Quaternion.Euler(0, Camera.main.transform.eulerAngles.y, 0) * new Vector3(input.x, 0, input.y);
-            self.rotation = Quaternion.Slerp(self.rotation, Quaternion.LookRotation(moveDir), deltaTime * Player.RotateSpeed);
+            self.rotation = Quaternion.Slerp(self.rotation, Quaternion.LookRotation(moveDir), Time.deltaTime * Player.RotateSpeed);
+
+            // move the player
+            var speed = Mathf.Lerp(Player.MoveSpeed, Player.RunSpeed, walk2RunTransition);
+            Owner.Controller.Move(self.forward * (speed * Time.deltaTime) +
+                             new Vector3(0.0f, Player.Gravity, 0.0f) * Time.deltaTime);
         }
 
         private void StopOnUpdate() {
@@ -116,32 +122,25 @@ namespace AKIRA.Behaviour.AI {
             switch (state) {
                 case MoveChildState.Move:
                     SwitchAnimation(Animation.Move);
-                    SetRootMotion(RootMotionMove);
                 break;
                 case MoveChildState.Stop:
                     SwitchAnimation(Animation.MoveToStop);
-                    SetRootMotion(null);
                 break;
             }
-        }
-
-        private void RootMotionMove(Vector3 vector, Quaternion quaternion) {
-            vector.y = Time.deltaTime * Player.Gravity;
-            Owner.Controller.Move(vector);
         }
     }
 
     // 玩家跳跃状态
     public class PlayerJumpState : PlayerStateBase {
         public override void OnEnter() {
-            base.OnEnter();
-            SwitchAnimation(Animation.JumpStart);
-            SetRootMotion(RootMotionMove);
+            // base.OnEnter();
+            // SwitchAnimation(Animation.JumpStart);
+            // SetRootMotion(RootMotionMove);
         }
 
         public override void OnExit() {
-            base.OnExit();
-            SetRootMotion(null);
+            // base.OnExit();
+            // SetRootMotion(null);
         }
 
         public override void OnUpdate() {

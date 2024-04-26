@@ -29,9 +29,14 @@ public static class Layer {
     public const int UI = 5;
                 
     /// <summary>
+    /// Player
+    /// </summary>
+    public const int Player = 6;
+                
+    /// <summary>
     /// Environment
     /// </summary>
-    public const int Environment = 6;
+    public const int Environment = 7;
                 
 }
 
@@ -88,6 +93,11 @@ public static class Tags {
     /// GameController
     /// </summary>
     public const string GameController = "GameController";
+                
+    /// <summary>
+    /// CinemachineTarget
+    /// </summary>
+    public const string CinemachineTarget = "CinemachineTarget";
                 
 }
 
