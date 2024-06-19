@@ -28,7 +28,7 @@ namespace AKIRA.Editor {
         // 是否正在忙碌
         private bool isbusying = false;
 
-        [MenuItem("Tools/AKIRA.Framework/Common/SourceReferWindow")]
+        [MenuItem("Tools/AKIRA.Framework/Common/Source Refer Window", priority = 120)]
         public static void ShowWindow() {
             SourceReferWindow wnd = GetWindow<SourceReferWindow>();
             wnd.titleContent = new GUIContent("SourceReferWindow");

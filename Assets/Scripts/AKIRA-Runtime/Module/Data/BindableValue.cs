@@ -12,7 +12,7 @@ using UnityEditor;
 /// </summary>
 /// <typeparam name="T"></typeparam>
 [Serializable]
-public partial class BindableValue<T> where T : IComparable<T> {
+public partial class BindableValue<T> where T : IComparable {
     [SerializeField]
     private T value;
     public T Value { 
@@ -55,23 +55,55 @@ public partial class BindableValue<T> where T : IComparable<T> {
     }
 
     public static bool operator <=(BindableValue<T> a, T b) {
-        return a.value.CompareTo(b) >= 0;
+        return a.value.CompareTo(b) <= 0;
     }
 
     public static bool operator >=(BindableValue<T> a, T b) {
         return a.value.CompareTo(b) >= 0;
+    }
+
+    public static bool operator >(T b, BindableValue<T> a) {
+        return a.value.CompareTo(b) < 0;
+    }
+
+    public static bool operator <(T b, BindableValue<T> a) {
+        return a.value.CompareTo(b) > 0;
+    }
+
+    public static bool operator <=(T b, BindableValue<T> a) {
+        return a.value.CompareTo(b) >= 0;
+    }
+
+    public static bool operator >=(T b, BindableValue<T> a) {
+        return a.value.CompareTo(b) <= 0;
+    }
+
+    public static bool operator >(BindableValue<T> a, BindableValue<T> b) {
+        return a.value.CompareTo(b.value) > 0;
+    }
+
+    public static bool operator <(BindableValue<T> a, BindableValue<T> b) {
+        return a.value.CompareTo(b.value) < 0;
+    }
+
+    public static bool operator <=(BindableValue<T> a, BindableValue<T> b) {
+        return a.value.CompareTo(b.value) <= 0;
+    }
+
+    public static bool operator >=(BindableValue<T> a, BindableValue<T> b) {
+        return a.value.CompareTo(b.value) >= 0;
     }
     #endregion
 }
 
 #region Property Drawer
 #if UNITY_EDITOR
-[CustomPropertyDrawer(typeof(BindableValue<>), true)]
+[CustomPropertyDrawer(typeof(BindableValue<>), false)]
 public class BindableValueDrawer: PropertyDrawer {
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
         EditorGUI.BeginChangeCheck();
         EditorGUI.PropertyField(position, property.FindPropertyRelative("value"), label);
-        if (EditorGUI.EndChangeCheck()) {
+        if (EditorGUI.EndChangeCheck() && Application.isPlaying) {
             // 延迟一下，否则反射拿到的值不正确
             EditorApplication.delayCall += () => {
                 // 对象实例
