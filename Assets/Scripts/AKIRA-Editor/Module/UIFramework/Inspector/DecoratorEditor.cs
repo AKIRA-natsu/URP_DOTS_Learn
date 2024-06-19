@@ -8,7 +8,7 @@ using UnityEngine;
 /// <para>A base class for creating editors that decorate Unity's built-in editor types.</para>
 /// <para>来源：https://www.xuanyusong.com/archives/3931</para>
 /// </summary>
-public abstract class DecoratorEditor : Editor
+public abstract class DecoratorEditor : global::UnityEditor.Editor
 {
 	// empty array for invoking methods using reflection
 	private static readonly object[] EMPTY_ARRAY = new object[0];
