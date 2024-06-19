@@ -17,9 +17,9 @@ public class PlayerPrefsWindow : EditorWindow {
     private FileDataView fileView;
     private PrefDataView prefView;
 
-    [MenuItem("Tools/AKIRA.Framework/Common/PlayerPrefsWindow", priority = 150)]
+    [MenuItem("Tools/AKIRA.Framework/Common/Player Prefs Window", priority = 150)]
     private static void ShowWindow() {
-        GetWindowWithRect<PlayerPrefsWindow>(new Rect(Vector2.zero, new (1080, 520)), false, "PlayerPrefsWindow");
+        GetWindowWithRect<PlayerPrefsWindow>(new Rect(Vector2.zero, new (1080, 520)), false, "Player Prefs Window");
     }
 
     public void CreateGUI() {
@@ -33,7 +33,7 @@ public class PlayerPrefsWindow : EditorWindow {
         }};
         menuContainer.Add(new ToolbarButton(ClearPrefs) { text = "Delete All Prefs" } );
         menuContainer.Add(new ToolbarButton(ClearFiles) { text = "Clear All Files" } );
-        menuContainer.Add(new ToolbarButton(OpenPersisentFolder) { text = "Open File Data" } );
+        menuContainer.Add(new ToolbarButton(OpenPersisentFolder) { text = "Open Local Data" } );
         
         // 视图容器
         var viewContainer = new VisualElement() { name = "View" };

@@ -30,11 +30,11 @@ namespace AKIRA.Manager {
         private async void InitSystems(object data) {
             EventSystem.Instance.RemoveEventListener(GameData.Event.OnLoadCompleted, InitSystems);
 
-            var root = new GameObject("[Systems]").DontDestory();
             // base systems
-            await CreateSystem<ObjectPool>(null);
-            await CreateSystem<UpdateSystem>(root);
-            await CreateSystem<UIManager>(null);
+            await CreateSystem(null, typeof(DataSystem));
+            await CreateSystem(null, typeof(ObjectPool));
+            await CreateSystem(this.gameObject, typeof(UpdateSystem));
+            await CreateSystem(null, typeof(UIManager));
 
             // normal systems
             SortedDictionary<int, List<Type>> map = new();
@@ -55,23 +55,13 @@ namespace AKIRA.Manager {
             // create
             foreach (var value in map.Values) {
                 foreach (var type in value) {
-                    await CreateSystem(root, type);
+                    await CreateSystem(this.gameObject, type);
                 }
             }
 
-            World.Init();
             EventSystem.Instance.TriggerEvent(GameData.Event.OnInitSystemCompleted);
 
-            GameObject.Destroy(this.gameObject);
-        }
-
-        /// <summary>
-        /// 创建带Controller的Manager，用Init替代Start和Awake
-        /// </summary>
-        /// <param name="root"></param>
-        /// <typeparam name="T"></typeparam>
-        private async UniTask CreateSystem<T>(GameObject root) where T : ISystem {
-           await CreateSystem(root, typeof(T));
+            this.gameObject.DontDestory();
         }
 
         /// <summary>

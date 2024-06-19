@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -8,22 +7,36 @@ using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
 
+public interface IInfo {}
+
 namespace AKIRA.Manager {
     /// <summary>
-    /// 数据表处理管理器
+    /// 数据管理器，存储，读表
     /// </summary>
-    public class TableCollectionContorller : IController {
-        private Dictionary<string, string> tableMap = new();
+    public partial class DataSystem : Singleton<DataSystem> {
+        protected DataSystem() { }
 
-        public async Task Initialize() {
+        public override async Task Initialize() {
+            // 配合Excel表读取
             var config = GameConfig.Instance.GetConfig<ExcelDataConfig>();
-            await Task.Yield();
-            if (config.output.Contains("Resources")) {
-                await LoadByResources(config);
+            if (config != null) {
+                $"Start Load Tables".Log();
+                if (config.output.Contains("Resources")) {
+                    await LoadByResources(config);
+                } else {
+                    await LoadByStreamingAssets(config);
+                }
             } else {
-                await LoadByStreamingAssets(config);
+                $"Skip Load Tables".Log();
             }
+            
+            $"Start Load Presisents".Log();
+            await LoadInfos();
         }
+
+        #region Table
+        // type key -- json string
+        private Dictionary<string, string> tableMap = new();
 
         private async Task LoadByResources(ExcelDataConfig config) {
             var extense = config.encrypt ? ".bytes" : ".json";
@@ -95,7 +108,7 @@ namespace AKIRA.Manager {
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public List<T> GetTableData<T>() {
+        public List<T> GetTable<T>() {
             var key = typeof(T).Name;
             if (tableMap.ContainsKey(key)) {
                 return JsonConvert.DeserializeObject<List<T>>(tableMap[key]);
@@ -103,5 +116,50 @@ namespace AKIRA.Manager {
                 return default;
             }
         }
+        #endregion
+    
+
+        #region presistent
+        private string localPath;
+
+        private Dictionary<string, IInfo> infos = new();
+
+        private async Task LoadInfos() {
+            localPath = Path.Combine(Application.persistentDataPath, Application.productName);
+            var types = typeof(IInfo).Name.GetConfigTypeByInterface();
+            foreach (var type in types) {
+                var json = type.Name.GetString();
+                IInfo info;
+                if (string.IsNullOrEmpty(json))
+                    info = type.CreateInstance<IInfo>();
+                else
+                    try {
+                        info = JsonConvert.DeserializeObject(json, type) as IInfo;
+                    } catch {
+                        throw new JsonException($"error deserialize with {type}");
+                    }
+                infos.Add(type.Name, info);
+                await Task.Yield();
+            }
+        }
+
+        /// <summary>
+        /// 读取存档
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        public T GetInfo<T>() where T : class, IInfo {
+            infos.TryGetValue(typeof(T).Name, out IInfo value);
+            return value as T;
+        }
+
+        /// <summary>
+        /// 存储系统存档
+        /// </summary>
+        /// <param name="info"></param>
+        public void SaveInfo(IInfo info) {
+            info.GetType().Name.Save(JsonConvert.SerializeObject(info));
+        }
+        #endregion
+
     }
 }

@@ -1,6 +1,4 @@
 using System;
-using System.Threading.Tasks;
-using AKIRA;
 using AKIRA.Manager;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -8,11 +6,7 @@ using UnityEngine;
 /// <summary>
 /// 特效管理器
 /// </summary>
-public class FXController : IController {
-    public async Task Initialize() {
-       await UniTask.Yield();
-    }
-
+public class FXController {
     /// <summary>
     /// 播放特效
     /// </summary>

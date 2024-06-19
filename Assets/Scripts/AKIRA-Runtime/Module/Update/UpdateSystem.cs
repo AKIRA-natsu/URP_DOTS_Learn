@@ -224,7 +224,7 @@ public class UpdateGroup {
 /// </summary>
 public class UpdateSystem : MonoSingleton<UpdateSystem> {
     // 更新组列表
-    private Dictionary<string, UpdateGroup> groupMap = new Dictionary<string, UpdateGroup>();
+    private Dictionary<string, UpdateGroup> groupMap = new();
 
     // 更新组 面板
     public IReadOnlyDictionary<string, UpdateGroup> GroupMap => groupMap;

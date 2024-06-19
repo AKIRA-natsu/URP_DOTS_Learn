@@ -380,6 +380,16 @@ public static partial class Utils {
     }
 
     /// <summary>
+    /// 富文本
+    /// </summary>
+    /// <param name="str"></param>
+    /// <param name="size">value or percent with '%'</param>
+    /// <returns></returns>
+    public static string Size(this string str, string size) {
+        return $"<size={size}>{str}</size>";
+    }
+
+    /// <summary>
     /// 富文本，鏈接
     /// </summary>
     /// <param name="url"></param>

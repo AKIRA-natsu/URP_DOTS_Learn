@@ -49,34 +49,5 @@ namespace AKIRA.Manager {
         public async virtual Task Initialize() {
             await Task.Yield();
         }
-
-        protected List<IController> controllers = new();
-
-        /// <summary>
-        /// <para>生成Controller实例</para>
-        /// <para>暂不支持MonoBehaviour版Controller</para>
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        protected async Task<U> CreateController<U>(string dll = GameData.DLL.Default) where U : IController {
-            if (typeof(U).IsSubclassOf(typeof(UnityEngine.Component))) {
-                $"在 {this} 中尝试创建 Controller {typeof(U)}".Error();
-                return default;
-            } else {
-                var controller = typeof(U).CreateInstance<U>(dll);
-                await controller.Initialize();
-                controllers.Add(controller);
-                return controller;
-            }
-        }
-
-        /// <summary>
-        /// 获得Controller
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        public U GetController<U>() where U : IController {
-            return (U)controllers.SingleOrDefault(controller => controller is U);
-        }
     }
 }

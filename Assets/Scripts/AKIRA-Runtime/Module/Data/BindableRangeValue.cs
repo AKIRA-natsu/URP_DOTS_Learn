@@ -10,7 +10,8 @@ using UnityEditor;
 /// <summary>
 /// <para>可变化值，继承自BinableValue<T></para>
 /// <para>带变化范围</para>
-/// <para>编辑器下没有限制该范围</para>
+/// <para>更新事件为Unity Event，可视化到Inspector上</para>
+/// <para>Json 存储，多存储min，max两个值</para>
 /// </summary>
 /// <typeparam name="T"></typeparam>
 [Serializable]

@@ -13,9 +13,6 @@ namespace AKIRA.Manager {
         private static T instance;
         public static T Instance => instance;
 
-        protected List<IController> controllers = new();
-
-
         /// <summary>
         /// 获得或创建默认Instance
         /// </summary>
@@ -42,34 +39,6 @@ namespace AKIRA.Manager {
 
         public async virtual Task Initialize() {
             await Task.Yield();
-        }
-
-        /// <summary>
-        /// 生成Controller实例
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        protected async Task<U> CreateController<U>(string dll = GameData.DLL.Default) where U : IController {
-            IController controller = default;
-            if (typeof(U).IsSubclassOf(typeof(Component))) {
-                var component = new GameObject($"[{typeof(U).Name}]").AddComponent(typeof(U));
-                component.SetParent(this);
-                controller = component as IController;
-            } else {
-                controller = typeof(U).CreateInstance<U>(dll);
-            }
-            await controller.Initialize();
-            controllers.Add(controller);
-            return (U)controller;
-        }
-
-        /// <summary>
-        /// 获得Controller
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        public U GetController<U>() where U : IController {
-            return (U)controllers.SingleOrDefault(controller => controller is U);
         }
     }
 }
