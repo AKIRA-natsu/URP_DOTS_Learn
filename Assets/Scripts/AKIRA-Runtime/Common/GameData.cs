@@ -163,7 +163,6 @@ namespace AKIRA {
         public class SaveKey {
             public const string Guide = "GuideXML.xml";
             public const string GuideIndexKey = "GuideIndexKey";
-            public const string LocalData = "LocalData";
         }
         #endregion
     }

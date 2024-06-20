@@ -157,16 +157,18 @@ namespace AKIRA.Manager {
         /// </summary>
         /// <param name="com"></param>
         /// <typeparam name="T"></typeparam>
-        public void Free<T>(T com) where T : Object {
+        public void Release(string key) {
             // var name = typeof(T).Name;
-            var name = com.name;
-            if (!poolMap.ContainsKey(name)) {
-                $"{name} 池子不存在！".Log(GameData.Log.Error);
+            if (!poolMap.ContainsKey(key)) {
+                $"Pool: {key} target dont exist!".Log(GameData.Log.Error);
                 return;
             }
-            var pool = poolMap[name] as OPool<T>;
-            pool.Free();
-            poolMap.Remove(name);
+            if (poolMap[key].Release()) {
+                poolMap.Remove(key);
+                $"Pool: {key} released successfully".Log(GameData.Log.Editor);
+            } else {
+                $"Pool: {key} released failed, still have used entity".Log(GameData.Log.Editor);
+            }
         }
 
         /// <summary>

@@ -140,10 +140,12 @@ namespace AKIRA {
             component.Dispose();
         }
 
-        public static void RemoveComponentData<T>(this EntityBase entity) where T : IComponentData {
+        public static void RemoveComponentData<T>(this EntityBase entity) where T : IComponentData
+            => RemoveComponentData<T>(entity, typeof(T));
+
+        public static void RemoveComponentData<T>(this EntityBase entity, Type type) where T : IComponentData {
             if (!componentDatas.ContainsKey(entity))
                 return;
-            var type = typeof(T);
             var components = componentDatas[entity];
             for (int i = 0; i < components.Count; i++) {
                 var component = components[i];

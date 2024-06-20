@@ -4,7 +4,12 @@ using UnityEngine;
 
 namespace AKIRA.Manager {
     #region Base
-    internal interface IPoolBase { }
+    internal interface IPoolBase {
+        /// <summary>
+        /// 释放
+        /// </summary>
+        bool Release();
+    }
 
     internal abstract class PoolBase<T> : IPoolBase {
         // 池子最大包含数量
@@ -24,10 +29,7 @@ namespace AKIRA.Manager {
         /// </summary>
         /// <param name="value"></param>
         public abstract void Destroy(T value, object data = null);
-        /// <summary>
-        /// 释放池子（销毁）
-        /// </summary>
-        public abstract void Free();
+        public abstract bool Release();
 
         /// <summary>
         /// 尝试获得空闲对象
@@ -59,10 +61,13 @@ namespace AKIRA.Manager {
     /// <typeparam name="T">可挂载脚本对象</typeparam>
     internal class OPool<T> : PoolBase<T> where T : Object {
         private Transform parent;
+        private PoolReleaseComponent releaseComponent;
 
-        public OPool(Transform root, string parentName) : base() {
-            parent = new GameObject(parentName).transform;
+        public OPool(Transform root, string name) : base() {
+            parent = new GameObject(name).transform;
             parent.SetParent(root);
+            releaseComponent = parent.GetOrAddComponent<PoolReleaseComponent>();
+            releaseComponent.Init(name);
         }
 
         /// <summary>
@@ -70,6 +75,7 @@ namespace AKIRA.Manager {
         /// </summary>
         /// <returns></returns>
         public T Instantiate(string path, Vector3 position, Quaternion rotation, Transform parent) {
+            releaseComponent.UpdateTime();
             parent = parent != null ? parent : this.parent;
             if (!TryGetFree(out T value)) {
                 // 池子中没有空闲对象，加载实例化
@@ -95,6 +101,7 @@ namespace AKIRA.Manager {
         /// </summary>
         /// <returns></returns>
         public T Instantiate(T origin, Vector3 position, Quaternion rotation, Transform parent) {
+            releaseComponent.UpdateTime();
             parent = parent != null ? parent : this.parent;
             if (!TryGetFree(out T value))
                 value = CreateNewInstance(origin);
@@ -153,14 +160,20 @@ namespace AKIRA.Manager {
             pool.Enqueue(value);
         }
 
-        public override void Free() {
-            // 把使用中回收
-            for (int i = 0; i < onUse.Count; i++)
-                pool.Enqueue(onUse[i]);
-            onUse.Clear();
+        public override bool Release() {
+            // 存在使用中就不释放
+            if (onUse.Count != 0)
+                return false;
+
+            // // 把使用中回收
+            // for (int i = 0; i < onUse.Count; i++)
+            //     pool.Enqueue(onUse[i]);
+            // onUse.Clear();
+
             // 把一整个删掉
             parent.gameObject.Destory();
             maxCount = 0;
+            return true;
         }
     }
     #endregion

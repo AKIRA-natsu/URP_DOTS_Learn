@@ -27,6 +27,14 @@ namespace AKIRA.Editor {
             this.Node = node;
             this.onNodeSelected = onNodeSelected;
 
+            // add color line to differentiate node
+            mainContainer.Insert(1, new VisualElement() {
+                style = {
+                    height = 3f,
+                    backgroundColor = GetBackgroundColor().ToUnityColor(),
+                }
+            });
+
             // port
             if (!node.IsRootNode()) {
                 Input = InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Single, typeof(bool));
@@ -69,6 +77,19 @@ namespace AKIRA.Editor {
         public override void OnUnselected() {
             base.OnUnselected();
             onNodeSelected?.Invoke(null);
+        }
+
+        private Color GetBackgroundColor() {
+            if (Node.IsTopNode())
+                return Color.Coral;
+
+            if (Node.IsPropNode())
+                return Color.LightPink;
+
+            if (Node.IsWindowNode())
+                return Color.LightSkyBlue;
+
+            return Color.White;
         }
 
         public override Port InstantiatePort(Orientation orientation, Direction direction, Port.Capacity capacity, Type type)

@@ -7,7 +7,7 @@ using AKIRA;
 /// <summary>
 /// 反射相关的拓展
 /// </summary>
-public static class ReflectionHelp {
+public static class ReflectionUtility {
     // 程序集
     private static Dictionary<string, Assembly> assemblies = new();
 
@@ -127,7 +127,7 @@ public static class ReflectionHelp {
             } else {
                 if (type.IsArray) {
                     // 转数组，正常表格的数组长度都是确定的并且不需要修改等，数组就可以了，不考虑List
-                    var strs = convertibleValue.ToString().Split(",");
+                    var strs = convertibleValue.ToString().Replace("\n", "").Split(",");
                     var instance = (Array)Activator.CreateInstance(type, strs.Length);
                     for (int i = 0; i < strs.Length; i++)
                         instance.SetValue(Convert.ChangeType(strs[i], type.GetElementType()), i);

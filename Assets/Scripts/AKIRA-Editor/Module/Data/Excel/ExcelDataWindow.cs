@@ -7,7 +7,7 @@ using System.Linq;
 /// <summary>
 /// excel 2 json/byte & class
 /// </summary>
-public class ExcelDataUtil : EditorWindow {
+public class ExcelDataWindow : EditorWindow {
     private ExcelDataConfig config;
     private Editor configEditor;
 
@@ -15,11 +15,14 @@ public class ExcelDataUtil : EditorWindow {
 
     // excels 路径
     private string[] files;
+    
+    // 文件添加后缀  {name}Suffix
+    internal const string Suffix = "Table";
 
-    [MenuItem("Tools/AKIRA.Framework/Common/ExcelDataUtil", priority = 151)]
+    [MenuItem("Tools/AKIRA.Framework/Common/Excel Data Converter", priority = 151)]
     private static void ShowWindow() {
-        var window = GetWindow<ExcelDataUtil>();
-        window.titleContent = new GUIContent("ExcelDataUtil");
+        var window = GetWindow<ExcelDataWindow>();
+        window.titleContent = new GUIContent("Excel Data Converter");
         window.minSize = new Vector2(700f, 400f);
         window.Show();
     }
@@ -90,8 +93,8 @@ public class ExcelDataUtil : EditorWindow {
         EditorGUILayout.LabelField(name);
         
         var scriptName = name.Split("（")[0];
-        if (!scriptName.Contains("Data"))
-            scriptName += "Data";
+        if (!scriptName.Contains(Suffix))
+            scriptName += Suffix;
         var type = scriptName.GetConfigTypeByAssembley();
         if (type == null) {
             if (GUILayout.Button("Create Script", GUILayout.Width(300))) {
@@ -129,7 +132,7 @@ public class ExcelDataUtil : EditorWindow {
         for (int i = 0; i < files.Length; i++) {
             var file = files[i];
             var name = Path.GetFileNameWithoutExtension(file);
-            var scriptName = $"{name.Split("（")[0]}Data";
+            var scriptName = $"{name.Split("（")[0]}{Suffix}";
 
             var cancel = EditorUtility.DisplayCancelableProgressBar("Generator scripts", $"generator script {scriptName}.cs", (float)i / files.Length);
             if (cancel)
@@ -151,7 +154,7 @@ public class ExcelDataUtil : EditorWindow {
         for (int i = 0; i < files.Length; i++) {
             var file = files[i];
             var name = Path.GetFileNameWithoutExtension(file);
-            var outputName = $"{name.Split("（")[0]}Data";
+            var outputName = $"{name.Split("（")[0]}{Suffix}";
 
             var cancel = EditorUtility.DisplayCancelableProgressBar("Generator output files", $"generator file {outputName}", (float)i / files.Length);
             if (cancel)

@@ -4,7 +4,7 @@ using UnityEngine;
 /// <summary>
 /// 数学方法
 /// </summary>
-public static class MathTool {
+public static class MathUtility {
     /// <summary>
     /// <para>Lerp</para>
     /// <para>来源：https://www.rorydriscoll.com/2016/03/07/frame-rate-independent-damping-using-lerp/</para>

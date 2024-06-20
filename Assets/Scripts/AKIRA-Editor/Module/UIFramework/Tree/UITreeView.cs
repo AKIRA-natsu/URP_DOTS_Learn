@@ -90,7 +90,7 @@ namespace AKIRA.Editor {
             // check ui tree build
             if (!UITree.IsFinishBuild) {
                 List<UIComponent> uis = new();
-                var wins = ReflectionHelp.Handle<WinAttribute>();
+                var wins = ReflectionUtility.Handle<WinAttribute>();
                 Array.Sort(wins, (a, b) => a.GetCustomAttribute<WinAttribute>().Data.self - b.GetCustomAttribute<WinAttribute>().Data.self);
                 foreach (var win in wins)
                     uis.Add(win.CreateInstance<UIComponent>());

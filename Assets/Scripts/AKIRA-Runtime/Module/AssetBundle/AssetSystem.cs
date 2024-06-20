@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -31,6 +32,7 @@ namespace AKIRA.Manager {
         /// 对加载过的物体做一个记录
         /// </summary>
         private Dictionary<string, Object> records = new();
+        private Dictionary<string, IEnumerable<Object>> recordLists = new();
 
         protected AssetSystem() {
             config = GameConfig.Instance.GetConfig<AssetBundleConfig>();
@@ -141,6 +143,36 @@ namespace AKIRA.Manager {
                 else
                     res = bundle.LoadAsset<T>(path);
                 records[path] = res;
+                return res;
+            }
+            return default;
+        }
+
+        public IEnumerable<T> LoadAll<T>(string path) where T : Object {
+            if (string.IsNullOrEmpty(path))
+                return default;
+            
+            if (typeof(T).IsSubclassOf(typeof(Component)))
+                return default;
+
+            if (recordLists.ContainsKey(path))
+                return recordLists[path].OfType<T>();
+
+            path.Log(GameData.Log.Editor);
+#if UNITY_EDITOR
+            if (!config.simulation) {
+                var res = path.LoadAllAssetsAtPath<T>();
+                recordLists[path] = res;
+                return res;
+            }
+#endif
+
+            foreach (var bundle in bundles) {
+                if (!bundle.Contains(path))
+                    continue;
+                
+                IEnumerable<T> res = bundle.LoadAssetWithSubAssets<T>(path);
+                recordLists[path] = res.OfType<Object>();
                 return res;
             }
             return default;

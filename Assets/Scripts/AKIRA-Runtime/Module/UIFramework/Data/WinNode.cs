@@ -20,7 +20,7 @@ namespace AKIRA.UIFramework {
 
         #region property
         // 节点名称，统一Transform的名称
-        public string Name => self_Trans.name;
+        public string Name => self_Trans?.name ?? self.GetType().Name;
         #endregion
 
         #region constructor

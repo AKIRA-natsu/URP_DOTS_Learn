@@ -224,7 +224,7 @@ public partial class {scriptType} {{";
                 row = sheet.Rows[i];
             if (!string.IsNullOrEmpty(header))
                 continue;
-            var data = ReflectionHelp.CreateInstance(scriptType);
+            var data = ReflectionUtility.CreateInstance(scriptType);
             for (int j = 1; j < sheet.Columns.Count; j++) {
                 var fieldName = row[j].ToString().Replace("-", "_");
                 // 长度不太对劲，需要更多测试

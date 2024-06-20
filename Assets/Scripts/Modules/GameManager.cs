@@ -3,8 +3,8 @@ using System;
 using AKIRA.Attribute;
 using AKIRA.UIFramework;
 using Cysharp.Threading.Tasks;
-using Unity.VisualScripting;
 using UnityEngine;
+using System.Reflection;
 
 namespace AKIRA.Manager {
     /// <summary>
@@ -38,13 +38,13 @@ namespace AKIRA.Manager {
 
             // normal systems
             SortedDictionary<int, List<Type>> map = new();
-            var launchers = ReflectionHelp.Handle<SystemLauncherAttribute>();
+            var launchers = ReflectionUtility.Handle<SystemLauncherAttribute>();
             // sort by attribute significance
             foreach (var launcher in launchers) {
                 // 只有继承ISystem的标签才能在Launcher里实例化
                 if (launcher.GetInterface("ISystem") == null)
                     continue;
-                var attr = launcher.GetAttribute<SystemLauncherAttribute>();
+                var attr = launcher.GetCustomAttribute<SystemLauncherAttribute>();
                 var significance = attr.significance;
                 if (map.ContainsKey(significance)) {
                     map[significance].Add(launcher);

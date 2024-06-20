@@ -7,7 +7,7 @@ using UnityEditor;
 using AKIRA.UIFramework;
 using System.Linq;
 
-public static partial class Utils {
+public static partial class Utility {
     #region GameObject
     /// <summary>
     /// GameObject Dont Destory
@@ -59,7 +59,21 @@ public static partial class Utils {
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
     public static T Instantiate<T>(this T com) where T : Component {
-        return GameObject.Instantiate<T>(com);
+        var go = GameObject.Instantiate(com);
+        go.name = com.name;
+        return go;
+    }
+    
+    /// <summary>
+    /// 实例化
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public static T Instantiate<T>(this T com, Transform parent) where T : Component {
+        var go = GameObject.Instantiate(com, parent);
+        go.name = com.name;
+        return go;
     }
 
     /// <summary>
@@ -71,7 +85,9 @@ public static partial class Utils {
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
     public static T Instantiate<T>(this T com, Vector3 position, Quaternion rotation) where T : Component {
-        return GameObject.Instantiate<T>(com, position, rotation);
+        var go = GameObject.Instantiate(com, position, rotation);
+        go.name = com.name;
+        return go;
     }
     
     /// <summary>
@@ -83,7 +99,9 @@ public static partial class Utils {
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
     public static T Instantiate<T>(this T com, Vector3 position, Quaternion rotation, Transform parent) where T : Component {
-        return GameObject.Instantiate<T>(com, position, rotation, parent);
+        var go = GameObject.Instantiate(com, position, rotation, parent);
+        go.name = com.name;
+        return go;
     }
 
     /// <summary>
@@ -93,6 +111,17 @@ public static partial class Utils {
     /// <returns></returns>
     public static GameObject Instantiate(this GameObject obj) {
         var go = GameObject.Instantiate(obj);
+        go.name = obj.name;
+        return go;
+    }
+
+    /// <summary>
+    /// 实例化
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <returns></returns>
+    public static GameObject Instantiate(this GameObject obj, Transform parent) {
+        var go = GameObject.Instantiate(obj, parent);
         go.name = obj.name;
         return go;
     }
@@ -458,7 +487,7 @@ public static partial class Utils {
     /// <param name="screenpos"></param>
     /// <returns></returns>
     public static Vector2 ScreenToUGUI(this Vector3 screenpos) {
-        Vector2 screenpos2 = new Vector2(screenpos.x - (Screen.width / 2), screenpos.y - (Screen.height / 2));
+        Vector2 screenpos2 = new(screenpos.x - (Screen.width / 2), screenpos.y - (Screen.height / 2));
         var UISize = UI.Rect.sizeDelta;
         Vector2 uipos;
         uipos.x = (screenpos2.x / Screen.width) * UISize.x;
@@ -472,7 +501,7 @@ public static partial class Utils {
     /// <param name="screenpos"></param>
     /// <returns></returns>
     public static Vector2 ScreenToUGUI(this Vector2 screenpos) {
-        Vector2 screenpos2 = new Vector2(screenpos.x - (Screen.width / 2), screenpos.y - (Screen.height / 2));
+        Vector2 screenpos2 = new(screenpos.x - (Screen.width / 2), screenpos.y - (Screen.height / 2));
         var UISize = UI.Rect.sizeDelta;
         Vector2 uipos;
         uipos.x = (screenpos2.x / Screen.width) * UISize.x;
@@ -488,7 +517,7 @@ public static partial class Utils {
     /// <param name="canvasRect">Canvas.RectTransform</param>
     /// <returns></returns>
     public static Vector2 ScreenToUGUI(this Vector3 screenpos, RectTransform canvasRect) {
-        Vector2 screenpos2 = new Vector2(screenpos.x - (Screen.width / 2), screenpos.y - (Screen.height / 2));
+        Vector2 screenpos2 = new(screenpos.x - (Screen.width / 2), screenpos.y - (Screen.height / 2));
         var UISize = canvasRect.sizeDelta;
         Vector2 uipos;
         uipos.x = (screenpos2.x / Screen.width) * UISize.x;
@@ -501,7 +530,7 @@ public static partial class Utils {
     /// </summary>
     public static Vector2 WorldToUGUI(this Vector3 position) {
         Vector2 ScreenPoint = Camera.main.WorldToScreenPoint(position);
-        Vector2 ScreenSize = new Vector2(Screen.width, Screen.height);
+        Vector2 ScreenSize = new(Screen.width, Screen.height);
         ScreenPoint -= ScreenSize / 2;//将屏幕坐标变换为以屏幕中心为原点
         Vector2 anchorPos = ScreenPoint / ScreenSize * UI.Rect.sizeDelta;//缩放得到UGUI坐标
         return anchorPos;
@@ -548,10 +577,10 @@ public static partial class Utils {
     /// <returns></returns>
     public static bool IsPointerOverUiObject(this Vector3 screenPosition) {
         if (!EventSystem.current.Equals(null)) {
-            PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
-            eventDataCurrentPosition.position = new Vector2(screenPosition.x, screenPosition.y);
+            PointerEventData eventDataCurrentPosition = new(EventSystem.current);
+            eventDataCurrentPosition.position = screenPosition;
 
-            List<RaycastResult> results = new List<RaycastResult>();
+            List<RaycastResult> results = new();
             EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
             return results.Count > 0;
         }
@@ -567,10 +596,10 @@ public static partial class Utils {
     /// <returns></returns>
     public static bool IsPointerOverUiObject(this Vector3 screenPosition, Type type) {
         if (!EventSystem.current.Equals(null)) {
-            PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
-            eventDataCurrentPosition.position = new Vector2(screenPosition.x, screenPosition.y);
+            PointerEventData eventDataCurrentPosition = new(EventSystem.current);
+            eventDataCurrentPosition.position = screenPosition;
 
-            List<RaycastResult> results = new List<RaycastResult>();
+            List<RaycastResult> results = new();
             EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
 
             foreach (var result in results) {
@@ -582,6 +611,19 @@ public static partial class Utils {
         }
 
         return true;
+    }
+
+    /// <summary>
+    /// 判断是否在UI范围内
+    /// </summary>
+    /// <param name="screenPosition"></param>
+    /// <param name="target"></param>
+    /// <returns></returns>
+    public static bool IsPointInRectTransform(Vector2 screenPosition, RectTransform target) {
+        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(target, screenPosition, UI.UICamera, out Vector2 localPoint)) {
+            return target.rect.Contains(localPoint);
+        }
+        return false;
     }
     #endregion
 
@@ -614,6 +656,22 @@ public static partial class Utils {
         for (int i = 0; i < values.Count(); i++)
             callback?.Invoke(i, values.ElementAt(i));
     }
+
+    public static void ForeachReverse<T>(this IEnumerable<T> values, Action<T> callback) {
+        if (values == default)
+            return;
+
+        for (int i = values.Count() - 1; i >= 0; i--)
+            callback?.Invoke(values.ElementAt(i));
+    }
+
+    public static void ForeachReverse<T>(this IEnumerable<T> values, Action<int, T> callback) {
+        if (values == default)
+            return;
+
+        for (int i = values.Count() - 1; i >= 0; i--)
+            callback?.Invoke(i, values.ElementAt(i));
+    }
     #endregion
 
     #region 随机值
@@ -627,6 +685,19 @@ public static partial class Utils {
         var values = Enum.GetValues(typeof(T)).Cast<T>().ToList();
         excepts.Foreach(except => values.Remove(except));
         return values[UnityEngine.Random.Range(0, values.Count)];
+    }
+
+    /// <summary>
+    /// 获得随机数组值
+    /// </summary>
+    /// <param name="list"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public static T GetRandomValue<T>(this IEnumerable<T> list) {
+        if (list.Count() == 0)
+            return default;
+        var index = UnityEngine.Random.Range(0, list.Count());
+        return list.ElementAt(index);
     }
 
     /// <summary>

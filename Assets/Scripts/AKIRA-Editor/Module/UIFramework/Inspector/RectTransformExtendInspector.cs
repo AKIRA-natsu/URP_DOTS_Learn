@@ -28,7 +28,6 @@ namespace AKIRA.Editor {
                     DrawEditBtn($"{target.name}Panel");
                     if (Application.isPlaying) {
                         DrawActiveBtn(UIManager.Instance.Get(panelType));
-                        DrawMethodBtns(panelType, UIManager.Instance.Get(panelType) ?? null);
                     } else {
                         DrawAnimationPop();
                         DrawDeleteBtn(panelType);
@@ -47,7 +46,6 @@ namespace AKIRA.Editor {
                     if (Application.isPlaying) {
                         var componentProp = GetComponentPropObject(FindComponentParentPanel(rect), componentType);
                         DrawActiveBtn(componentProp);
-                        DrawMethodBtns(componentType, componentProp);
                     } else {
                         DrawRenameBtn(componentType, rect);
                         DrawAnimationPop();
@@ -127,34 +125,6 @@ namespace AKIRA.Editor {
         private void DrawEditBtn(string name) {
             if (GUILayout.Button("Edit")) {
                 System.Diagnostics.Process.Start(name.GetScriptLocation());
-            }
-        }
-
-        /// <summary>
-        /// 绘制方法按钮
-        /// </summary>
-        /// <param name="type"></param>
-        /// <param name="type"></param>
-        private void DrawMethodBtns(Type type, object target) {
-            if (target == null)
-                return;
-
-            var methodInfos = type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-            foreach (var info in methodInfos) {
-                var attributes = info.GetCustomAttributes(typeof(UIBtnMethodAttribute), true) as UIBtnMethodAttribute[];
-                if (attributes.Length == 0)
-                    continue;
-                if (info.GetParameters().Length != 0) {
-                    $"UIBtnMethodAttribute 暂时仅支持无参方法".Log(GameData.Log.Warn);
-                    continue;
-                }
-                var attribute = attributes[0];
-                var name = attribute.name;
-                if (String.IsNullOrEmpty(name))
-                    name = info.Name;
-                if (GUILayout.Button(name)) {
-                    info.Invoke(target, null);
-                }
             }
         }
 
