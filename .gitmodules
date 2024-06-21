@@ -1,0 +1,3 @@
+[submodule "Assets/AKIRA-Framework"]
+	path = Assets/AKIRA-Framework
+	url = git@github.com:AKIRA-natsu/AKIRA.Framework.git
