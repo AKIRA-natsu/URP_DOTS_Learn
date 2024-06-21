@@ -5,7 +5,7 @@ using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace AKIRA.UIFramework {
-    [Win(WinEnum.Console, "Assets/Res/MainBundle/Prefabs/UI/Console.prefab", WinType.Interlude)]
+    [Win(WinType.Interlude, "Assets/Res/MainBundle/Prefabs/UI/Console.prefab", 100)]
     public class ConsolePanel : ConsolePanelProp, IConsoleUI {
         public override void Awake(object obj) {
             base.Awake(obj);
@@ -29,7 +29,7 @@ namespace AKIRA.UIFramework {
         }
 
         private void OnEndEdit(string value) {
-            EventSystem.Instance.TriggerEvent(GameData.Event.OnConsoleCommand, value.Trim().Replace("-", "").ToLower());
+            EventSystem.Instance.TriggerEvent(Consts.Event.OnConsoleCommand, value.Trim().Replace("-", "").ToLower());
             ConsoleInput.text = "";
             ConsoleInput.ActivateInputField();
         }

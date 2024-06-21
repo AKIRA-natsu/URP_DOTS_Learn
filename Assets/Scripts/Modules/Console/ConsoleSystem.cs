@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,8 +28,8 @@ namespace AKIRA.Manager {
             config = GameConfig.Instance.GetConfig<ConsoleConfig>();
             var window = config.Init();
 
-            if (window != WinEnum.None) {
-                var panel = UIManager.Instance.Get(window);
+            if (!string.IsNullOrEmpty(window)) {
+                var panel = UIManager.Instance.Get(Type.GetType(window));
                 if (panel != null && panel.GetType().GetInterface("IConsoleUI") != null) {
                     $"Console Init successful!".Log(GameData.Log.Success);
                     // 页面初始化
@@ -40,7 +41,7 @@ namespace AKIRA.Manager {
                     Commands = new IGMCommand[types.Length];
                     types.Foreach((i, type) => Commands[i] = type.CreateInstance<IGMCommand>());
                     // 注册发送事件
-                    EventSystem.Instance.AddEventListener(GameData.Event.OnConsoleCommand, OnConsoleCommand);
+                    EventSystem.Instance.AddEventListener(Consts.Event.OnConsoleCommand, OnConsoleCommand);
                     // 更新
                     this.Regist(GameData.Group.Other);
                 } else {

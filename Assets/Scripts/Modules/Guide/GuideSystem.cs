@@ -54,8 +54,8 @@ namespace AKIRA.Manager {
                 return;
             
             "指引异步加载开始".Log(GameData.Log.Guide);
-            currentIndex = GameData.SaveKey.GuideIndexKey.GetInt();
-            Guide3DRoot = AssetSystem.Instance.LoadObject<GameObject>(GameData.Asset.Guide3DRoot).Instantiate().transform;
+            currentIndex = Consts.SaveKey.GuideIndexKey.GetInt();
+            Guide3DRoot = AssetSystem.Instance.LoadObject<GameObject>(Consts.Asset.Guide3DRoot).Instantiate().transform;
             await UniTask.NextFrame();
             Init();
             await UniTask.Delay(200);
@@ -63,7 +63,7 @@ namespace AKIRA.Manager {
             if (currentIndex >= infos.Count || infos.Count == 0) {
                 "不包含指引，指引异步加载完成".Log(GameData.Log.Guide);
             } else {
-                EventSystem.Instance.AddEventListener(GameData.Event.OnInitSystemCompleted, OnGameStart);
+                EventSystem.Instance.AddEventListener(Consts.Event.OnInitSystemCompleted, OnGameStart);
                 "注册事件，指引异步加载完成".Log(GameData.Log.Guide);
             }
         }
@@ -73,7 +73,7 @@ namespace AKIRA.Manager {
         /// </summary>
         private void Init() {
             infos.Clear();
-            XML xml = new XML(GameData.SaveKey.Guide);
+            XML xml = new XML(Consts.SaveKey.Guide);
             if (xml.Exist()) {
                 xml.Read((x) => {
                     var nodes= x.SelectSingleNode("Data").ChildNodes;
@@ -115,7 +115,7 @@ namespace AKIRA.Manager {
         private void OnGameStart(object data) {
             $"进入游戏，开始指引".Log();
             StartGuide(currentIndex);
-            EventSystem.Instance.RemoveEventListener(GameData.Event.OnInitSystemCompleted, OnGameStart);
+            EventSystem.Instance.RemoveEventListener(Consts.Event.OnInitSystemCompleted, OnGameStart);
         }
 
         /// <summary>
@@ -161,9 +161,9 @@ namespace AKIRA.Manager {
         /// </summary>
         public async void NextGuide(float waitTime = 0f) {
             CurrentIGuide = null;
-            GameData.SaveKey.GuideIndexKey.Save(++currentIndex);
+            Consts.SaveKey.GuideIndexKey.Save(++currentIndex);
             if (currentIndex >= infos.Count) {
-                EventSystem.Instance.TriggerEvent(GameData.Event.OnGuidenceCompleted);
+                EventSystem.Instance.TriggerEvent(Consts.Event.OnGuidenceCompleted);
                 return;
             }
 
@@ -266,10 +266,10 @@ namespace AKIRA.Manager {
                 $"不存在GameObject Tag: {Tags.Player}".Error();
             
             // 为场景添加Arrow箭头
-            arrow3D = AssetSystem.Instance.LoadObject<GameObject>(GameData.Asset.GuideArrow).Instantiate();
+            arrow3D = AssetSystem.Instance.LoadObject<GameObject>(Consts.Asset.GuideArrow).Instantiate();
             arrow3D.SetParent(GuideSystem.Instance.gameObject);
             arrow3D.SetActive(false);
-            arrow2D = AssetSystem.Instance.LoadObject<GameObject>(GameData.Asset.GuideArrow2D).Instantiate().GetComponent<Arrow>();
+            arrow2D = AssetSystem.Instance.LoadObject<GameObject>(Consts.Asset.GuideArrow2D).Instantiate().GetComponent<Arrow>();
             arrow2D.SetParent(GuideSystem.Instance);
             arrow2D.Init(player);
             
@@ -278,7 +278,7 @@ namespace AKIRA.Manager {
             //     heightOffset += move.moveRadius;
 
             // 指引结束回收箭头
-            EventSystem.Instance.AddEventListener(GameData.Event.OnGuidenceCompleted, _ => {
+            EventSystem.Instance.AddEventListener(Consts.Event.OnGuidenceCompleted, _ => {
                 GameObject.Destroy(arrow3D);
                 GameObject.Destroy(arrow2D.gameObject);
             });

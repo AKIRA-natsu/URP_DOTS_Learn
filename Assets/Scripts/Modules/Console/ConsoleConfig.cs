@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using System.Text;
-using AKIRA.UIFramework;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Layouts;
@@ -12,7 +11,7 @@ namespace AKIRA.Manager {
     /// </summary>
     [Serializable]
     public struct PlatformWakeConfig {
-        public WinEnum window;
+        public string window;
 
         public RuntimePlatform[] platforms;
 
@@ -36,7 +35,7 @@ namespace AKIRA.Manager {
         /// <summary>
         /// Init by console system
         /// </summary>
-        public WinEnum Init() {
+        public string Init() {
             var platform = Application.platform;
             foreach (var config in wakeConfigs) {
                 if (config.platforms.Contains(platform)) {
@@ -56,7 +55,7 @@ namespace AKIRA.Manager {
             }
 
             $"Console not availiable".Log(GameData.Log.Console);
-            return WinEnum.None;
+            return default;
         }
 
         /// <summary>

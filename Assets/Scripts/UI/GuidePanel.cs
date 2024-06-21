@@ -9,7 +9,7 @@ using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
 #endif
 
 namespace AKIRA.UIFramework {
-    [Win(WinEnum.Guide, "Assets/Res/MainBundle/Prefabs/UI/Guide.prefab", WinType.Interlude)]
+    [Win(WinType.Interlude, "Assets/Res/MainBundle/Prefabs/UI/Guide.prefab")]
     public class GuidePanel : GuidePanelProp, IUpdate {
         public override void Awake(object obj) {
             base.Awake(obj);
@@ -17,8 +17,8 @@ namespace AKIRA.UIFramework {
             Hide();
             Mask.Active(false);
             
-            EventSystem.Instance.AddEventListener(GameData.Event.OnInitSystemCompleted, _ => {
-                EventSystem.Instance.AddEventListener(GameData.Event.OnGuidenceCompleted, _ => Hide());
+            EventSystem.Instance.AddEventListener(Consts.Event.OnInitSystemCompleted, _ => {
+                EventSystem.Instance.AddEventListener(Consts.Event.OnGuidenceCompleted, _ => Hide());
                 GuideSystem.Instance.RegistOnGuideUIResumeAction(() => Show());
                 GuideSystem.Instance.RegistOnGuideUIPauseAction(Hide);
             });

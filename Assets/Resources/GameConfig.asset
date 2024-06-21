@@ -1,26 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-8007395691727417672
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c595f27c35a967a489044a60ae73ce88, type: 3}
-  m_Name: ConsoleConfig
-  m_EditorClassIdentifier: 
-  maxHistoryCount: 50
-  wakeConfigs:
-  - window: 108
-    platforms: 0200000007000000
-    wakeInputs:
-    - <Keyboard>/tab
-    - <Keyboard>/backquote
-    shutInputs:
-    - <Keyboard>/escape
 --- !u!114 &-4453349924037599099
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -102,9 +81,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   simulation: 0
   useWebRequestTest: 0
-  paths:
-  - Android/Android
-  - Android/mainbundle
+  paths: []
 --- !u!114 &-745551132546285038
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -140,8 +117,30 @@ MonoBehaviour:
   runtimeConfigs:
   - {fileID: 687445742868141366}
   - {fileID: -3596378399308982382}
-  - {fileID: -8007395691727417672}
   - {fileID: -745551132546285038}
+  - {fileID: 4704390103598570060}
+  - {fileID: 333163400157701369}
+--- !u!114 &333163400157701369
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c595f27c35a967a489044a60ae73ce88, type: 3}
+  m_Name: ConsoleConfig
+  m_EditorClassIdentifier: 
+  maxHistoryCount: 50
+  wakeConfigs:
+  - window: AKIRA.UIFramework.ConsolePanel
+    platforms: 0200000007000000
+    wakeInputs:
+    - <Keyboard>/backquote
+    - <Keyboard>/ctrl
+    shutInputs:
+    - <Keyboard>/escape
 --- !u!114 &687445742868141366
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -180,3 +179,17 @@ MonoBehaviour:
   - name: Test
     color: {r: 0.36845854, g: 0.52357036, b: 0.6792453, a: 1}
     logable: 1
+--- !u!114 &4704390103598570060
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab2acc69fe49c2b4097d47d8b671fac6, type: 3}
+  m_Name: UIRumetimeConfig
+  m_EditorClassIdentifier: 
+  <UIManagerPrefab>k__BackingField: {fileID: 8759672577828521074, guid: fe6ab438caf4ed44b835ea3d0c67a666,
+    type: 3}

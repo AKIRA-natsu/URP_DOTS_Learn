@@ -16,11 +16,11 @@ namespace AKIRA.Manager {
         }
 
         private async void Start() {
-            EventSystem.Instance.AddEventListener(GameData.Event.OnLoadCompleted, InitSystems);
+            EventSystem.Instance.AddEventListener(Consts.Event.OnLoadCompleted, InitSystems);
             StartCoroutine(AssetSystem.Instance.LoadBundles());
 
             await UniTask.WaitUntil(() => AssetSystem.Instance.BundleLoadCompleted);
-            EventSystem.Instance.TriggerEvent(GameData.Event.OnLoadCompleted);
+            EventSystem.Instance.TriggerEvent(Consts.Event.OnLoadCompleted);
         }
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace AKIRA.Manager {
         /// </summary>
         /// <param name="data"></param>
         private async void InitSystems(object data) {
-            EventSystem.Instance.RemoveEventListener(GameData.Event.OnLoadCompleted, InitSystems);
+            EventSystem.Instance.RemoveEventListener(Consts.Event.OnLoadCompleted, InitSystems);
 
             // base systems
             await CreateSystem(null, typeof(DataSystem));
@@ -59,7 +59,7 @@ namespace AKIRA.Manager {
                 }
             }
 
-            EventSystem.Instance.TriggerEvent(GameData.Event.OnInitSystemCompleted);
+            EventSystem.Instance.TriggerEvent(Consts.Event.OnInitSystemCompleted);
 
             this.gameObject.DontDestory();
         }

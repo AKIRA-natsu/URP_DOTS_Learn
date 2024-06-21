@@ -82,7 +82,7 @@ public class GuideWindow : EditorWindow {
     private void OnGUI() {
         // 第一次打开窗口读取指引数据
         if (xml == null) {
-            xml = new XML(GameData.SaveKey.Guide);
+            xml = new XML(Consts.SaveKey.Guide);
             if (xml.Exist()) {
                 xml.Read((x) => {
                     var nodes= x.SelectSingleNode("Data").ChildNodes;
@@ -100,7 +100,7 @@ public class GuideWindow : EditorWindow {
                             target = prefab.transform.Find(path.Replace($"{prefabName}/", "")).gameObject;
                         } else {
                             // 3D物体下简单找到对象
-                            target = GameData.Asset.Guide3DRoot.LoadAssetAtPath<Transform>().Find(path).gameObject;
+                            target = Consts.Asset.Guide3DRoot.LoadAssetAtPath<Transform>().Find(path).gameObject;
                         }
 
                         infos.Add(new GuideInfo() {
@@ -126,7 +126,7 @@ public class GuideWindow : EditorWindow {
         }
 
         GUILayout.BeginHorizontal();
-        GUILayout.Label($"Path: {GameData.SaveKey.Guide}");
+        GUILayout.Label($"Path: {Consts.SaveKey.Guide}");
         GUILayout.EndHorizontal();
 
         EditorGUILayout.BeginHorizontal("box");
