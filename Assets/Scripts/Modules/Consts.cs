@@ -6,10 +6,6 @@ namespace AKIRA
         public class Event
         {
             /// <summary>
-            /// 加载完成
-            /// </summary>
-            public const string OnLoadCompleted = "OnLoadCompleted";
-            /// <summary>
             /// 系统初始化完成
             /// </summary>
             public const string OnInitSystemCompleted = "OnInitSystemCompleted";
