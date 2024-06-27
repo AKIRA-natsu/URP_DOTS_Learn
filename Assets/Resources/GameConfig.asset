@@ -82,6 +82,23 @@ MonoBehaviour:
   simulation: 0
   useWebRequestTest: 0
   paths: []
+--- !u!114 &-3593966094172277767
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89eea95204e02e54d8bd932e1b7f12a8, type: 3}
+  m_Name: PresistentConfig
+  m_EditorClassIdentifier: 
+  <Method>k__BackingField: 2
+  path: E:/UnityProject/AKIRA/Assets/StreamingAssets\Cache Data
+  useAutoSave: 0
+  autoSaveCount: 0
+  manualSaveCount: 1
 --- !u!114 &-745551132546285038
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -120,6 +137,7 @@ MonoBehaviour:
   - {fileID: -745551132546285038}
   - {fileID: 4704390103598570060}
   - {fileID: 333163400157701369}
+  - {fileID: -3593966094172277767}
 --- !u!114 &333163400157701369
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -193,3 +211,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <UIManagerPrefab>k__BackingField: {fileID: 8759672577828521074, guid: fe6ab438caf4ed44b835ea3d0c67a666,
     type: 3}
+  <DontDestory>k__BackingField: 0

@@ -96,7 +96,7 @@ public class GuideWindow : EditorWindow {
                         if (completeType == GuideCompleteType.UIWorld) {
                             // 查找预制体
                             var prefabName = path.Split("/")[0];
-                            var prefab = $"{prefabName}Panel".GetConfigTypeByAssembley().GetAttribute<WinAttribute>().Data.path.LoadAssetAtPath<GameObject>();
+                            var prefab = $"{prefabName}Panel".GetTypeByAssembley().GetAttribute<WinAttribute>().Data.path.LoadAssetAtPath<GameObject>();
                             target = prefab.transform.Find(path.Replace($"{prefabName}/", "")).gameObject;
                         } else {
                             // 3D物体下简单找到对象

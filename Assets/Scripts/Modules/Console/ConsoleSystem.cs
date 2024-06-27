@@ -37,7 +37,7 @@ namespace AKIRA.Manager {
                     Output = new StringBuilder($"--------Console--------\n");
                     RepaintPanel();
                     // 获得全部指令
-                    var types = typeof(IGMCommand).Name.GetConfigTypeByInterface();
+                    var types = typeof(IGMCommand).Name.GetTypeByInterface();
                     Commands = new IGMCommand[types.Length];
                     types.Foreach((i, type) => Commands[i] = type.CreateInstance<IGMCommand>());
                     // 注册发送事件

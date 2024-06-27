@@ -85,7 +85,7 @@ namespace AKIRA.Manager {
                         if (completeType == GuideCompleteType.UIWorld) {
                             // UI实例化Manager下查找物体
                             var prefabName = path.Split("/")[0];
-                            var type = $"{prefabName}Panel".GetConfigTypeByAssembley();
+                            var type = $"{prefabName}Panel".GetTypeByAssembley();
                             target = UIManager.Instance.Get(type).transform.Find(path.Replace($"{prefabName}/", "")).gameObject;
                         } else {
                             // 3D物体下简单找到对象

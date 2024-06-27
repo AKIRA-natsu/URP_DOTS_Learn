@@ -14,5 +14,6 @@ namespace AKIRA.Manager {
         }
 
         public override void RegistModules() {}
+
     }
 }
